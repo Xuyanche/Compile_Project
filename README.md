@@ -88,5 +88,8 @@ class Statement : AST {
     //Block
 }
 ...
+
+Output:
+vector<AST *> 
 ```
 
