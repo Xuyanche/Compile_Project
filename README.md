@@ -4,7 +4,7 @@
 
 #### lex
 
-```
+```c++
 base:
 class Token {
     enum xxx type;
@@ -41,7 +41,7 @@ vector<Token *>
 
 #### yacc
 
-```
+```c++
 base:
 class AST{
     enum xxx type;
