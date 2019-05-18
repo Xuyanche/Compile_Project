@@ -1,8 +1,13 @@
 
 %{
 #include <stdio.h>
-#include <y.tab.h>
+#include <stdlib.h>
+#include <string.h>
+#include "node.h"
+#include "compile.tab.h"
 
+int No_Line=1;
+int column = 0;
 void count();
 %}
 
@@ -16,77 +21,72 @@ IS			(u|U|l|L)*
 
 
 %%
-"char"	{ count(); return(CHAR);}
-"int"	{ count(); return(INT);}
-"float"	{ count(); return(FLOAT);}
-"if"	{ count(); return(IF);}
-"else"	{ count(); return(ELSE);}
-"do"	{ count(); return(DO);}
-"while"	{ count(); return(WHILE);}
-"break"	{ count(); return(BREAK);}
-"for"	{ count(); return(FOR);}
-"return"	{ count(); return(RETURN);}
-"void"	{ count(); return(VOID);}
+"char"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CHAR);}
+"int"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(INT);}
+"float"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(FLOAT);}
+"if"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(IF);}
+"else"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(ELSE);}
+"do"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(DO);}
+"while"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(WHILE);}
+"break"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(BREAK);}
+"for"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(FOR);}
+"return"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(RETURN);}
+"void"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(VOID);}
+"struct"	{yylval.token_p = newNode(yytext, No_Line, column); count(); return(STRUCT);}
 
 
-{LETTER}({LETTER}|{DIGIT})*		{ count();  return check_type(); } 
+{LETTER}({LETTER}|{DIGIT})*		{ yylval.token_p = newNode(yytext, No_Line, column); count();  return IDENTIFIER; } 
 
-0[xX]{H}+{IS}?		{ count(); return(CONSTANT); }
-0{DIGIT}+{IS}?		{ count(); return(CONSTANT); }
-{DIGIT}+{IS}?		{ count(); return(CONSTANT); }
-LETTER?'(\\.|[^\\'])+'	{ count(); return(CONSTANT); }
+0[xX]{H}+{IS}?		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); }
+0{DIGIT}+{IS}?		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); }
+{DIGIT}+{IS}?		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); }
+LETTER?'(\\.|[^\\'])+'	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return (CONSTANT); }
 
-{DIGIT}*"."{DIGIT}+	{ count(); return(CONSTANT); } //number
-{DIGIT}+"."{DIGIT}*	{ count(); return(CONSTANT); }
-LETTER?\"(\\.|[^\\"])*\"	{ count(); return(STRING_LITERAL); }
+{DIGIT}*"."{DIGIT}+	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); } 
+{DIGIT}+"."{DIGIT}*	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); }
+LETTER?\"(\\.|[^\\"])*\"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return (STRING_LITERAL); }
 
 
+"\n"	{No_Line++;}
 
-"&&"	{ count(); return AND;}
-"||"	{ count(); return OR;}
-"<="	{ count(); return LE;}
-">="	{ count(); return GE;}
-"=="	{ count(); return EQ;}
-"!="	{ count(); return NE;}
-"+"		{ count(); return '+';}
-"-"		{ count(); return '-';}
-"*"		{ count(); return '*';}
-"/"		{ count(); return '/';}
-"!"		{ count(); return '!';}	
-","		{ count(); return ',';}
-"."		{ count(); return '.';}
-"="		{ count(); return '=';}
-"<"		{ count(); return '<';}
-">"		{ count(); return '>';}
-"{"		{ count(); return '{';}
-"}"		{ count(); return '}';}
-"("		{ count(); return '(';}
-")"		{ count(); return ')';}
-"["		{ count(); return '[';}
-"]"		{ count(); return ']';}
-";"		{ count(); return ';';}
-"*"		{ count(); return '*';}
+"&&"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return AND;}
+"||"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return OR;}
+"<="	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return LE;}
+">="	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return GE;}
+"=="	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return EQ;}
+"!="	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return NE;}
+"+"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '+';}
+"-"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '-';}
+"*"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '*';}
+"/"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '/';}
+"!"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '!';}	
+","		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ',';}
+"."		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '.';}
+"="		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '=';}
+"<"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '<';}
+">"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '>';}
+"{"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '{';}
+"}"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '}';}
+"("		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '(';}
+")"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ')';}
+"["	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '[';}
+"]"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ']';}
+";"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ';';}
+"?"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '?';}
+":"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ':';}
+"|"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '|';}
+"^"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '^';}
 
 
 
 %%
+
 
 yywrap()
 {
 	return 1;
 }
 
-
-
-int checktype()
-{
-	// this function is meant to return if the word is a identifier or a typename (define by user)
-	// now just return identifier
-	return (IDENTIFIER);
-}
-
-
-int column = 0;
 
 void count()
 {
@@ -99,11 +99,7 @@ void count()
 			column += 8 - (column % 8);
 		else
 			column++;
-
 	ECHO;
 }
-
-
-
 
 

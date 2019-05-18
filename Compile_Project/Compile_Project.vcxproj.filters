@@ -15,21 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="compile.tab.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Compile_Project.cpp">
+    <ClCompile Include="lex.yy.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="node.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="compile.l">
-      <Filter>源文件</Filter>
+      <Filter>资源文件</Filter>
     </None>
+    <None Include="compile.y">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="node.h.gch">
+      <Filter>头文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="compile.tab.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="node.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

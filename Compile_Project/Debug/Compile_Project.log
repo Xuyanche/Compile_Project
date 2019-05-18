@@ -1,0 +1,47 @@
+﻿  compile.tab.c
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(91): warning C4005: “YY_NULL”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(89): note: 参见“YY_NULL”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(100): warning C4005: “YYERROR_VERBOSE”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(98): note: 参见“YYERROR_VERBOSE”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(225): warning C4005: “YYSIZE_T”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(223): note: 参见“YYSIZE_T”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(231): warning C4005: “YYSIZE_T”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(225): note: 参见“YYSIZE_T”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(245): warning C4005: “YY_”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(241): note: 参见“YY_”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(253): warning C4005: “YYUSE”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(251): note: 参见“YYUSE”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(285): warning C4005: “YYSTACK_ALLOC”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(281): note: 参见“YYSTACK_ALLOC”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(290): warning C4005: “YYSTACK_ALLOC”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(285): note: 参见“YYSTACK_ALLOC”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(314): warning C4005: “YYSTACK_ALLOC”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(290): note: 参见“YYSTACK_ALLOC”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(315): warning C4005: “YYSTACK_FREE”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(305): note: 参见“YYSTACK_FREE”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(317): warning C4005: “YYSTACK_ALLOC_MAXIMUM”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(311): note: 参见“YYSTACK_ALLOC_MAXIMUM”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(400): warning C4005: “YYCOPY”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(391): note: 参见“YYCOPY”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(781): warning C4005: “YYLEX”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(779): note: 参见“YYLEX”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(943): warning C4005: “YYDPRINTF”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(796): note: 参见“YYDPRINTF”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(944): warning C4005: “YY_SYMBOL_PRINT”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(807): note: 参见“YY_SYMBOL_PRINT”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(945): warning C4005: “YY_STACK_PRINT”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(899): note: 参见“YY_STACK_PRINT”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(946): warning C4005: “YY_REDUCE_PRINT”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(937): note: 参见“YY_REDUCE_PRINT”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\compile.tab.c(2421): fatal error C1010: 在查找预编译头时遇到意外的文件结尾。是否忘记了向源中添加“#include "pch.h"”?
+  lex.yy.c
+d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(102): warning C4005: “yynoreturn”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(100): note: 参见“yynoreturn”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(139): warning C4005: “YY_BUF_SIZE”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(137): note: 参见“YY_BUF_SIZE”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(626): warning C4005: “YY_READ_BUF_SIZE”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(624): note: 参见“YY_READ_BUF_SIZE”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(1885): warning C4005: “yyless”: 宏重定义
+  d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(180): note: 参见“yyless”的前一个定义
+d:\lenovo\documents\github\compile_project\compile_project\lex.yy.c(2093): fatal error C1010: 在查找预编译头时遇到意外的文件结尾。是否忘记了向源中添加“#include "pch.h"”?
+  正在生成代码...

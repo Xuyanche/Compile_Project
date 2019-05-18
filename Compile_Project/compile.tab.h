@@ -54,28 +54,39 @@ extern int yydebug;
      INT = 263,
      FLOAT = 264,
      VOID = 265,
-     LE = 266,
-     GE = 267,
-     AND = 268,
-     OR = 269,
-     EQ = 270,
-     NE = 271,
-     IF = 272,
-     ELSE = 273,
-     DO = 274,
-     WHILE = 275,
-     BREAK = 276,
-     FOR = 277,
-     RETURN = 278,
-     SWITCH = 279,
-     CASE = 280,
-     DEFAULT = 281
+     STRUCT = 266,
+     LE = 267,
+     GE = 268,
+     AND = 269,
+     OR = 270,
+     EQ = 271,
+     NE = 272,
+     IF = 273,
+     ELSE = 274,
+     DO = 275,
+     WHILE = 276,
+     BREAK = 277,
+     FOR = 278,
+     RETURN = 279,
+     SWITCH = 280,
+     CASE = 281,
+     DEFAULT = 282
    };
 #endif
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+{
+/* Line 2058 of yacc.c  */
+#line 19 "compile.y"
+
+         Node *token_p;
+
+
+/* Line 2058 of yacc.c  */
+#line 89 "compile.tab.h"
+} YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
