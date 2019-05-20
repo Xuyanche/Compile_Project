@@ -29,8 +29,7 @@ void insert(Node* father, Node* newchild)
 	{
 		newchild->IsBegin = 1;
 		father->child = newchild;
-		father->No_Child++;
-		return;
+		father->No_Child ++;
 	}
 
 	Node* focus = father->child;
