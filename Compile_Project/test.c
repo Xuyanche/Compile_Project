@@ -1,3 +1,3 @@
 int main(int i){
-	int a;
+	int a = b == c;
 }

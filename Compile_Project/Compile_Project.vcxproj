@@ -24,6 +24,10 @@
   <ItemGroup>
     <ClCompile Include="compile.tab.c" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="compile.l" />
+    <None Include="compile.y" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{FD393EC6-D877-4012-B731-C573B2C06B9A}</ProjectGuid>

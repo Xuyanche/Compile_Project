@@ -40,11 +40,10 @@ IS			(u|U|l|L)*
 0[xX]{H}+{IS}?		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); }
 0{DIGIT}+{IS}?		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); }
 {DIGIT}+{IS}?		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); }
-LETTER?'(\\.|[^\\'])+'	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return (CONSTANT); }
 
 {DIGIT}*"."{DIGIT}+	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); } 
 {DIGIT}+"."{DIGIT}*	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return(CONSTANT); }
-LETTER?\"(\\.|[^\\"])*\"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return (STRING_LITERAL); }
+
 
 
 "\n"	{No_Line++;}
@@ -71,11 +70,11 @@ LETTER?\"(\\.|[^\\"])*\"	{ yylval.token_p = newNode(yytext, No_Line, column); co
 ")"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ')';}
 "["	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '[';}
 "]"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ']';}
-";"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ';';}
+";"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ';';}
 "?"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '?';}
 ":"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return ':';}
 "|"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '|';}
-"^"		{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '^';}
+"^"	{ yylval.token_p = newNode(yytext, No_Line, column); count(); return '^';}
 
 
 

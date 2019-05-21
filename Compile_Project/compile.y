@@ -20,8 +20,10 @@ extern int column;
          Node *token_p;
 }
 %type <token_p> program extdefs extdef extvars spec type
-%type <token_p> var func paras para stmtblock 
-%type <token_p>  defs def decs dec
+%type <token_p> var func paras para args defs def dec
+%type <token_p>  assignop unaryop init 
+%type <token_p> exp primexp unaryexp leftexp relationexp equalexp addexp multipexp 
+%type <token_p> stmtblock stmts
 %token <token_p>  '+' '-' '*' '/' '!' ',' '.' '=' '>' '<' '{' '}' '(' ')' '[' ']' ';' '?' '|' '^' ':'
 %token <token_p> IDENTIFIER CONSTANT TYPE_NAME STRING_LITERAL
 %token <token_p> CHAR INT FLOAT VOID STRUCT
@@ -75,17 +77,26 @@ type
 	| FLOAT			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	;
 
-decs
-	: dec ',' decs	{p = newNode("decs", $1->No_Line, $1->col);
-					insert(p, $1); 
-					insert(p, $2); 
-					insert(p, $3); 
-					$$ = p;}
-	| dec	{p = newNode("decs", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	;
 
 dec	
 	: var	{p = newNode("dec", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| var assignop init	{p = newNode("dec", $1->No_Line, $1->col); 
+						insert(p, $1);
+						insert(p, $2);
+						insert(p, $3);
+						$$ = p;}
+	;
+
+
+assignop
+	: '='	{p = newNode("assignop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	;
+
+init
+	: exp	{p = newNode("init", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	
+	
+	
 	;
 	
 var
@@ -117,13 +128,27 @@ para
 				$$ = p;}
 	;
 	
+	
 stmtblock
-	: '{' defs '}'	{p = newNode("stmtblock", $1->No_Line, $1->col);
+	: '{' defs stmts '}'	{p = newNode("stmtblock", $1->No_Line, $1->col);
 							insert(p, $1);
 							insert(p, $2);
 							insert(p, $3);
+							insert(p, $4);
 							$$ = p;}
 	;
+	
+stmts
+	: exp ';'	{p = newNode("stmts", $1->No_Line, $1->col); 
+				insert(p, $1); 
+				insert(p, $2); 
+				$$ = p;}
+	| stmtblock	{p = newNode("stmts", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| selstmt	{p = newNode("stmts", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| loopstmt	{p = newNode("stmts", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| jstmt		{p = newNode("stmts", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	;	
+
 	
 defs
 	: def defs	{p = newNode("defs", $1->No_Line, $1->col); 
@@ -134,12 +159,162 @@ defs
 	;
 
 def
-	: spec decs ';' {p = newNode("def", $1->No_Line, $1->col);
+	: spec extvars ';' {p = newNode("def", $1->No_Line, $1->col);
 					insert(p, $1);
 					insert(p, $2);
 					insert(p, $3);
 					$$ = p;}
 	;
+
+exp
+	: relationexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| equalexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| addexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| multipexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}	
+	;
+
+primexp
+	: IDENTIFIER	{p = newNode("primexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| CONSTANT	{p = newNode("primexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| STRING_LITERAL	{p = newNode("primexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| '(' exp ')'	{p = newNode("primexp", $1->No_Line, $1->col);
+					insert(p, $1);
+					insert(p, $2);
+					insert(p, $3);
+					$$ = p;}
+	;
+
+unaryop
+	: '+'	{p = newNode("unaryop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| '-'	{p = newNode("unaryop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| '*'	{p = newNode("unaryop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| '!'	{p = newNode("unaryop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	;
+
+unaryexp
+	: unaryop unaryexp	{p = newNode("unaryexp", $1->No_Line, $1->col);
+						insert(p, $1); 
+						insert(p, $2); 
+						$$ = p;}
+	| leftexp	{p = newNode("unaryexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}	
+	;
+
+
+leftexp
+	: primexp	{p = newNode("leftexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| leftexp '[' ']'	{p = newNode("leftexp", $1->No_Line, $1->col); 
+						insert(p, $1);
+						insert(p, $2);
+						insert(p, $3);
+						$$ = p;}
+	| leftexp '(' ')'	{p = newNode("leftexp", $1->No_Line, $1->col); 
+						insert(p, $1); 
+						insert(p, $2); 
+						insert(p, $3); 
+						$$ = p;}
+	| leftexp '(' args ')'	{p = newNode("leftexp", $1->No_Line, $1->col);
+							insert(p, $1); 
+							insert(p, $2); 
+							insert(p, $3); 
+							insert(p, $4); 
+							$$ = p;}					
+	;
+
+args
+	: exp ',' args	{p = newNode("args", $1->No_Line, $1->col); 
+					insert(p, $1); 
+					insert(p, $2); 
+					insert(p, $3); 
+					$$ = p;}
+	| exp	{p = newNode("args", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	;
+	
+relationexp
+	: unaryexp	{p = newNode("relationexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	|  relationexp '<' addexp	{p = newNode("relationexp", $1->No_Line, $1->col); 
+								insert(p, $1); 
+								insert(p, $2); 
+								insert(p, $3); 
+								$$ = p;}
+	| relationexp '>' addexp 	{p = newNode("relationexp", $1->No_Line, $1->col); 
+								insert(p, $1); 
+								insert(p, $2); 
+								insert(p, $3); 
+								$$ = p;}
+	| relationexp LE addexp	{p = newNode("relationexp", $1->No_Line, $1->col);
+								insert(p, $1); 
+								insert(p, $2); 
+								insert(p, $3); 
+								$$ = p;}
+	| relationexp GE addexp	{p = newNode("relationexp", $1->No_Line, $1->col); 
+								insert(p, $1); 
+								insert(p, $2); 
+								insert(p, $3); 
+								$$ = p;}
+	;
+
+	
+equalexp
+	: equalexp EQ addexp	{p = newNode("equalexp", $1->No_Line, $1->col);
+								insert(p, $1); 
+								insert(p, $2); 
+								insert(p, $3); 
+								$$ = p;}
+	| equalexp NE addexp	{p = newNode("equalexp", $1->No_Line, $1->col); 
+								insert(p, $1);
+								insert(p, $2);
+								insert(p, $3);
+								$$ = p;}
+	| unaryexp	{p = newNode("addexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	;
+
+addexp
+	: unaryexp	{p = newNode("addexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| addexp '+' multipexp	{p = newNode("addexp", $1->No_Line, $1->col);
+							insert(p, $1);
+							insert(p, $2);
+							insert(p, $3);
+							$$ = p;}
+	| addexp '-' multipexp	{p = newNode("addexp", $1->No_Line, $1->col);
+							insert(p, $1); 
+							insert(p, $2); 
+							insert(p, $3); 
+							$$ = p;}
+	;
+
+multipexp
+	: unaryexp	{p = newNode("multipexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| multipexp '*' unaryexp	{p = newNode("multipexp", $1->No_Line, $1->col); 
+								insert(p, $1); 
+								insert(p, $2); 
+								insert(p, $3); 
+								$$ = p;}
+	| multipexp '/' unaryexp	{p = newNode("multipexp", $1->No_Line, $1->col); 
+								insert(p, $1);
+								insert(p, $2);
+								insert(p, $3);
+								$$ = p;}
+	;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %%
 
