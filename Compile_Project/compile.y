@@ -23,7 +23,7 @@ extern int column;
 %type <token_p> var func paras para args defs def dec
 %type <token_p>  assignop unaryop init 
 %type <token_p> exp primexp unaryexp leftexp relationexp equalexp addexp multipexp 
-%type <token_p> stmtblock stmts stmt jstmt assignstmt assign loopstmt selstmt
+%type <token_p> stmtblock stmts stmt jstmt assignstmt assign loopstmt selstmt call
 %token <token_p>  '+' '-' '*' '/' '!' ',' '.' '=' '>' '<' '{' '}' '(' ')' '[' ']' ';' '?' '|' '^' ':'
 %token <token_p> IDENTIFIER CONSTANT TYPE_NAME STRING_LITERAL
 %token <token_p> CHAR INT FLOAT VOID STRUCT
@@ -253,7 +253,8 @@ exp
 	: relationexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	| equalexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	| addexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| multipexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}	
+	| multipexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	|	{p = NULL;}
 	;
 
 primexp
@@ -265,6 +266,7 @@ primexp
 					insert(p, $2);
 					insert(p, $3);
 					$$ = p;}
+	| call 	{p = newNode("primexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	;
 
 unaryop
@@ -381,8 +383,14 @@ multipexp
 
 
 
-
-
+call
+	: IDENTIFIER '(' args ')' {p = newNode("call", $1->No_Line, $1->col); 
+								insert(p, $1);
+								insert(p, $2);
+								insert(p, $3);
+								insert(p, $4);
+								$$ = p;}
+	;
 
 
 
