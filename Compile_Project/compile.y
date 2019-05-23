@@ -19,11 +19,11 @@ extern int column;
 %union{
          Node *token_p;
 }
-%type <token_p> program extdefs extdef extvars spec type
+%type <token_p> program declaration_list declaration extvars spec type
 %type <token_p> var func paras para args defs def dec
 %type <token_p>  assignop unaryop init 
 %type <token_p> exp primexp unaryexp leftexp relationexp equalexp addexp multipexp 
-%type <token_p> stmtblock stmts
+%type <token_p> stmtblock stmts stmt jstmt assignstmt assign loopstmt selstmt
 %token <token_p>  '+' '-' '*' '/' '!' ',' '.' '=' '>' '<' '{' '}' '(' ')' '[' ']' ';' '?' '|' '^' ':'
 %token <token_p> IDENTIFIER CONSTANT TYPE_NAME STRING_LITERAL
 %token <token_p> CHAR INT FLOAT VOID STRUCT
@@ -34,23 +34,23 @@ extern int column;
 %%
 
 program
-	:extdefs {p = newNode("program", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	:declaration_list {p = newNode("program", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	;
 	
-extdefs
-	: extdef extdefs 	{p = newNode("extdefs", $1->No_Line, $1->col);
+declaration_list
+	: declaration declaration_list 	{p = newNode("declaration_list", $1->No_Line, $1->col);
 						insert(p, $1); insert(p, $2);
 						$$ = p;}
-	|
+	| declaration	{p = newNode("declaration_list", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	;
 
-extdef
-	: spec extvars ';'	{p = newNode("extdef", $1->No_Line, $1->col);
+declaration
+	: spec extvars ';'	{p = newNode("declaration", $1->No_Line, $1->col);
 						insert(p, $1);
 						insert(p, $2);
 						insert(p, $3);
 						$$ = p;}
-	| spec func stmtblock	{p = newNode("extdef", $1->No_Line, $1->col); 
+	| spec func stmtblock	{p = newNode("declaration", $1->No_Line, $1->col); 
 							insert(p, $1);
 							insert(p, $2);
 							insert(p, $3);
@@ -94,9 +94,6 @@ assignop
 
 init
 	: exp	{p = newNode("init", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	
-	
-	
 	;
 	
 var
@@ -139,15 +136,101 @@ stmtblock
 	;
 	
 stmts
-	: exp ';'	{p = newNode("stmts", $1->No_Line, $1->col); 
-				insert(p, $1); 
-				insert(p, $2); 
-				$$ = p;}
-	| stmtblock	{p = newNode("stmts", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| selstmt	{p = newNode("stmts", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| loopstmt	{p = newNode("stmts", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| jstmt		{p = newNode("stmts", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	: stmt stmts	{p = newNode("stmts", $1->No_Line, $1->col); 
+					insert(p, $1); 
+					insert(p, $2); 
+					$$ = p;}
+	| 	{$$ = NULL;}
+	;
+	
+stmt
+	: assignstmt	{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| stmtblock	{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| selstmt	{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| loopstmt	{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	| jstmt		{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	;	
+
+
+
+selstmt
+	: IF '(' exp ')' stmt	{p = newNode("selstmt", $1->No_Line, $1->col);
+							insert(p, $1); 
+							insert(p, $2); 
+							insert(p, $3); 
+							insert(p, $4); 
+							insert(p, $5); 
+							$$ = p;}
+	| IF '(' exp ')' stmt ELSE stmt	{p = newNode("selstmt", $1->No_Line, $1->col);
+										insert(p, $1);
+										insert(p, $2);
+										insert(p, $3);
+										insert(p, $4);
+										insert(p, $5);
+										insert(p, $6);
+										insert(p, $7);
+										$$ = p;}
+	;
+
+
+	
+loopstmt
+	: WHILE '(' exp ')' stmt	{p = newNode("loopstmt", $1->No_Line, $1->col);
+									insert(p, $1);
+									insert(p, $2);
+									insert(p, $3);
+									insert(p, $4);
+									insert(p, $5);
+									$$ = p;}
+	| FOR '(' exp ';' exp ';' exp ')' stmt	{p = newNode("loopstmt", $1->No_Line, $1->col);
+													insert(p, $1); 
+													insert(p, $2); 
+													insert(p, $3); 
+													insert(p, $4); 
+													insert(p, $5); 
+													insert(p, $6); 
+													insert(p, $7); 
+													insert(p, $8); 
+													insert(p, $9); 
+													$$ = p;}
+	| DO stmt WHILE '(' exp ')' ';'	{p = newNode("loopstmt", $1->No_Line, $1->col);
+											insert(p, $1); 
+											insert(p, $2); 
+											insert(p, $3); 
+											insert(p, $4); 
+											insert(p, $5); 
+											insert(p, $6); 
+											insert(p, $7); 
+											$$ = p;}
+	;
+
+assignstmt
+	: assign ';' {p = newNode("assignstmt", $1->No_Line, $1->col);
+							insert(p, $1);
+							insert(p, $2);
+							$$ = p;}
+	;
+
+
+assign
+	: var assignop assign	{p = newNode("assign", $1->No_Line, $1->col);
+							insert(p, $1);
+							insert(p, $2);
+							insert(p, $3);
+							$$ = p;}
+	| exp	{p = newNode("assign", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	;
+
+
+jstmt
+	: BREAK ';'		{p = newNode("jstmt", $1->No_Line, $1->col); insert(p, $1); insert(p, $2); $$ = p;}
+	| RETURN exp ';'	{p = newNode("jstmt", $1->No_Line, $1->col);
+						insert(p, $1);
+						insert(p, $2); 
+						insert(p, $3); 
+						$$ = p;}
+	;
+
 
 	
 defs
