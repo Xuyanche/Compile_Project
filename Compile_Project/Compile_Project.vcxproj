@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compile.tab.h" />
+    <ClInclude Include="node.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="compile.tab.c" />
+    <ClCompile Include="node.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="compile.l" />

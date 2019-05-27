@@ -18,9 +18,15 @@
     <ClInclude Include="compile.tab.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="node.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="compile.tab.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="node.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

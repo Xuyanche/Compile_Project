@@ -24,78 +24,73 @@ extern int column;
 %type <token_p>  assignop unaryop init 
 %type <token_p> exp primexp unaryexp leftexp relationexp equalexp addexp multipexp 
 %type <token_p> stmtblock stmts stmt jstmt assignstmt assign loopstmt selstmt call
-%token <token_p>  '+' '-' '*' '/' '!' ',' '.' '=' '>' '<' '{' '}' '(' ')' '[' ']' ';' '?' '|' '^' ':'
-%token <token_p> IDENTIFIER CONSTANT TYPE_NAME STRING_LITERAL
-%token <token_p> CHAR INT FLOAT VOID STRUCT
-%token <token_p> LE GE AND OR EQ NE
-%token <token_p> IF ELSE DO WHILE BREAK FOR RETURN SWITCH CASE DEFAULT
+%token <token_p> '+' '-' '*' '/' ',' '=' '{' '}' '(' ')' '[' ']' ';'
+%token <token_p> ID NUM INT VOID IF ELSE WHILE RETURN
+%token <token_p> LE LEQ GE GEQ EQ NEQ
 
 %start program
 %%
 
 program
-	:declaration_list {p = newNode("program", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	:declaration_list {p = newNode("program", $1->No_Line); insert(p, $1); $$ = p;}
 	;
 	
 declaration_list
-	: declaration declaration_list 	{p = newNode("declaration_list", $1->No_Line, $1->col);
-						insert(p, $1); insert(p, $2);
-						$$ = p;}
-	| declaration	{p = newNode("declaration_list", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	: declaration_list declaration
+		{ p = newNode("declaration_list", $1->No_Line);
+		  insert(p, $2); 
+		  insert(p, $1);
+		  $$ = p;
+		}
+	| declaration	
+		{	p = newNode("declaration_list", $1->No_Line); 
+			insert(p, $1); 
+			$$ = p;
+		}
 	;
 
 declaration
-	: spec extvars ';'	{p = newNode("declaration", $1->No_Line, $1->col);
-						insert(p, $1);
-						insert(p, $2);
-						insert(p, $3);
-						$$ = p;}
-	| spec func stmtblock	{p = newNode("declaration", $1->No_Line, $1->col); 
-							insert(p, $1);
-							insert(p, $2);
-							insert(p, $3);
-							$$ = p;}
-	;
-	
-extvars
-	: dec				{p = newNode("extvars", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| dec ',' extvars	{p = newNode("extvars", $1->No_Line, $1->col);
-						insert(p, $1);
-						insert(p, $2);
-						insert(p, $3);
-						$$ = p;}
-	;
-
-spec
-	: type			{p = newNode("spec", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	: type var ';'	
+		{	p = newNode("declaration", $1->No_Line);
+			insert(p, $3);
+			insert(p, $2);
+			insert(p, $1);
+			$$ = p;
+		}
+	| type func stmtblock	
+		{	p = newNode("declaration", $1->No_Line);
+			insert(p, $3);
+			insert(p, $2);
+			insert(p, $1);
+			$$ = p;
+		}
 	;
 
 type
 	: VOID			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	| INT			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	/* 
 	| CHAR			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	| FLOAT			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	;
-
-
-dec	
-	: var	{p = newNode("dec", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| var assignop init	{p = newNode("dec", $1->No_Line, $1->col); 
-						insert(p, $1);
-						insert(p, $2);
-						insert(p, $3);
-						$$ = p;}
-	;
-
-
-assignop
-	: '='	{p = newNode("assignop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	;
-
-init
-	: exp	{p = newNode("init", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	*/
 	;
 	
+var
+	: ID				
+		{	p = newNode("extvars", $1->No_Line);
+			insert(p, $1);
+			$$ = p;
+		}
+	| ID '[' NUM ']'	
+		{	p = newNode("extvars", $1->No_Line);
+			insert(p, $4);
+			insert(p, $3);
+			insert(p, $2);
+			insert(p, $1);
+			$$ = p;
+		}
+	;
+
 var
 	: IDENTIFIER	{p = newNode("var", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	;
@@ -356,7 +351,7 @@ equalexp
 addexp
 	: unaryexp	{p = newNode("addexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	| addexp '+' multipexp	{p = newNode("addexp", $1->No_Line, $1->col);
-							insert(p, $1);
+							insert(p, $1); 
 							insert(p, $2);
 							insert(p, $3);
 							$$ = p;}
@@ -392,25 +387,7 @@ call
 								$$ = p;}
 	;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %%
-
-
-
 
 void yyerror(char* s)
 {    
