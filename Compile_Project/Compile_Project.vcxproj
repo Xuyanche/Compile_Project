@@ -19,12 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="compile.tab.h" />
     <ClInclude Include="node.h" />
+    <ClInclude Include="parser.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="compile.tab.c" />
+    <ClCompile Include="lex.yy.c" />
     <ClCompile Include="node.c" />
+    <ClCompile Include="parser.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="compile.l" />

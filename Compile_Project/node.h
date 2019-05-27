@@ -5,21 +5,100 @@
 #include <string.h>
 #pragma warning(disable : 4996)
 
-typedef struct Node
+typedef struct STNode STNode;
+typedef struct listnode listnode;
+struct STNode
 {
-	Node * brother;	
-	Node * child;
+	STNode * brother;	
+	STNode * child;
+	STNode * father;
 	int No_Child;
 	int col;
 	int No_Line;
 	char name[20];
 	int IsBegin;
-}Node;
+};
+struct listnode
+{
+	int data;
+	listnode *next;
+};
 
-int insert(Node* father, Node* newchild);
 
-Node* newNode(char* node_name, int line);
 
-void print(Node* root, int level);
+int insert(STNode* father, STNode* newchild)
+{
+	if (!newchild && father)
+		return 1;
+	if (father->No_Child == 0)
+		newchild->IsBegin = 1;
+	newchild->father = father;
+	STNode* focus = father->child;
+	newchild->brother = focus;
+	father->child = newchild;
+	father->No_Child++;
+	return 0;
+}
 
+STNode* newNode(char* node_name, int line)
+{
+	STNode *p = (STNode*)malloc(sizeof(STNode));
+	if (p == NULL)
+	{
+		printf("Error:out of memory.\n");
+		exit(1);
+	}
+	strncpy(p->name, node_name, 20);
+	p->brother = NULL;
+	p->child = NULL;
+	p->father = NULL;
+	p->No_Line = line;
+	p->No_Child = 0;
+	p->col = 0;
+	p->IsBegin = 0;
+	// printf("reading:%s\n", node_name);
+	return p;
+}
+
+void print(STNode* node, int level)
+{
+	/*STNode *father = node;
+	listnode *tail = NULL;
+	if (father)
+		while (father->father)
+		{
+			father = father->father;
+			listnode *temp = (listnode*)malloc(sizeof(listnode));
+			if (!temp)
+				printf("No memory!\n");
+			temp->next = tail;
+			temp->data = father->brother ? 1 : 0;
+			tail = temp;
+		}
+	while (tail)
+	{
+		if (tail->data)
+			printf("|  ");
+		else
+			printf("   ");
+		tail = tail->next;	
+	}
+	if ( level > 0 ){
+		printf("|--");
+	}*/
+	int i;
+	for (i = 0; i < level; i++)
+	{
+		printf("__");
+	}
+	printf("%s\n", node->name);
+
+	STNode* focus = node->child;
+	for (i = 0; i < node->No_Child; i++)
+	{
+		print(focus, level + 1);
+		focus = focus->brother;
+	}
+	return;
+}
 #endif

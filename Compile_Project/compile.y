@@ -4,26 +4,22 @@
 #include <string.h>
 #include "lex.yy.c"
 #include "node.h"
-
-
-Node* p;
+#define YYDEBUG 1
+STNode* p;
 void yyerror(char *s);
 FILE *fout;
-
-
 extern int column;
-
-
 %}
 
 %union{
-         Node *token_p;
+         STNode *token_p;
 }
 %type <token_p> program declaration_list declaration var_decl func_decl
-%type <token_p> type var func stmtblock paras para_list para
-%type <token_p> local_decls stmt_list
-%type <token_p> exp primexp unaryexp leftexp relationexp equalexp addexp multipexp 
-%type <token_p> stmtblock stmts stmt jstmt assignstmt assign loopstmt selstmt call
+%type <token_p> type var func paras para_list para
+%type <token_p> local_decls comp_stmt
+%type <token_p> stmt_list stmt expr_stmt selc_stmt iter_stmt retn_stmt
+%type <token_p> expr simple_expr relop add_expr addop term mulop factor
+%type <token_p> call args arg_list
 %token <token_p> '+' '-' '*' '/' ',' '=' '{' '}' '(' ')' '[' ']' ';'
 %token <token_p> ID NUM INT VOID IF ELSE WHILE RETURN
 %token <token_p> LE LEQ GE GEQ EQ NEQ
@@ -33,7 +29,7 @@ extern int column;
 
  /* 1 */
 program
-	:declaration_list {p = newNode("program", $1->No_Line); insert(p, $1); $$ = p;}
+	: declaration_list {p = newNode("program", $1->No_Line); insert(p, $1); $$ = p;}
 	;
 
  /* 2 */
@@ -94,8 +90,8 @@ var_decl
 
  /* 5 */
 type
-	: VOID			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| INT			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	: VOID			{p = newNode("type", $1->No_Line); insert(p, $1); $$ = p;}
+	| INT			{p = newNode("type", $1->No_Line); insert(p, $1); $$ = p;}
 	/* 
 	| CHAR			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	| FLOAT			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
@@ -139,13 +135,17 @@ paras
 		insert(p, $1);
 		$$ = p;
 	}
+	| 
+	{
+		/* Do Nothing */
+	}
 	;
 
  /* 8 */
 para_list
-	: para-list ',' para
+	: para_list ',' para
 	{	
-		p = newNode('para-list', $1->No_Line);
+		p = newNode("para_list", $1->No_Line);
 		insert(p, $3);
 		insert(p, $2);
 		insert(p, $1);
@@ -153,7 +153,7 @@ para_list
 	}
 	| para
 	{	
-		p = newNode('para_list', $1->No_Line);
+		p = newNode("para_list", $1->No_Line);
 		insert(p, $1);
 		$$ = p;
 	}
@@ -201,7 +201,7 @@ local_decls
 		insert(p, $1);
 		$$ = p;
 	}
-	| %empty
+	| 
 	{
 		/* Do nothing */
 	}
@@ -216,7 +216,7 @@ stmt_list
 		insert(p, $1);
 		$$ = p;
 	}
-	| %empty
+	| 
 	{
 		/* Do nothing */
 	}
@@ -250,7 +250,7 @@ expr_stmt
 
  /* 15 */
 selc_stmt
-	: IF '(' exp ')' stmt	
+	: IF '(' expr ')' stmt	
 	{	
 		p = newNode("selc_stmt", $1->No_Line);
 		insert(p, $5); 
@@ -260,7 +260,7 @@ selc_stmt
 		insert(p, $1); 
 		$$ = p;
 	}
-	| IF '(' exp ')' stmt ELSE stmt	
+	| IF '(' expr ')' stmt ELSE stmt	
 	{	
 		p = newNode("selc_stmt", $1->No_Line);
 		insert(p, $7);
@@ -276,7 +276,7 @@ selc_stmt
 	
  /* 16 */
 iter_stmt
-	: WHILE '(' exp ')' stmt	
+	: WHILE '(' expr ')' stmt	
 	{
 		p = newNode("iter_stmt", $1->No_Line);
 		insert(p, $5);
@@ -312,7 +312,7 @@ iter_stmt
 
  /* 17 */
 retn_stmt
-	: RETURN exp ';'	
+	: RETURN expr ';'	
 	{	p = newNode("retn_stmt", $1->No_Line);
 		insert(p, $3);
 		insert(p, $2); 
@@ -388,17 +388,17 @@ simple_expr
 
  /* 21 */
 relop
-	: GE	{ p = newNode("relop"); insert(p, $1); $$ = p;}
-	: GEQ	{ p = newNode("relop"); insert(p, $1); $$ = p;}
-	: LE	{ p = newNode("relop"); insert(p, $1); $$ = p;}
-	: LEQ	{ p = newNode("relop"); insert(p, $1); $$ = p;}
-	: EQ	{ p = newNode("relop"); insert(p, $1); $$ = p;}
-	: NEQ	{ p = newNode("relop"); insert(p, $1); $$ = p;}
+	: GE	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
+	| GEQ	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
+	| LE	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
+	| LEQ	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
+	| EQ	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
+	| NEQ	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
 	;
 
  /* 22 */
 add_expr
-	: add_expr addop term
+	:add_expr addop term
 	{
 		p = newNode("add_expr", $1->No_Line);
 		insert(p, $3);
@@ -416,13 +416,13 @@ add_expr
 
  /* 23 */
 addop
-	: '+'	{ p = newNode("addop"); insert(p, $1); $$ = p;}
-	: '-'	{ p = newNode("addop"); insert(p, $1); $$ = p;}
+	: '+'	{ p = newNode("addop", $1->No_Line); insert(p, $1); $$ = p;}
+	| '-'	{ p = newNode("addop", $1->No_Line); insert(p, $1); $$ = p;}
 	;
 
  /* 24 */
 term
-	: term mulop factor
+	:term mulop factor
 	{
 		p = newNode("term", $1->No_Line);
 		insert(p, $3);
@@ -440,8 +440,8 @@ term
 
  /* 25 */
 mulop
-	: '*'	{ p = newNode("mulop"); insert(p, $1); $$ = p;}
-	: '/'	{ p = newNode("mulop"); insert(p, $1); $$ = p;}
+	: '*'	{ p = newNode("mulop", $1->No_Line);; insert(p, $1); $$ = p;}
+	| '/'	{ p = newNode("mulop", $1->No_Line);; insert(p, $1); $$ = p;}
 	;
 
  /* 26 */
@@ -454,9 +454,9 @@ factor
 		insert(p, $1);
 		$$ = p;
 	}
-	| var	{ p = newNode("factor"); insert(p, $1); $$ = p;}
-	| call	{ p = newNode("factor"); insert(p, $1); $$ = p;}
-	| NUM	{ p = newNode("factor"); insert(p, $1); $$ = p;}
+	| var	{ p = newNode("factor", $1->No_Line); insert(p, $1); $$ = p;}
+	| call	{ p = newNode("factor", $1->No_Line); insert(p, $1); $$ = p;}
+	| NUM	{ p = newNode("factor", $1->No_Line); insert(p, $1); $$ = p;}
 	;
 
  /* 27 */
@@ -474,8 +474,8 @@ call
 
  /* 28 */
 args
-	: arg_list	{ p = newNode("args"); insert(p, $1); $$ = p;}
-	| %empty	{ /* Do nothing */ }
+	: arg_list	{ p = newNode("args", $1->No_Line); insert(p, $1); $$ = p;}
+	| 	{ /* Do nothing */ }
 	;
 
  /* 29 */
@@ -500,28 +500,28 @@ arg_list
 void yyerror(char* s)
 {    
 	printf("Error:%s\n", s);
-	 getchar();
-	 getchar();
 }
 
 int main(int argc,char *argv[])
 {    
-	char filename1[30];
-	
-	scanf("%s", &filename1);
-     FILE* fin=NULL;
-     extern FILE* yyin;
-     fin=fopen(filename1,"r"); 
-     if(fin==NULL)
-     { 
-         printf("cannot open reading file.\n");
-         return -1;
-     }
-     yyin=fin;
-     yyparse();
-     print(p,0);
-     fclose(fin);
-	 getchar();
-	 getchar();
-     return 0;
+	extern int yydebug;
+	yydebug = 1;
+	if (argc == 1)
+	{
+		printf("No input file!\n");
+		return -1;
+	}
+	FILE* fin=NULL;
+	fin = fopen(argv[1],"r"); 
+	if(!fin)
+	{ 
+		printf("cannot open reading file.\n");
+		return -1;
+	}
+	extern FILE* yyin;
+	yyin=fin;
+	yyparse();
+	print(p,0);
+	fclose(fin);
+	return 0;
 }

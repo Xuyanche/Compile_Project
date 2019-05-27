@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "node.h"
+#include "parser.h"
 /* Global variable specification */
 int nr_line = 1;
 %}
@@ -10,8 +11,6 @@ int nr_line = 1;
 digit [0-9]
 letter [A-za-z_]
 whitespace [ \t\r]+
-ID {letter}{letter|digit}*
-NUM {digit}+
 
 /*
 	H			[a-fA-F0-9]
@@ -51,18 +50,18 @@ NUM {digit}+
  /* Symbol Token Specification */
 
  /* Identifier and numbers */
-ID		{ yylval.token_p = newNode(yytext, nr_line);   return ID; }
-NUM 	{ yylval.token_p = newNode(yytext, nr_line);   return NUM; }
+{letter}({letter}|{digit})*		{ yylval.token_p = newNode(yytext, nr_line);   return(ID); }
+{digit}+	{ yylval.token_p = newNode(yytext, nr_line);   return(NUM); }
 
  /* Whitespace filtering and line counting */
 {whitespace} {/*Skip whitespace*/}
 "\n"	{nr_line++;}
 
  /* Numerical Arithmetic Operators */
-"+"		{ yylval.token_p = newNode(yytext, No_Line, column); return '+';}
-"-"		{ yylval.token_p = newNode(yytext, No_Line, column); return '-';}
-"*"		{ yylval.token_p = newNode(yytext, No_Line, column); return '*';}
-"/"		{ yylval.token_p = newNode(yytext, No_Line, column); return '/';}
+"+"		{ yylval.token_p = newNode(yytext, nr_line); return '+';}
+"-"		{ yylval.token_p = newNode(yytext, nr_line); return '-';}
+"*"		{ yylval.token_p = newNode(yytext, nr_line); return '*';}
+"/"		{ yylval.token_p = newNode(yytext, nr_line); return '/';}
 
  /* Relative Operators */
 "<"		{ yylval.token_p = newNode(yytext, nr_line);  return LE;}
@@ -107,7 +106,7 @@ NUM 	{ yylval.token_p = newNode(yytext, nr_line);   return NUM; }
 
 %%
 
-yywrap()
+int yywrap()
 {
 	return 1;
 }

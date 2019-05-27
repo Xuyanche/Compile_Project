@@ -1,19 +1,19 @@
-/* A Bison parser, made by GNU Bison 2.7.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison interface for Yacc-like parsers in C
-   
-      Copyright (C) 1984, 1989-1990, 2000-2012 Free Software Foundation, Inc.
-   
+
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
@@ -26,13 +26,13 @@
    special exception, which will cause the skeleton and the resulting
    Bison output files to be licensed under the GNU General Public
    License without this special exception.
-   
+
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_COMPILE_TAB_H_INCLUDED
-# define YY_YY_COMPILE_TAB_H_INCLUDED
-/* Enabling traces.  */
+#ifndef YY_YY_PARSER_H_INCLUDED
+# define YY_YY_PARSER_H_INCLUDED
+/* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
@@ -40,72 +40,63 @@
 extern int yydebug;
 #endif
 
-/* Tokens.  */
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     IDENTIFIER = 258,
-     CONSTANT = 259,
-     TYPE_NAME = 260,
-     STRING_LITERAL = 261,
-     CHAR = 262,
-     INT = 263,
-     FLOAT = 264,
-     VOID = 265,
-     STRUCT = 266,
-     LE = 267,
-     GE = 268,
-     AND = 269,
-     OR = 270,
-     EQ = 271,
-     NE = 272,
-     IF = 273,
-     ELSE = 274,
-     DO = 275,
-     WHILE = 276,
-     BREAK = 277,
-     FOR = 278,
-     RETURN = 279,
-     SWITCH = 280,
-     CASE = 281,
-     DEFAULT = 282
-   };
+  enum yytokentype
+  {
+    ID = 258,
+    NUM = 259,
+    INT = 260,
+    VOID = 261,
+    IF = 262,
+    ELSE = 263,
+    WHILE = 264,
+    RETURN = 265,
+    LE = 266,
+    LEQ = 267,
+    GE = 268,
+    GEQ = 269,
+    EQ = 270,
+    NEQ = 271
+  };
 #endif
+/* Tokens.  */
+#define ID 258
+#define NUM 259
+#define INT 260
+#define VOID 261
+#define IF 262
+#define ELSE 263
+#define WHILE 264
+#define RETURN 265
+#define LE 266
+#define LEQ 267
+#define GE 268
+#define GEQ 269
+#define EQ 270
+#define NEQ 271
 
-
+/* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
+
+union YYSTYPE
 {
-/* Line 2058 of yacc.c  */
-#line 19 "compile.y"
+#line 14 "compile.y" /* yacc.c:1909  */
 
-         Node *token_p;
+         STNode *token_p;
 
+#line 90 "parser.h" /* yacc.c:1909  */
+};
 
-/* Line 2058 of yacc.c  */
-#line 89 "compile.tab.h"
-} YYSTYPE;
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+
 extern YYSTYPE yylval;
 
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
 int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
 
-#endif /* !YY_YY_COMPILE_TAB_H_INCLUDED  */
+#endif /* !YY_YY_PARSER_H_INCLUDED  */
