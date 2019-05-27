@@ -9,7 +9,7 @@ typedef struct STNode STNode;
 typedef struct listnode listnode;
 struct STNode
 {
-	STNode * brother;	
+	STNode * brother;
 	STNode * child;
 	STNode * father;
 	int No_Child;
@@ -62,18 +62,17 @@ STNode* newNode(char* node_name, int line)
 
 void print(STNode* node, int level)
 {
-	/*STNode *father = node;
+	int i;
+	STNode *father = node->father;
 	listnode *tail = NULL;
 	if (father)
 		while (father->father)
 		{
-			father = father->father;
 			listnode *temp = (listnode*)malloc(sizeof(listnode));
-			if (!temp)
-				printf("No memory!\n");
 			temp->next = tail;
 			temp->data = father->brother ? 1 : 0;
 			tail = temp;
+			father = father->father;
 		}
 	while (tail)
 	{
@@ -81,18 +80,20 @@ void print(STNode* node, int level)
 			printf("|  ");
 		else
 			printf("   ");
-		tail = tail->next;	
+		tail = tail->next;
 	}
 	if ( level > 0 ){
-		printf("|--");
-	}*/
-	int i;
-	for (i = 0; i < level; i++)
+		if (node->brother)
+			printf("|--");
+		
+		else
+			printf("+--");
+	}
+	/*for (i = 0; i < level; i++)
 	{
 		printf("__");
-	}
+	}*/
 	printf("%s\n", node->name);
-
 	STNode* focus = node->child;
 	for (i = 0; i < node->No_Child; i++)
 	{

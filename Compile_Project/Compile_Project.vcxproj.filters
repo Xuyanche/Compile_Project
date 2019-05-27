@@ -23,13 +23,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="node.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="parser.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="lex.yy.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

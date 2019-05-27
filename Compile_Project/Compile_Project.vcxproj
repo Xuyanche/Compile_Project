@@ -23,8 +23,6 @@
     <ClInclude Include="parser.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lex.yy.c" />
-    <ClCompile Include="node.c" />
     <ClCompile Include="parser.c" />
   </ItemGroup>
   <ItemGroup>

@@ -12,10 +12,10 @@ extern int column;
 %}
 
 %union{
-         STNode *token_p;
+	STNode *token_p;
 }
 %type <token_p> program declaration_list declaration var_decl func_decl
-%type <token_p> type var func paras para_list para
+%type <token_p> type var paras para_list para
 %type <token_p> local_decls comp_stmt
 %type <token_p> stmt_list stmt expr_stmt selc_stmt iter_stmt retn_stmt
 %type <token_p> expr simple_expr relop add_expr addop term mulop factor
@@ -100,19 +100,11 @@ type
 
  /* 6 */
 func_decl
-	: type func comp_stmt	
+	: type ID '(' paras ')' comp_stmt	
 	{	
 		p = newNode("func_decl", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
-	}
-	;
-func
-	: ID '(' paras ')'
-	{	
-		p = newNode("func", $1->No_Line); 
+		insert(p, $6);
+		insert(p, $5);
 		insert(p, $4);
 		insert(p, $3);
 		insert(p, $2);
@@ -134,10 +126,6 @@ paras
 		p = newNode("paras", $1->No_Line);
 		insert(p, $1);
 		$$ = p;
-	}
-	| 
-	{
-		/* Do Nothing */
 	}
 	;
 
@@ -185,8 +173,10 @@ comp_stmt
 	{	
 		p = newNode("comp_stmt", $1->No_Line);
 		insert(p, $4);
-		insert(p, $3);
-		insert(p, $2);
+		if ($3)
+			insert(p, $3);
+		if ($2)
+			insert(p, $2);
 		insert(p, $1);
 		$$ = p;
 	}
@@ -196,14 +186,16 @@ comp_stmt
 local_decls
 	: local_decls var_decl	
 	{
-		p = newNode("local_decls", $1->No_Line); 
+		p = newNode("local_decls", $2->No_Line); 
 		insert(p, $2);
-		insert(p, $1);
+		if ($1)
+			insert(p, $1);
 		$$ = p;
 	}
 	| 
 	{
-		/* Do nothing */
+		p = NULL;
+		$$ = p;
 	}
 	;
 	
@@ -211,14 +203,16 @@ local_decls
 stmt_list
 	: stmt_list stmt
 	{
-		p = newNode("stmt_list", $1->No_Line); 
+		p = newNode("stmt_list", $2->No_Line);
 		insert(p, $2);
-		insert(p, $1);
+		if ($1)
+			insert(p, $1);
 		$$ = p;
 	}
 	| 
 	{
-		/* Do nothing */
+		p = NULL; 
+		$$ = p;
 	}
 	;
 	

@@ -4,22 +4,23 @@
 #include "node.h"
 
 /* Insert the newchild node as the first child of the father node */
-int insert(Node* father, Node* newchild)
+int insert(STNode* father, STNode* newchild)
 {
 	if (!newchild && father)
 		return 1;
 	if (father->No_Child == 0)
 		newchild->IsBegin = 1;
-	Node* focus = father->child;
+	newchild->father = father;
+	STNode* focus = father->child;
 	newchild->brother = focus;
 	father->child = newchild;
 	father->No_Child++;
 	return 0;
 }
 
-Node* newNode(char* node_name, int line)
+STNode* newNode(char* node_name, int line)
 {
-	Node *p = (Node*)malloc(sizeof(Node));
+	STNode *p = (STNode*)malloc(sizeof(STNode));
 	if (p == NULL)
 	{
 		printf("Error:out of memory.\n");
@@ -28,30 +29,52 @@ Node* newNode(char* node_name, int line)
 	strncpy(p->name, node_name, 20);
 	p->brother = NULL;
 	p->child = NULL;
+	p->father = NULL;
 	p->No_Line = line;
 	p->No_Child = 0;
 	p->col = 0;
 	p->IsBegin = 0;
-	// printf("reading:%s\n", node_name);
 	return p;
 }
 
-void print(Node* root, int level)
+void print(STNode* node, int level)
 {
+	/*STNode *father = node;
+	listnode *tail = NULL;
+	if (father)
+		while (father->father)
+		{
+			father = father->father;
+			listnode *temp = (listnode*)malloc(sizeof(listnode));
+			if (!temp)
+				printf("No memory!\n");
+			temp->next = tail;
+			temp->data = father->brother ? 1 : 0;
+			tail = temp;
+		}
+	while (tail)
+	{
+		if (tail->data)
+			printf("|  ");
+		else
+			printf("   ");
+		tail = tail->next;
+	}
+	if ( level > 0 ){
+		printf("|--");
+	}*/
 	int i;
 	for (i = 0; i < level; i++)
 	{
 		printf("__");
 	}
-	printf("%s\n", root->name);
+	printf("%s\n", node->name);
 
-	Node* focus = root->child;
-	for (i = 0; i < root->No_Child; i++)
+	STNode* focus = node->child;
+	for (i = 0; i < node->No_Child; i++)
 	{
 		print(focus, level + 1);
 		focus = focus->brother;
 	}
-
 	return;
-
 }

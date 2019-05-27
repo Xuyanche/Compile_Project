@@ -1,4 +1,4 @@
-State 99 conflicts: 1 shift/reduce
+State 98 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -19,118 +19,115 @@ Grammar
     8 type: VOID
     9     | INT
 
-   10 func_decl: type func comp_stmt
+   10 func_decl: type ID '(' paras ')' comp_stmt
 
-   11 func: ID '(' paras ')'
+   11 paras: para_list
+   12      | VOID
 
-   12 paras: para_list
-   13      | VOID
-   14      | %empty
+   13 para_list: para_list ',' para
+   14          | para
 
-   15 para_list: para_list ',' para
-   16          | para
+   15 para: type ID
+   16     | type ID '[' ']'
 
-   17 para: type ID
-   18     | type ID '[' ']'
+   17 comp_stmt: '{' local_decls stmt_list '}'
 
-   19 comp_stmt: '{' local_decls stmt_list '}'
+   18 local_decls: local_decls var_decl
+   19            | /* empty */
 
-   20 local_decls: local_decls var_decl
-   21            | %empty
+   20 stmt_list: stmt_list stmt
+   21          | /* empty */
 
-   22 stmt_list: stmt_list stmt
-   23          | %empty
+   22 stmt: expr_stmt
+   23     | comp_stmt
+   24     | selc_stmt
+   25     | iter_stmt
+   26     | retn_stmt
 
-   24 stmt: expr_stmt
-   25     | comp_stmt
-   26     | selc_stmt
-   27     | iter_stmt
-   28     | retn_stmt
+   27 expr_stmt: expr ';'
+   28          | ';'
 
-   29 expr_stmt: expr ';'
-   30          | ';'
+   29 selc_stmt: IF '(' expr ')' stmt
+   30          | IF '(' expr ')' stmt ELSE stmt
 
-   31 selc_stmt: IF '(' expr ')' stmt
-   32          | IF '(' expr ')' stmt ELSE stmt
+   31 iter_stmt: WHILE '(' expr ')' stmt
 
-   33 iter_stmt: WHILE '(' expr ')' stmt
+   32 retn_stmt: RETURN expr ';'
+   33          | RETURN ';'
 
-   34 retn_stmt: RETURN expr ';'
-   35          | RETURN ';'
+   34 expr: var '=' expr
+   35     | simple_expr
 
-   36 expr: var '=' expr
-   37     | simple_expr
+   36 var: ID
+   37    | ID '[' expr ']'
 
-   38 var: ID
-   39    | ID '[' expr ']'
+   38 simple_expr: add_expr relop add_expr
+   39            | add_expr
 
-   40 simple_expr: add_expr relop add_expr
-   41            | add_expr
+   40 relop: GE
+   41      | GEQ
+   42      | LE
+   43      | LEQ
+   44      | EQ
+   45      | NEQ
 
-   42 relop: GE
-   43      | GEQ
-   44      | LE
-   45      | LEQ
-   46      | EQ
-   47      | NEQ
+   46 add_expr: add_expr addop term
+   47         | term
 
-   48 add_expr: add_expr addop term
-   49         | term
+   48 addop: '+'
+   49      | '-'
 
-   50 addop: '+'
-   51      | '-'
+   50 term: term mulop factor
+   51     | factor
 
-   52 term: term mulop factor
-   53     | factor
+   52 mulop: '*'
+   53      | '/'
 
-   54 mulop: '*'
-   55      | '/'
+   54 factor: '(' expr ')'
+   55       | var
+   56       | call
+   57       | NUM
 
-   56 factor: '(' expr ')'
-   57       | var
-   58       | call
-   59       | NUM
+   58 call: ID '(' args ')'
 
-   60 call: ID '(' args ')'
+   59 args: arg_list
+   60     | /* empty */
 
-   61 args: arg_list
-   62     | %empty
-
-   63 arg_list: arg_list ',' expr
-   64         | expr
+   61 arg_list: arg_list ',' expr
+   62         | expr
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 11 31 32 33 56 60
-')' (41) 11 31 32 33 56 60
-'*' (42) 54
-'+' (43) 50
-',' (44) 15 63
-'-' (45) 51
-'/' (47) 55
-';' (59) 6 7 29 30 34 35
-'=' (61) 36
-'[' (91) 7 18 39
-']' (93) 7 18 39
-'{' (123) 19
-'}' (125) 19
+'(' (40) 10 29 30 31 54 58
+')' (41) 10 29 30 31 54 58
+'*' (42) 52
+'+' (43) 48
+',' (44) 13 61
+'-' (45) 49
+'/' (47) 53
+';' (59) 6 7 27 28 32 33
+'=' (61) 34
+'[' (91) 7 16 37
+']' (93) 7 16 37
+'{' (123) 17
+'}' (125) 17
 error (256)
-ID (258) 6 7 11 17 18 38 39 60
-NUM (259) 7 59
+ID (258) 6 7 10 15 16 36 37 58
+NUM (259) 7 57
 INT (260) 9
-VOID (261) 8 13
-IF (262) 31 32
-ELSE (263) 32
-WHILE (264) 33
-RETURN (265) 34 35
-LE (266) 44
-LEQ (267) 45
-GE (268) 42
-GEQ (269) 43
-EQ (270) 46
-NEQ (271) 47
+VOID (261) 8 12
+IF (262) 29 30
+ELSE (263) 30
+WHILE (264) 31
+RETURN (265) 32 33
+LE (266) 42
+LEQ (267) 43
+GE (268) 40
+GEQ (269) 41
+EQ (270) 44
+NEQ (271) 45
 
 
 Nonterminals, with rules where they appear
@@ -144,62 +141,60 @@ declaration_list (32)
 declaration (33)
     on left: 4 5, on right: 2 3
 var_decl (34)
-    on left: 6 7, on right: 4 20
+    on left: 6 7, on right: 4 18
 type (35)
-    on left: 8 9, on right: 6 7 10 17 18
+    on left: 8 9, on right: 6 7 10 15 16
 func_decl (36)
     on left: 10, on right: 5
-func (37)
-    on left: 11, on right: 10
-paras (38)
-    on left: 12 13 14, on right: 11
-para_list (39)
-    on left: 15 16, on right: 12 15
-para (40)
-    on left: 17 18, on right: 15 16
-comp_stmt (41)
-    on left: 19, on right: 10 25
-local_decls (42)
-    on left: 20 21, on right: 19 20
-stmt_list (43)
-    on left: 22 23, on right: 19 22
-stmt (44)
-    on left: 24 25 26 27 28, on right: 22 31 32 33
-expr_stmt (45)
+paras (37)
+    on left: 11 12, on right: 10
+para_list (38)
+    on left: 13 14, on right: 11 13
+para (39)
+    on left: 15 16, on right: 13 14
+comp_stmt (40)
+    on left: 17, on right: 10 23
+local_decls (41)
+    on left: 18 19, on right: 17 18
+stmt_list (42)
+    on left: 20 21, on right: 17 20
+stmt (43)
+    on left: 22 23 24 25 26, on right: 20 29 30 31
+expr_stmt (44)
+    on left: 27 28, on right: 22
+selc_stmt (45)
     on left: 29 30, on right: 24
-selc_stmt (46)
-    on left: 31 32, on right: 26
-iter_stmt (47)
-    on left: 33, on right: 27
-retn_stmt (48)
-    on left: 34 35, on right: 28
-expr (49)
-    on left: 36 37, on right: 29 31 32 33 34 36 39 56 63 64
-var (50)
-    on left: 38 39, on right: 36 57
-simple_expr (51)
-    on left: 40 41, on right: 37
-relop (52)
-    on left: 42 43 44 45 46 47, on right: 40
-add_expr (53)
-    on left: 48 49, on right: 40 41 48
-addop (54)
-    on left: 50 51, on right: 48
-term (55)
-    on left: 52 53, on right: 48 49 52
-mulop (56)
-    on left: 54 55, on right: 52
-factor (57)
-    on left: 56 57 58 59, on right: 52 53
-call (58)
-    on left: 60, on right: 58
-args (59)
-    on left: 61 62, on right: 60
-arg_list (60)
-    on left: 63 64, on right: 61 63
+iter_stmt (46)
+    on left: 31, on right: 25
+retn_stmt (47)
+    on left: 32 33, on right: 26
+expr (48)
+    on left: 34 35, on right: 27 29 30 31 32 34 37 54 61 62
+var (49)
+    on left: 36 37, on right: 34 55
+simple_expr (50)
+    on left: 38 39, on right: 35
+relop (51)
+    on left: 40 41 42 43 44 45, on right: 38
+add_expr (52)
+    on left: 46 47, on right: 38 39 46
+addop (53)
+    on left: 48 49, on right: 46
+term (54)
+    on left: 50 51, on right: 46 47 50
+mulop (55)
+    on left: 52 53, on right: 50
+factor (56)
+    on left: 54 55 56 57, on right: 50 51
+call (57)
+    on left: 58, on right: 56
+args (58)
+    on left: 59 60, on right: 58
+arg_list (59)
+    on left: 61 62, on right: 59 61
 
 
-State 0
+state 0
 
     0 $accept: . program $end
 
@@ -214,28 +209,28 @@ State 0
     func_decl         go to state 8
 
 
-State 1
+state 1
 
     9 type: INT .
 
     $default  reduce using rule 9 (type)
 
 
-State 2
+state 2
 
     8 type: VOID .
 
     $default  reduce using rule 8 (type)
 
 
-State 3
+state 3
 
     0 $accept: program . $end
 
     $end  shift, and go to state 9
 
 
-State 4
+state 4
 
     1 program: declaration_list .
     2 declaration_list: declaration_list . declaration
@@ -251,223 +246,240 @@ State 4
     func_decl    go to state 8
 
 
-State 5
+state 5
 
     3 declaration_list: declaration .
 
     $default  reduce using rule 3 (declaration_list)
 
 
-State 6
+state 6
 
     4 declaration: var_decl .
 
     $default  reduce using rule 4 (declaration)
 
 
-State 7
+state 7
 
     6 var_decl: type . ID ';'
     7         | type . ID '[' NUM ']' ';'
-   10 func_decl: type . func comp_stmt
+   10 func_decl: type . ID '(' paras ')' comp_stmt
 
     ID  shift, and go to state 11
 
-    func  go to state 12
 
-
-State 8
+state 8
 
     5 declaration: func_decl .
 
     $default  reduce using rule 5 (declaration)
 
 
-State 9
+state 9
 
     0 $accept: program $end .
 
     $default  accept
 
 
-State 10
+state 10
 
     2 declaration_list: declaration_list declaration .
 
     $default  reduce using rule 2 (declaration_list)
 
 
-State 11
+state 11
 
     6 var_decl: type ID . ';'
     7         | type ID . '[' NUM ']' ';'
-   11 func: ID . '(' paras ')'
+   10 func_decl: type ID . '(' paras ')' comp_stmt
 
-    '('  shift, and go to state 13
-    '['  shift, and go to state 14
-    ';'  shift, and go to state 15
-
-
-State 12
-
-   10 func_decl: type func . comp_stmt
-
-    '{'  shift, and go to state 16
-
-    comp_stmt  go to state 17
+    '('  shift, and go to state 12
+    '['  shift, and go to state 13
+    ';'  shift, and go to state 14
 
 
-State 13
+state 12
 
-   11 func: ID '(' . paras ')'
+   10 func_decl: type ID '(' . paras ')' comp_stmt
 
     INT   shift, and go to state 1
-    VOID  shift, and go to state 18
+    VOID  shift, and go to state 15
 
-    $default  reduce using rule 14 (paras)
-
-    type       go to state 19
-    paras      go to state 20
-    para_list  go to state 21
-    para       go to state 22
+    type       go to state 16
+    paras      go to state 17
+    para_list  go to state 18
+    para       go to state 19
 
 
-State 14
+state 13
 
     7 var_decl: type ID '[' . NUM ']' ';'
 
-    NUM  shift, and go to state 23
+    NUM  shift, and go to state 20
 
 
-State 15
+state 14
 
     6 var_decl: type ID ';' .
 
     $default  reduce using rule 6 (var_decl)
 
 
-State 16
+state 15
 
-   19 comp_stmt: '{' . local_decls stmt_list '}'
+    8 type: VOID .
+   12 paras: VOID .
 
-    $default  reduce using rule 21 (local_decls)
+    ')'       reduce using rule 12 (paras)
+    $default  reduce using rule 8 (type)
 
-    local_decls  go to state 24
+
+state 16
+
+   15 para: type . ID
+   16     | type . ID '[' ']'
+
+    ID  shift, and go to state 21
 
 
-State 17
+state 17
 
-   10 func_decl: type func comp_stmt .
+   10 func_decl: type ID '(' paras . ')' comp_stmt
+
+    ')'  shift, and go to state 22
+
+
+state 18
+
+   11 paras: para_list .
+   13 para_list: para_list . ',' para
+
+    ','  shift, and go to state 23
+
+    $default  reduce using rule 11 (paras)
+
+
+state 19
+
+   14 para_list: para .
+
+    $default  reduce using rule 14 (para_list)
+
+
+state 20
+
+    7 var_decl: type ID '[' NUM . ']' ';'
+
+    ']'  shift, and go to state 24
+
+
+state 21
+
+   15 para: type ID .
+   16     | type ID . '[' ']'
+
+    '['  shift, and go to state 25
+
+    $default  reduce using rule 15 (para)
+
+
+state 22
+
+   10 func_decl: type ID '(' paras ')' . comp_stmt
+
+    '{'  shift, and go to state 26
+
+    comp_stmt  go to state 27
+
+
+state 23
+
+   13 para_list: para_list ',' . para
+
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 2
+
+    type  go to state 16
+    para  go to state 28
+
+
+state 24
+
+    7 var_decl: type ID '[' NUM ']' . ';'
+
+    ';'  shift, and go to state 29
+
+
+state 25
+
+   16 para: type ID '[' . ']'
+
+    ']'  shift, and go to state 30
+
+
+state 26
+
+   17 comp_stmt: '{' . local_decls stmt_list '}'
+
+    $default  reduce using rule 19 (local_decls)
+
+    local_decls  go to state 31
+
+
+state 27
+
+   10 func_decl: type ID '(' paras ')' comp_stmt .
 
     $default  reduce using rule 10 (func_decl)
 
 
-State 18
+state 28
 
-    8 type: VOID .
-   13 paras: VOID .
+   13 para_list: para_list ',' para .
 
-    ')'       reduce using rule 13 (paras)
-    $default  reduce using rule 8 (type)
+    $default  reduce using rule 13 (para_list)
 
 
-State 19
+state 29
 
-   17 para: type . ID
-   18     | type . ID '[' ']'
+    7 var_decl: type ID '[' NUM ']' ';' .
 
-    ID  shift, and go to state 25
-
-
-State 20
-
-   11 func: ID '(' paras . ')'
-
-    ')'  shift, and go to state 26
+    $default  reduce using rule 7 (var_decl)
 
 
-State 21
+state 30
 
-   12 paras: para_list .
-   15 para_list: para_list . ',' para
+   16 para: type ID '[' ']' .
 
-    ','  shift, and go to state 27
-
-    $default  reduce using rule 12 (paras)
+    $default  reduce using rule 16 (para)
 
 
-State 22
+state 31
 
-   16 para_list: para .
-
-    $default  reduce using rule 16 (para_list)
-
-
-State 23
-
-    7 var_decl: type ID '[' NUM . ']' ';'
-
-    ']'  shift, and go to state 28
-
-
-State 24
-
-   19 comp_stmt: '{' local_decls . stmt_list '}'
-   20 local_decls: local_decls . var_decl
+   17 comp_stmt: '{' local_decls . stmt_list '}'
+   18 local_decls: local_decls . var_decl
 
     INT   shift, and go to state 1
     VOID  shift, and go to state 2
 
-    $default  reduce using rule 23 (stmt_list)
+    $default  reduce using rule 21 (stmt_list)
 
-    var_decl   go to state 29
-    type       go to state 30
-    stmt_list  go to state 31
-
-
-State 25
-
-   17 para: type ID .
-   18     | type ID . '[' ']'
-
-    '['  shift, and go to state 32
-
-    $default  reduce using rule 17 (para)
+    var_decl   go to state 32
+    type       go to state 33
+    stmt_list  go to state 34
 
 
-State 26
+state 32
 
-   11 func: ID '(' paras ')' .
+   18 local_decls: local_decls var_decl .
 
-    $default  reduce using rule 11 (func)
-
-
-State 27
-
-   15 para_list: para_list ',' . para
-
-    INT   shift, and go to state 1
-    VOID  shift, and go to state 2
-
-    type  go to state 19
-    para  go to state 33
+    $default  reduce using rule 18 (local_decls)
 
 
-State 28
-
-    7 var_decl: type ID '[' NUM ']' . ';'
-
-    ';'  shift, and go to state 34
-
-
-State 29
-
-   20 local_decls: local_decls var_decl .
-
-    $default  reduce using rule 20 (local_decls)
-
-
-State 30
+state 33
 
     6 var_decl: type . ID ';'
     7         | type . ID '[' NUM ']' ';'
@@ -475,12 +487,12 @@ State 30
     ID  shift, and go to state 35
 
 
-State 31
+state 34
 
-   19 comp_stmt: '{' local_decls stmt_list . '}'
-   22 stmt_list: stmt_list . stmt
+   17 comp_stmt: '{' local_decls stmt_list . '}'
+   20 stmt_list: stmt_list . stmt
 
-    '{'     shift, and go to state 16
+    '{'     shift, and go to state 26
     '}'     shift, and go to state 36
     '('     shift, and go to state 37
     ';'     shift, and go to state 38
@@ -505,52 +517,31 @@ State 31
     call         go to state 56
 
 
-State 32
-
-   18 para: type ID '[' . ']'
-
-    ']'  shift, and go to state 57
-
-
-State 33
-
-   15 para_list: para_list ',' para .
-
-    $default  reduce using rule 15 (para_list)
-
-
-State 34
-
-    7 var_decl: type ID '[' NUM ']' ';' .
-
-    $default  reduce using rule 7 (var_decl)
-
-
-State 35
+state 35
 
     6 var_decl: type ID . ';'
     7         | type ID . '[' NUM ']' ';'
 
-    '['  shift, and go to state 14
-    ';'  shift, and go to state 15
+    '['  shift, and go to state 13
+    ';'  shift, and go to state 14
 
 
-State 36
+state 36
 
-   19 comp_stmt: '{' local_decls stmt_list '}' .
+   17 comp_stmt: '{' local_decls stmt_list '}' .
 
-    $default  reduce using rule 19 (comp_stmt)
+    $default  reduce using rule 17 (comp_stmt)
 
 
-State 37
+state 37
 
-   56 factor: '(' . expr ')'
+   54 factor: '(' . expr ')'
 
     '('  shift, and go to state 37
     ID   shift, and go to state 39
     NUM  shift, and go to state 40
 
-    expr         go to state 58
+    expr         go to state 57
     var          go to state 51
     simple_expr  go to state 52
     add_expr     go to state 53
@@ -559,218 +550,229 @@ State 37
     call         go to state 56
 
 
-State 38
+state 38
 
-   30 expr_stmt: ';' .
+   28 expr_stmt: ';' .
 
-    $default  reduce using rule 30 (expr_stmt)
-
-
-State 39
-
-   38 var: ID .
-   39    | ID . '[' expr ']'
-   60 call: ID . '(' args ')'
-
-    '('  shift, and go to state 59
-    '['  shift, and go to state 60
-
-    $default  reduce using rule 38 (var)
+    $default  reduce using rule 28 (expr_stmt)
 
 
-State 40
+state 39
 
-   59 factor: NUM .
+   36 var: ID .
+   37    | ID . '[' expr ']'
+   58 call: ID . '(' args ')'
 
-    $default  reduce using rule 59 (factor)
+    '('  shift, and go to state 58
+    '['  shift, and go to state 59
 
-
-State 41
-
-   31 selc_stmt: IF . '(' expr ')' stmt
-   32          | IF . '(' expr ')' stmt ELSE stmt
-
-    '('  shift, and go to state 61
+    $default  reduce using rule 36 (var)
 
 
-State 42
+state 40
 
-   33 iter_stmt: WHILE . '(' expr ')' stmt
-
-    '('  shift, and go to state 62
-
-
-State 43
-
-   34 retn_stmt: RETURN . expr ';'
-   35          | RETURN . ';'
-
-    '('  shift, and go to state 37
-    ';'  shift, and go to state 63
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
-
-    expr         go to state 64
-    var          go to state 51
-    simple_expr  go to state 52
-    add_expr     go to state 53
-    term         go to state 54
-    factor       go to state 55
-    call         go to state 56
-
-
-State 44
-
-   25 stmt: comp_stmt .
-
-    $default  reduce using rule 25 (stmt)
-
-
-State 45
-
-   22 stmt_list: stmt_list stmt .
-
-    $default  reduce using rule 22 (stmt_list)
-
-
-State 46
-
-   24 stmt: expr_stmt .
-
-    $default  reduce using rule 24 (stmt)
-
-
-State 47
-
-   26 stmt: selc_stmt .
-
-    $default  reduce using rule 26 (stmt)
-
-
-State 48
-
-   27 stmt: iter_stmt .
-
-    $default  reduce using rule 27 (stmt)
-
-
-State 49
-
-   28 stmt: retn_stmt .
-
-    $default  reduce using rule 28 (stmt)
-
-
-State 50
-
-   29 expr_stmt: expr . ';'
-
-    ';'  shift, and go to state 65
-
-
-State 51
-
-   36 expr: var . '=' expr
-   57 factor: var .
-
-    '='  shift, and go to state 66
+   57 factor: NUM .
 
     $default  reduce using rule 57 (factor)
 
 
-State 52
+state 41
 
-   37 expr: simple_expr .
+   29 selc_stmt: IF . '(' expr ')' stmt
+   30          | IF . '(' expr ')' stmt ELSE stmt
 
-    $default  reduce using rule 37 (expr)
-
-
-State 53
-
-   40 simple_expr: add_expr . relop add_expr
-   41            | add_expr .
-   48 add_expr: add_expr . addop term
-
-    '+'  shift, and go to state 67
-    '-'  shift, and go to state 68
-    LE   shift, and go to state 69
-    LEQ  shift, and go to state 70
-    GE   shift, and go to state 71
-    GEQ  shift, and go to state 72
-    EQ   shift, and go to state 73
-    NEQ  shift, and go to state 74
-
-    $default  reduce using rule 41 (simple_expr)
-
-    relop  go to state 75
-    addop  go to state 76
+    '('  shift, and go to state 60
 
 
-State 54
+state 42
 
-   49 add_expr: term .
-   52 term: term . mulop factor
+   31 iter_stmt: WHILE . '(' expr ')' stmt
 
-    '*'  shift, and go to state 77
-    '/'  shift, and go to state 78
-
-    $default  reduce using rule 49 (add_expr)
-
-    mulop  go to state 79
+    '('  shift, and go to state 61
 
 
-State 55
+state 43
 
-   53 term: factor .
-
-    $default  reduce using rule 53 (term)
-
-
-State 56
-
-   58 factor: call .
-
-    $default  reduce using rule 58 (factor)
-
-
-State 57
-
-   18 para: type ID '[' ']' .
-
-    $default  reduce using rule 18 (para)
-
-
-State 58
-
-   56 factor: '(' expr . ')'
-
-    ')'  shift, and go to state 80
-
-
-State 59
-
-   60 call: ID '(' . args ')'
+   32 retn_stmt: RETURN . expr ';'
+   33          | RETURN . ';'
 
     '('  shift, and go to state 37
+    ';'  shift, and go to state 62
     ID   shift, and go to state 39
     NUM  shift, and go to state 40
 
-    $default  reduce using rule 62 (args)
-
-    expr         go to state 81
+    expr         go to state 63
     var          go to state 51
     simple_expr  go to state 52
     add_expr     go to state 53
     term         go to state 54
     factor       go to state 55
     call         go to state 56
-    args         go to state 82
-    arg_list     go to state 83
 
 
-State 60
+state 44
 
-   39 var: ID '[' . expr ']'
+   23 stmt: comp_stmt .
+
+    $default  reduce using rule 23 (stmt)
+
+
+state 45
+
+   20 stmt_list: stmt_list stmt .
+
+    $default  reduce using rule 20 (stmt_list)
+
+
+state 46
+
+   22 stmt: expr_stmt .
+
+    $default  reduce using rule 22 (stmt)
+
+
+state 47
+
+   24 stmt: selc_stmt .
+
+    $default  reduce using rule 24 (stmt)
+
+
+state 48
+
+   25 stmt: iter_stmt .
+
+    $default  reduce using rule 25 (stmt)
+
+
+state 49
+
+   26 stmt: retn_stmt .
+
+    $default  reduce using rule 26 (stmt)
+
+
+state 50
+
+   27 expr_stmt: expr . ';'
+
+    ';'  shift, and go to state 64
+
+
+state 51
+
+   34 expr: var . '=' expr
+   55 factor: var .
+
+    '='  shift, and go to state 65
+
+    $default  reduce using rule 55 (factor)
+
+
+state 52
+
+   35 expr: simple_expr .
+
+    $default  reduce using rule 35 (expr)
+
+
+state 53
+
+   38 simple_expr: add_expr . relop add_expr
+   39            | add_expr .
+   46 add_expr: add_expr . addop term
+
+    '+'  shift, and go to state 66
+    '-'  shift, and go to state 67
+    LE   shift, and go to state 68
+    LEQ  shift, and go to state 69
+    GE   shift, and go to state 70
+    GEQ  shift, and go to state 71
+    EQ   shift, and go to state 72
+    NEQ  shift, and go to state 73
+
+    $default  reduce using rule 39 (simple_expr)
+
+    relop  go to state 74
+    addop  go to state 75
+
+
+state 54
+
+   47 add_expr: term .
+   50 term: term . mulop factor
+
+    '*'  shift, and go to state 76
+    '/'  shift, and go to state 77
+
+    $default  reduce using rule 47 (add_expr)
+
+    mulop  go to state 78
+
+
+state 55
+
+   51 term: factor .
+
+    $default  reduce using rule 51 (term)
+
+
+state 56
+
+   56 factor: call .
+
+    $default  reduce using rule 56 (factor)
+
+
+state 57
+
+   54 factor: '(' expr . ')'
+
+    ')'  shift, and go to state 79
+
+
+state 58
+
+   58 call: ID '(' . args ')'
+
+    '('  shift, and go to state 37
+    ID   shift, and go to state 39
+    NUM  shift, and go to state 40
+
+    $default  reduce using rule 60 (args)
+
+    expr         go to state 80
+    var          go to state 51
+    simple_expr  go to state 52
+    add_expr     go to state 53
+    term         go to state 54
+    factor       go to state 55
+    call         go to state 56
+    args         go to state 81
+    arg_list     go to state 82
+
+
+state 59
+
+   37 var: ID '[' . expr ']'
+
+    '('  shift, and go to state 37
+    ID   shift, and go to state 39
+    NUM  shift, and go to state 40
+
+    expr         go to state 83
+    var          go to state 51
+    simple_expr  go to state 52
+    add_expr     go to state 53
+    term         go to state 54
+    factor       go to state 55
+    call         go to state 56
+
+
+state 60
+
+   29 selc_stmt: IF '(' . expr ')' stmt
+   30          | IF '(' . expr ')' stmt ELSE stmt
 
     '('  shift, and go to state 37
     ID   shift, and go to state 39
@@ -785,10 +787,9 @@ State 60
     call         go to state 56
 
 
-State 61
+state 61
 
-   31 selc_stmt: IF '(' . expr ')' stmt
-   32          | IF '(' . expr ')' stmt ELSE stmt
+   31 iter_stmt: WHILE '(' . expr ')' stmt
 
     '('  shift, and go to state 37
     ID   shift, and go to state 39
@@ -803,15 +804,36 @@ State 61
     call         go to state 56
 
 
-State 62
+state 62
 
-   33 iter_stmt: WHILE '(' . expr ')' stmt
+   33 retn_stmt: RETURN ';' .
+
+    $default  reduce using rule 33 (retn_stmt)
+
+
+state 63
+
+   32 retn_stmt: RETURN expr . ';'
+
+    ';'  shift, and go to state 86
+
+
+state 64
+
+   27 expr_stmt: expr ';' .
+
+    $default  reduce using rule 27 (expr_stmt)
+
+
+state 65
+
+   34 expr: var '=' . expr
 
     '('  shift, and go to state 37
     ID   shift, and go to state 39
     NUM  shift, and go to state 40
 
-    expr         go to state 86
+    expr         go to state 87
     var          go to state 51
     simple_expr  go to state 52
     add_expr     go to state 53
@@ -820,279 +842,241 @@ State 62
     call         go to state 56
 
 
-State 63
+state 66
 
-   35 retn_stmt: RETURN ';' .
+   48 addop: '+' .
 
-    $default  reduce using rule 35 (retn_stmt)
-
-
-State 64
-
-   34 retn_stmt: RETURN expr . ';'
-
-    ';'  shift, and go to state 87
+    $default  reduce using rule 48 (addop)
 
 
-State 65
+state 67
 
-   29 expr_stmt: expr ';' .
+   49 addop: '-' .
 
-    $default  reduce using rule 29 (expr_stmt)
-
-
-State 66
-
-   36 expr: var '=' . expr
-
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
-
-    expr         go to state 88
-    var          go to state 51
-    simple_expr  go to state 52
-    add_expr     go to state 53
-    term         go to state 54
-    factor       go to state 55
-    call         go to state 56
+    $default  reduce using rule 49 (addop)
 
 
-State 67
+state 68
 
-   50 addop: '+' .
-
-    $default  reduce using rule 50 (addop)
-
-
-State 68
-
-   51 addop: '-' .
-
-    $default  reduce using rule 51 (addop)
-
-
-State 69
-
-   44 relop: LE .
-
-    $default  reduce using rule 44 (relop)
-
-
-State 70
-
-   45 relop: LEQ .
-
-    $default  reduce using rule 45 (relop)
-
-
-State 71
-
-   42 relop: GE .
+   42 relop: LE .
 
     $default  reduce using rule 42 (relop)
 
 
-State 72
+state 69
 
-   43 relop: GEQ .
+   43 relop: LEQ .
 
     $default  reduce using rule 43 (relop)
 
 
-State 73
+state 70
 
-   46 relop: EQ .
+   40 relop: GE .
 
-    $default  reduce using rule 46 (relop)
-
-
-State 74
-
-   47 relop: NEQ .
-
-    $default  reduce using rule 47 (relop)
+    $default  reduce using rule 40 (relop)
 
 
-State 75
+state 71
 
-   40 simple_expr: add_expr relop . add_expr
+   41 relop: GEQ .
+
+    $default  reduce using rule 41 (relop)
+
+
+state 72
+
+   44 relop: EQ .
+
+    $default  reduce using rule 44 (relop)
+
+
+state 73
+
+   45 relop: NEQ .
+
+    $default  reduce using rule 45 (relop)
+
+
+state 74
+
+   38 simple_expr: add_expr relop . add_expr
 
     '('  shift, and go to state 37
     ID   shift, and go to state 39
     NUM  shift, and go to state 40
 
-    var       go to state 89
-    add_expr  go to state 90
+    var       go to state 88
+    add_expr  go to state 89
     term      go to state 54
     factor    go to state 55
     call      go to state 56
 
 
-State 76
+state 75
 
-   48 add_expr: add_expr addop . term
+   46 add_expr: add_expr addop . term
 
     '('  shift, and go to state 37
     ID   shift, and go to state 39
     NUM  shift, and go to state 40
 
-    var     go to state 89
-    term    go to state 91
+    var     go to state 88
+    term    go to state 90
     factor  go to state 55
     call    go to state 56
 
 
-State 77
+state 76
 
-   54 mulop: '*' .
+   52 mulop: '*' .
 
-    $default  reduce using rule 54 (mulop)
-
-
-State 78
-
-   55 mulop: '/' .
-
-    $default  reduce using rule 55 (mulop)
+    $default  reduce using rule 52 (mulop)
 
 
-State 79
+state 77
 
-   52 term: term mulop . factor
+   53 mulop: '/' .
+
+    $default  reduce using rule 53 (mulop)
+
+
+state 78
+
+   50 term: term mulop . factor
 
     '('  shift, and go to state 37
     ID   shift, and go to state 39
     NUM  shift, and go to state 40
 
-    var     go to state 89
-    factor  go to state 92
+    var     go to state 88
+    factor  go to state 91
     call    go to state 56
 
 
-State 80
+state 79
 
-   56 factor: '(' expr ')' .
+   54 factor: '(' expr ')' .
 
-    $default  reduce using rule 56 (factor)
-
-
-State 81
-
-   64 arg_list: expr .
-
-    $default  reduce using rule 64 (arg_list)
+    $default  reduce using rule 54 (factor)
 
 
-State 82
+state 80
 
-   60 call: ID '(' args . ')'
+   62 arg_list: expr .
 
-    ')'  shift, and go to state 93
-
-
-State 83
-
-   61 args: arg_list .
-   63 arg_list: arg_list . ',' expr
-
-    ','  shift, and go to state 94
-
-    $default  reduce using rule 61 (args)
+    $default  reduce using rule 62 (arg_list)
 
 
-State 84
+state 81
 
-   39 var: ID '[' expr . ']'
+   58 call: ID '(' args . ')'
 
-    ']'  shift, and go to state 95
+    ')'  shift, and go to state 92
 
 
-State 85
+state 82
 
-   31 selc_stmt: IF '(' expr . ')' stmt
-   32          | IF '(' expr . ')' stmt ELSE stmt
+   59 args: arg_list .
+   61 arg_list: arg_list . ',' expr
+
+    ','  shift, and go to state 93
+
+    $default  reduce using rule 59 (args)
+
+
+state 83
+
+   37 var: ID '[' expr . ']'
+
+    ']'  shift, and go to state 94
+
+
+state 84
+
+   29 selc_stmt: IF '(' expr . ')' stmt
+   30          | IF '(' expr . ')' stmt ELSE stmt
+
+    ')'  shift, and go to state 95
+
+
+state 85
+
+   31 iter_stmt: WHILE '(' expr . ')' stmt
 
     ')'  shift, and go to state 96
 
 
-State 86
+state 86
 
-   33 iter_stmt: WHILE '(' expr . ')' stmt
+   32 retn_stmt: RETURN expr ';' .
 
-    ')'  shift, and go to state 97
-
-
-State 87
-
-   34 retn_stmt: RETURN expr ';' .
-
-    $default  reduce using rule 34 (retn_stmt)
+    $default  reduce using rule 32 (retn_stmt)
 
 
-State 88
+state 87
 
-   36 expr: var '=' expr .
+   34 expr: var '=' expr .
 
-    $default  reduce using rule 36 (expr)
-
-
-State 89
-
-   57 factor: var .
-
-    $default  reduce using rule 57 (factor)
+    $default  reduce using rule 34 (expr)
 
 
-State 90
+state 88
 
-   40 simple_expr: add_expr relop add_expr .
-   48 add_expr: add_expr . addop term
+   55 factor: var .
 
-    '+'  shift, and go to state 67
-    '-'  shift, and go to state 68
-
-    $default  reduce using rule 40 (simple_expr)
-
-    addop  go to state 76
+    $default  reduce using rule 55 (factor)
 
 
-State 91
+state 89
 
-   48 add_expr: add_expr addop term .
-   52 term: term . mulop factor
+   38 simple_expr: add_expr relop add_expr .
+   46 add_expr: add_expr . addop term
 
-    '*'  shift, and go to state 77
-    '/'  shift, and go to state 78
+    '+'  shift, and go to state 66
+    '-'  shift, and go to state 67
 
-    $default  reduce using rule 48 (add_expr)
+    $default  reduce using rule 38 (simple_expr)
 
-    mulop  go to state 79
-
-
-State 92
-
-   52 term: term mulop factor .
-
-    $default  reduce using rule 52 (term)
+    addop  go to state 75
 
 
-State 93
+state 90
 
-   60 call: ID '(' args ')' .
+   46 add_expr: add_expr addop term .
+   50 term: term . mulop factor
 
-    $default  reduce using rule 60 (call)
+    '*'  shift, and go to state 76
+    '/'  shift, and go to state 77
+
+    $default  reduce using rule 46 (add_expr)
+
+    mulop  go to state 78
 
 
-State 94
+state 91
 
-   63 arg_list: arg_list ',' . expr
+   50 term: term mulop factor .
+
+    $default  reduce using rule 50 (term)
+
+
+state 92
+
+   58 call: ID '(' args ')' .
+
+    $default  reduce using rule 58 (call)
+
+
+state 93
+
+   61 arg_list: arg_list ',' . expr
 
     '('  shift, and go to state 37
     ID   shift, and go to state 39
     NUM  shift, and go to state 40
 
-    expr         go to state 98
+    expr         go to state 97
     var          go to state 51
     simple_expr  go to state 52
     add_expr     go to state 53
@@ -1101,19 +1085,47 @@ State 94
     call         go to state 56
 
 
-State 95
+state 94
 
-   39 var: ID '[' expr ']' .
+   37 var: ID '[' expr ']' .
 
-    $default  reduce using rule 39 (var)
+    $default  reduce using rule 37 (var)
 
 
-State 96
+state 95
 
-   31 selc_stmt: IF '(' expr ')' . stmt
-   32          | IF '(' expr ')' . stmt ELSE stmt
+   29 selc_stmt: IF '(' expr ')' . stmt
+   30          | IF '(' expr ')' . stmt ELSE stmt
 
-    '{'     shift, and go to state 16
+    '{'     shift, and go to state 26
+    '('     shift, and go to state 37
+    ';'     shift, and go to state 38
+    ID      shift, and go to state 39
+    NUM     shift, and go to state 40
+    IF      shift, and go to state 41
+    WHILE   shift, and go to state 42
+    RETURN  shift, and go to state 43
+
+    comp_stmt    go to state 44
+    stmt         go to state 98
+    expr_stmt    go to state 46
+    selc_stmt    go to state 47
+    iter_stmt    go to state 48
+    retn_stmt    go to state 49
+    expr         go to state 50
+    var          go to state 51
+    simple_expr  go to state 52
+    add_expr     go to state 53
+    term         go to state 54
+    factor       go to state 55
+    call         go to state 56
+
+
+state 96
+
+   31 iter_stmt: WHILE '(' expr ')' . stmt
+
+    '{'     shift, and go to state 26
     '('     shift, and go to state 37
     ';'     shift, and go to state 38
     ID      shift, and go to state 39
@@ -1137,11 +1149,36 @@ State 96
     call         go to state 56
 
 
-State 97
+state 97
 
-   33 iter_stmt: WHILE '(' expr ')' . stmt
+   61 arg_list: arg_list ',' expr .
 
-    '{'     shift, and go to state 16
+    $default  reduce using rule 61 (arg_list)
+
+
+state 98
+
+   29 selc_stmt: IF '(' expr ')' stmt .
+   30          | IF '(' expr ')' stmt . ELSE stmt
+
+    ELSE  shift, and go to state 100
+
+    ELSE      [reduce using rule 29 (selc_stmt)]
+    $default  reduce using rule 29 (selc_stmt)
+
+
+state 99
+
+   31 iter_stmt: WHILE '(' expr ')' stmt .
+
+    $default  reduce using rule 31 (iter_stmt)
+
+
+state 100
+
+   30 selc_stmt: IF '(' expr ')' stmt ELSE . stmt
+
+    '{'     shift, and go to state 26
     '('     shift, and go to state 37
     ';'     shift, and go to state 38
     ID      shift, and go to state 39
@@ -1151,7 +1188,7 @@ State 97
     RETURN  shift, and go to state 43
 
     comp_stmt    go to state 44
-    stmt         go to state 100
+    stmt         go to state 101
     expr_stmt    go to state 46
     selc_stmt    go to state 47
     iter_stmt    go to state 48
@@ -1165,61 +1202,8 @@ State 97
     call         go to state 56
 
 
-State 98
+state 101
 
-   63 arg_list: arg_list ',' expr .
+   30 selc_stmt: IF '(' expr ')' stmt ELSE stmt .
 
-    $default  reduce using rule 63 (arg_list)
-
-
-State 99
-
-   31 selc_stmt: IF '(' expr ')' stmt .
-   32          | IF '(' expr ')' stmt . ELSE stmt
-
-    ELSE  shift, and go to state 101
-
-    ELSE      [reduce using rule 31 (selc_stmt)]
-    $default  reduce using rule 31 (selc_stmt)
-
-
-State 100
-
-   33 iter_stmt: WHILE '(' expr ')' stmt .
-
-    $default  reduce using rule 33 (iter_stmt)
-
-
-State 101
-
-   32 selc_stmt: IF '(' expr ')' stmt ELSE . stmt
-
-    '{'     shift, and go to state 16
-    '('     shift, and go to state 37
-    ';'     shift, and go to state 38
-    ID      shift, and go to state 39
-    NUM     shift, and go to state 40
-    IF      shift, and go to state 41
-    WHILE   shift, and go to state 42
-    RETURN  shift, and go to state 43
-
-    comp_stmt    go to state 44
-    stmt         go to state 102
-    expr_stmt    go to state 46
-    selc_stmt    go to state 47
-    iter_stmt    go to state 48
-    retn_stmt    go to state 49
-    expr         go to state 50
-    var          go to state 51
-    simple_expr  go to state 52
-    add_expr     go to state 53
-    term         go to state 54
-    factor       go to state 55
-    call         go to state 56
-
-
-State 102
-
-   32 selc_stmt: IF '(' expr ')' stmt ELSE stmt .
-
-    $default  reduce using rule 32 (selc_stmt)
+    $default  reduce using rule 30 (selc_stmt)
