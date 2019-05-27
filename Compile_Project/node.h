@@ -1,5 +1,5 @@
-#ifndef Node_H
-#define Node_H
+#ifndef NODE_H
+#define NODE_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,14 +18,14 @@ struct STNode
 	char name[20];
 	int IsBegin;
 };
+
 struct listnode
 {
 	int data;
 	listnode *next;
 };
 
-
-
+/* Insert newchild as the first child of father */
 int insert(STNode* father, STNode* newchild)
 {
 	if (!newchild && father)
@@ -40,6 +40,7 @@ int insert(STNode* father, STNode* newchild)
 	return 0;
 }
 
+/* Create a new node with given node name */
 STNode* newNode(char* node_name, int line)
 {
 	STNode *p = (STNode*)malloc(sizeof(STNode));
@@ -56,7 +57,6 @@ STNode* newNode(char* node_name, int line)
 	p->No_Child = 0;
 	p->col = 0;
 	p->IsBegin = 0;
-	// printf("reading:%s\n", node_name);
 	return p;
 }
 
@@ -89,13 +89,9 @@ void print(STNode* node, int level)
 		else
 			printf("+--");
 	}
-	/*for (i = 0; i < level; i++)
-	{
-		printf("__");
-	}*/
 	printf("%s\n", node->name);
 	STNode* focus = node->child;
-	for (i = 0; i < node->No_Child; i++)
+	while (focus)
 	{
 		print(focus, level + 1);
 		focus = focus->brother;
