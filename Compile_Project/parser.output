@@ -33,10 +33,10 @@ Grammar
    17 comp_stmt: '{' local_decls stmt_list '}'
 
    18 local_decls: local_decls var_decl
-   19            | /* empty */
+   19            | %empty
 
    20 stmt_list: stmt_list stmt
-   21          | /* empty */
+   21          | %empty
 
    22 stmt: expr_stmt
    23     | comp_stmt
@@ -91,7 +91,7 @@ Grammar
    58 call: ID '(' args ')'
 
    59 args: arg_list
-   60     | /* empty */
+   60     | %empty
 
    61 arg_list: arg_list ',' expr
    62         | expr
@@ -194,7 +194,7 @@ arg_list (59)
     on left: 61 62, on right: 59 61
 
 
-state 0
+State 0
 
     0 $accept: . program $end
 
@@ -209,28 +209,28 @@ state 0
     func_decl         go to state 8
 
 
-state 1
+State 1
 
     9 type: INT .
 
     $default  reduce using rule 9 (type)
 
 
-state 2
+State 2
 
     8 type: VOID .
 
     $default  reduce using rule 8 (type)
 
 
-state 3
+State 3
 
     0 $accept: program . $end
 
     $end  shift, and go to state 9
 
 
-state 4
+State 4
 
     1 program: declaration_list .
     2 declaration_list: declaration_list . declaration
@@ -246,21 +246,21 @@ state 4
     func_decl    go to state 8
 
 
-state 5
+State 5
 
     3 declaration_list: declaration .
 
     $default  reduce using rule 3 (declaration_list)
 
 
-state 6
+State 6
 
     4 declaration: var_decl .
 
     $default  reduce using rule 4 (declaration)
 
 
-state 7
+State 7
 
     6 var_decl: type . ID ';'
     7         | type . ID '[' NUM ']' ';'
@@ -269,28 +269,28 @@ state 7
     ID  shift, and go to state 11
 
 
-state 8
+State 8
 
     5 declaration: func_decl .
 
     $default  reduce using rule 5 (declaration)
 
 
-state 9
+State 9
 
     0 $accept: program $end .
 
     $default  accept
 
 
-state 10
+State 10
 
     2 declaration_list: declaration_list declaration .
 
     $default  reduce using rule 2 (declaration_list)
 
 
-state 11
+State 11
 
     6 var_decl: type ID . ';'
     7         | type ID . '[' NUM ']' ';'
@@ -301,7 +301,7 @@ state 11
     ';'  shift, and go to state 14
 
 
-state 12
+State 12
 
    10 func_decl: type ID '(' . paras ')' comp_stmt
 
@@ -314,21 +314,21 @@ state 12
     para       go to state 19
 
 
-state 13
+State 13
 
     7 var_decl: type ID '[' . NUM ']' ';'
 
     NUM  shift, and go to state 20
 
 
-state 14
+State 14
 
     6 var_decl: type ID ';' .
 
     $default  reduce using rule 6 (var_decl)
 
 
-state 15
+State 15
 
     8 type: VOID .
    12 paras: VOID .
@@ -337,7 +337,7 @@ state 15
     $default  reduce using rule 8 (type)
 
 
-state 16
+State 16
 
    15 para: type . ID
    16     | type . ID '[' ']'
@@ -345,14 +345,14 @@ state 16
     ID  shift, and go to state 21
 
 
-state 17
+State 17
 
    10 func_decl: type ID '(' paras . ')' comp_stmt
 
     ')'  shift, and go to state 22
 
 
-state 18
+State 18
 
    11 paras: para_list .
    13 para_list: para_list . ',' para
@@ -362,21 +362,21 @@ state 18
     $default  reduce using rule 11 (paras)
 
 
-state 19
+State 19
 
    14 para_list: para .
 
     $default  reduce using rule 14 (para_list)
 
 
-state 20
+State 20
 
     7 var_decl: type ID '[' NUM . ']' ';'
 
     ']'  shift, and go to state 24
 
 
-state 21
+State 21
 
    15 para: type ID .
    16     | type ID . '[' ']'
@@ -386,7 +386,7 @@ state 21
     $default  reduce using rule 15 (para)
 
 
-state 22
+State 22
 
    10 func_decl: type ID '(' paras ')' . comp_stmt
 
@@ -395,7 +395,7 @@ state 22
     comp_stmt  go to state 27
 
 
-state 23
+State 23
 
    13 para_list: para_list ',' . para
 
@@ -406,21 +406,21 @@ state 23
     para  go to state 28
 
 
-state 24
+State 24
 
     7 var_decl: type ID '[' NUM ']' . ';'
 
     ';'  shift, and go to state 29
 
 
-state 25
+State 25
 
    16 para: type ID '[' . ']'
 
     ']'  shift, and go to state 30
 
 
-state 26
+State 26
 
    17 comp_stmt: '{' . local_decls stmt_list '}'
 
@@ -429,35 +429,35 @@ state 26
     local_decls  go to state 31
 
 
-state 27
+State 27
 
    10 func_decl: type ID '(' paras ')' comp_stmt .
 
     $default  reduce using rule 10 (func_decl)
 
 
-state 28
+State 28
 
    13 para_list: para_list ',' para .
 
     $default  reduce using rule 13 (para_list)
 
 
-state 29
+State 29
 
     7 var_decl: type ID '[' NUM ']' ';' .
 
     $default  reduce using rule 7 (var_decl)
 
 
-state 30
+State 30
 
    16 para: type ID '[' ']' .
 
     $default  reduce using rule 16 (para)
 
 
-state 31
+State 31
 
    17 comp_stmt: '{' local_decls . stmt_list '}'
    18 local_decls: local_decls . var_decl
@@ -472,14 +472,14 @@ state 31
     stmt_list  go to state 34
 
 
-state 32
+State 32
 
    18 local_decls: local_decls var_decl .
 
     $default  reduce using rule 18 (local_decls)
 
 
-state 33
+State 33
 
     6 var_decl: type . ID ';'
     7         | type . ID '[' NUM ']' ';'
@@ -487,7 +487,7 @@ state 33
     ID  shift, and go to state 35
 
 
-state 34
+State 34
 
    17 comp_stmt: '{' local_decls stmt_list . '}'
    20 stmt_list: stmt_list . stmt
@@ -517,7 +517,7 @@ state 34
     call         go to state 56
 
 
-state 35
+State 35
 
     6 var_decl: type ID . ';'
     7         | type ID . '[' NUM ']' ';'
@@ -526,14 +526,14 @@ state 35
     ';'  shift, and go to state 14
 
 
-state 36
+State 36
 
    17 comp_stmt: '{' local_decls stmt_list '}' .
 
     $default  reduce using rule 17 (comp_stmt)
 
 
-state 37
+State 37
 
    54 factor: '(' . expr ')'
 
@@ -550,14 +550,14 @@ state 37
     call         go to state 56
 
 
-state 38
+State 38
 
    28 expr_stmt: ';' .
 
     $default  reduce using rule 28 (expr_stmt)
 
 
-state 39
+State 39
 
    36 var: ID .
    37    | ID . '[' expr ']'
@@ -569,14 +569,14 @@ state 39
     $default  reduce using rule 36 (var)
 
 
-state 40
+State 40
 
    57 factor: NUM .
 
     $default  reduce using rule 57 (factor)
 
 
-state 41
+State 41
 
    29 selc_stmt: IF . '(' expr ')' stmt
    30          | IF . '(' expr ')' stmt ELSE stmt
@@ -584,14 +584,14 @@ state 41
     '('  shift, and go to state 60
 
 
-state 42
+State 42
 
    31 iter_stmt: WHILE . '(' expr ')' stmt
 
     '('  shift, and go to state 61
 
 
-state 43
+State 43
 
    32 retn_stmt: RETURN . expr ';'
    33          | RETURN . ';'
@@ -610,56 +610,56 @@ state 43
     call         go to state 56
 
 
-state 44
+State 44
 
    23 stmt: comp_stmt .
 
     $default  reduce using rule 23 (stmt)
 
 
-state 45
+State 45
 
    20 stmt_list: stmt_list stmt .
 
     $default  reduce using rule 20 (stmt_list)
 
 
-state 46
+State 46
 
    22 stmt: expr_stmt .
 
     $default  reduce using rule 22 (stmt)
 
 
-state 47
+State 47
 
    24 stmt: selc_stmt .
 
     $default  reduce using rule 24 (stmt)
 
 
-state 48
+State 48
 
    25 stmt: iter_stmt .
 
     $default  reduce using rule 25 (stmt)
 
 
-state 49
+State 49
 
    26 stmt: retn_stmt .
 
     $default  reduce using rule 26 (stmt)
 
 
-state 50
+State 50
 
    27 expr_stmt: expr . ';'
 
     ';'  shift, and go to state 64
 
 
-state 51
+State 51
 
    34 expr: var . '=' expr
    55 factor: var .
@@ -669,14 +669,14 @@ state 51
     $default  reduce using rule 55 (factor)
 
 
-state 52
+State 52
 
    35 expr: simple_expr .
 
     $default  reduce using rule 35 (expr)
 
 
-state 53
+State 53
 
    38 simple_expr: add_expr . relop add_expr
    39            | add_expr .
@@ -697,7 +697,7 @@ state 53
     addop  go to state 75
 
 
-state 54
+State 54
 
    47 add_expr: term .
    50 term: term . mulop factor
@@ -710,28 +710,28 @@ state 54
     mulop  go to state 78
 
 
-state 55
+State 55
 
    51 term: factor .
 
     $default  reduce using rule 51 (term)
 
 
-state 56
+State 56
 
    56 factor: call .
 
     $default  reduce using rule 56 (factor)
 
 
-state 57
+State 57
 
    54 factor: '(' expr . ')'
 
     ')'  shift, and go to state 79
 
 
-state 58
+State 58
 
    58 call: ID '(' . args ')'
 
@@ -752,7 +752,7 @@ state 58
     arg_list     go to state 82
 
 
-state 59
+State 59
 
    37 var: ID '[' . expr ']'
 
@@ -769,7 +769,7 @@ state 59
     call         go to state 56
 
 
-state 60
+State 60
 
    29 selc_stmt: IF '(' . expr ')' stmt
    30          | IF '(' . expr ')' stmt ELSE stmt
@@ -787,7 +787,7 @@ state 60
     call         go to state 56
 
 
-state 61
+State 61
 
    31 iter_stmt: WHILE '(' . expr ')' stmt
 
@@ -804,28 +804,28 @@ state 61
     call         go to state 56
 
 
-state 62
+State 62
 
    33 retn_stmt: RETURN ';' .
 
     $default  reduce using rule 33 (retn_stmt)
 
 
-state 63
+State 63
 
    32 retn_stmt: RETURN expr . ';'
 
     ';'  shift, and go to state 86
 
 
-state 64
+State 64
 
    27 expr_stmt: expr ';' .
 
     $default  reduce using rule 27 (expr_stmt)
 
 
-state 65
+State 65
 
    34 expr: var '=' . expr
 
@@ -842,63 +842,63 @@ state 65
     call         go to state 56
 
 
-state 66
+State 66
 
    48 addop: '+' .
 
     $default  reduce using rule 48 (addop)
 
 
-state 67
+State 67
 
    49 addop: '-' .
 
     $default  reduce using rule 49 (addop)
 
 
-state 68
+State 68
 
    42 relop: LE .
 
     $default  reduce using rule 42 (relop)
 
 
-state 69
+State 69
 
    43 relop: LEQ .
 
     $default  reduce using rule 43 (relop)
 
 
-state 70
+State 70
 
    40 relop: GE .
 
     $default  reduce using rule 40 (relop)
 
 
-state 71
+State 71
 
    41 relop: GEQ .
 
     $default  reduce using rule 41 (relop)
 
 
-state 72
+State 72
 
    44 relop: EQ .
 
     $default  reduce using rule 44 (relop)
 
 
-state 73
+State 73
 
    45 relop: NEQ .
 
     $default  reduce using rule 45 (relop)
 
 
-state 74
+State 74
 
    38 simple_expr: add_expr relop . add_expr
 
@@ -913,7 +913,7 @@ state 74
     call      go to state 56
 
 
-state 75
+State 75
 
    46 add_expr: add_expr addop . term
 
@@ -927,21 +927,21 @@ state 75
     call    go to state 56
 
 
-state 76
+State 76
 
    52 mulop: '*' .
 
     $default  reduce using rule 52 (mulop)
 
 
-state 77
+State 77
 
    53 mulop: '/' .
 
     $default  reduce using rule 53 (mulop)
 
 
-state 78
+State 78
 
    50 term: term mulop . factor
 
@@ -954,28 +954,28 @@ state 78
     call    go to state 56
 
 
-state 79
+State 79
 
    54 factor: '(' expr ')' .
 
     $default  reduce using rule 54 (factor)
 
 
-state 80
+State 80
 
    62 arg_list: expr .
 
     $default  reduce using rule 62 (arg_list)
 
 
-state 81
+State 81
 
    58 call: ID '(' args . ')'
 
     ')'  shift, and go to state 92
 
 
-state 82
+State 82
 
    59 args: arg_list .
    61 arg_list: arg_list . ',' expr
@@ -985,14 +985,14 @@ state 82
     $default  reduce using rule 59 (args)
 
 
-state 83
+State 83
 
    37 var: ID '[' expr . ']'
 
     ']'  shift, and go to state 94
 
 
-state 84
+State 84
 
    29 selc_stmt: IF '(' expr . ')' stmt
    30          | IF '(' expr . ')' stmt ELSE stmt
@@ -1000,35 +1000,35 @@ state 84
     ')'  shift, and go to state 95
 
 
-state 85
+State 85
 
    31 iter_stmt: WHILE '(' expr . ')' stmt
 
     ')'  shift, and go to state 96
 
 
-state 86
+State 86
 
    32 retn_stmt: RETURN expr ';' .
 
     $default  reduce using rule 32 (retn_stmt)
 
 
-state 87
+State 87
 
    34 expr: var '=' expr .
 
     $default  reduce using rule 34 (expr)
 
 
-state 88
+State 88
 
    55 factor: var .
 
     $default  reduce using rule 55 (factor)
 
 
-state 89
+State 89
 
    38 simple_expr: add_expr relop add_expr .
    46 add_expr: add_expr . addop term
@@ -1041,7 +1041,7 @@ state 89
     addop  go to state 75
 
 
-state 90
+State 90
 
    46 add_expr: add_expr addop term .
    50 term: term . mulop factor
@@ -1054,21 +1054,21 @@ state 90
     mulop  go to state 78
 
 
-state 91
+State 91
 
    50 term: term mulop factor .
 
     $default  reduce using rule 50 (term)
 
 
-state 92
+State 92
 
    58 call: ID '(' args ')' .
 
     $default  reduce using rule 58 (call)
 
 
-state 93
+State 93
 
    61 arg_list: arg_list ',' . expr
 
@@ -1085,14 +1085,14 @@ state 93
     call         go to state 56
 
 
-state 94
+State 94
 
    37 var: ID '[' expr ']' .
 
     $default  reduce using rule 37 (var)
 
 
-state 95
+State 95
 
    29 selc_stmt: IF '(' expr ')' . stmt
    30          | IF '(' expr ')' . stmt ELSE stmt
@@ -1121,7 +1121,7 @@ state 95
     call         go to state 56
 
 
-state 96
+State 96
 
    31 iter_stmt: WHILE '(' expr ')' . stmt
 
@@ -1149,14 +1149,14 @@ state 96
     call         go to state 56
 
 
-state 97
+State 97
 
    61 arg_list: arg_list ',' expr .
 
     $default  reduce using rule 61 (arg_list)
 
 
-state 98
+State 98
 
    29 selc_stmt: IF '(' expr ')' stmt .
    30          | IF '(' expr ')' stmt . ELSE stmt
@@ -1167,14 +1167,14 @@ state 98
     $default  reduce using rule 29 (selc_stmt)
 
 
-state 99
+State 99
 
    31 iter_stmt: WHILE '(' expr ')' stmt .
 
     $default  reduce using rule 31 (iter_stmt)
 
 
-state 100
+State 100
 
    30 selc_stmt: IF '(' expr ')' stmt ELSE . stmt
 
@@ -1202,7 +1202,7 @@ state 100
     call         go to state 56
 
 
-state 101
+State 101
 
    30 selc_stmt: IF '(' expr ')' stmt ELSE stmt .
 

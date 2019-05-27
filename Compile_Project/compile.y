@@ -194,8 +194,7 @@ local_decls
 	}
 	| 
 	{
-		p = NULL;
-		$$ = p;
+		$$ = NULL;
 	}
 	;
 	
@@ -211,8 +210,7 @@ stmt_list
 	}
 	| 
 	{
-		p = NULL; 
-		$$ = p;
+		$$ = NULL;
 	}
 	;
 	
@@ -459,7 +457,8 @@ call
 	{
 		p = newNode("call", $1->No_Line);
 		insert(p, $4);
-		insert(p, $3);
+		if ($3)
+			insert(p, $3);
 		insert(p, $2);
 		insert(p, $1);
 		$$ = p;
@@ -469,7 +468,7 @@ call
  /* 28 */
 args
 	: arg_list	{ p = newNode("args", $1->No_Line); insert(p, $1); $$ = p;}
-	| 	{ /* Do nothing */ }
+	| 	{ $$ = NULL; }
 	;
 
  /* 29 */

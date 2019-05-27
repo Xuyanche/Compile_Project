@@ -49,6 +49,14 @@ whitespace [ \t\r]+
 
  /* Symbol Token Specification */
 
+  /* Parentheses */
+"("		{ yylval.token_p = newNode(yytext, nr_line);  return '(';}
+")"		{ yylval.token_p = newNode(yytext, nr_line);  return ')';}
+"["		{ yylval.token_p = newNode(yytext, nr_line);  return '[';}
+"]"		{ yylval.token_p = newNode(yytext, nr_line);  return ']';}
+"{"		{ yylval.token_p = newNode(yytext, nr_line);  return '{';}
+"}"		{ yylval.token_p = newNode(yytext, nr_line);  return '}';}
+
  /* Identifier and numbers */
 {letter}({letter}|{digit})*		{ yylval.token_p = newNode(yytext, nr_line);   return(ID); }
 {digit}+	{ yylval.token_p = newNode(yytext, nr_line);   return(NUM); }
@@ -79,14 +87,6 @@ whitespace [ \t\r]+
 
  /* Comma */
 ","		{ yylval.token_p = newNode(yytext, nr_line);  return ',';}
-
- /* Parentheses */
-"("		{ yylval.token_p = newNode(yytext, nr_line);  return '(';}
-")"		{ yylval.token_p = newNode(yytext, nr_line);  return ')';}
-"["		{ yylval.token_p = newNode(yytext, nr_line);  return '[';}
-"]"		{ yylval.token_p = newNode(yytext, nr_line);  return ']';}
-"{"		{ yylval.token_p = newNode(yytext, nr_line);  return '{';}
-"}"		{ yylval.token_p = newNode(yytext, nr_line);  return '}';}
 
  /* To be added:
 	"&&"	{ yylval.token_p = newNode(yytext, nr_line);  return AND;}
