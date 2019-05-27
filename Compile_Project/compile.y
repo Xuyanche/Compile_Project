@@ -19,9 +19,9 @@ extern int column;
 %union{
          Node *token_p;
 }
-%type <token_p> program declaration_list declaration extvars spec type
-%type <token_p> var func paras para args defs def dec
-%type <token_p>  assignop unaryop init 
+%type <token_p> program declaration_list declaration var_decl func_decl
+%type <token_p> type var func stmtblock paras para_list para
+%type <token_p> local_decls stmt_list
 %type <token_p> exp primexp unaryexp leftexp relationexp equalexp addexp multipexp 
 %type <token_p> stmtblock stmts stmt jstmt assignstmt assign loopstmt selstmt call
 %token <token_p> '+' '-' '*' '/' ',' '=' '{' '}' '(' ')' '[' ']' ';'
@@ -31,41 +31,68 @@ extern int column;
 %start program
 %%
 
+ /* 1 */
 program
 	:declaration_list {p = newNode("program", $1->No_Line); insert(p, $1); $$ = p;}
 	;
-	
+
+ /* 2 */
 declaration_list
 	: declaration_list declaration
-		{ p = newNode("declaration_list", $1->No_Line);
-		  insert(p, $2); 
-		  insert(p, $1);
-		  $$ = p;
-		}
+	{ 
+		p = newNode("declaration_list", $1->No_Line);
+		insert(p, $2); 
+		insert(p, $1);
+		$$ = p;
+	}
 	| declaration	
-		{	p = newNode("declaration_list", $1->No_Line); 
-			insert(p, $1); 
-			$$ = p;
-		}
+	{	
+		p = newNode("declaration_list", $1->No_Line); 
+		insert(p, $1); 
+		$$ = p;
+	}
 	;
 
+ /* 3 */
 declaration
-	: type var ';'	
-		{	p = newNode("declaration", $1->No_Line);
-			insert(p, $3);
-			insert(p, $2);
-			insert(p, $1);
-			$$ = p;
-		}
-	| type func stmtblock	
-		{	p = newNode("declaration", $1->No_Line);
-			insert(p, $3);
-			insert(p, $2);
-			insert(p, $1);
-			$$ = p;
-		}
+	: var_decl
+	{	
+		p = newNode("declaration", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
+	| func_decl
+	{	
+		p = newNode("declaration", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
+ /* 4 */
+var_decl
+	: type ID ';'	
+	{	
+		p = newNode("var_decl", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| type ID '[' NUM ']' ';'
+	{
+		p = newNode("var_decl", $1->No_Line);
+		insert(p, $6);
+		insert(p, $5);
+		insert(p, $4);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	;
+
+ /* 5 */
 type
 	: VOID			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	| INT			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
@@ -74,109 +101,192 @@ type
 	| FLOAT			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
 	*/
 	;
-	
-var
-	: ID				
-		{	p = newNode("extvars", $1->No_Line);
-			insert(p, $1);
-			$$ = p;
-		}
-	| ID '[' NUM ']'	
-		{	p = newNode("extvars", $1->No_Line);
-			insert(p, $4);
-			insert(p, $3);
-			insert(p, $2);
-			insert(p, $1);
-			$$ = p;
-		}
-	;
 
-var
-	: IDENTIFIER	{p = newNode("var", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+ /* 6 */
+func_decl
+	: type func comp_stmt	
+	{	
+		p = newNode("func_decl", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
-
 func
-	: IDENTIFIER '(' paras ')'	{p = newNode("func", $1->No_Line, $1->col); 
-								insert(p, $1);
-								insert(p, $2);
-								insert(p, $3);
-								insert(p, $4);
-								$$ = p;}
+	: ID '(' paras ')'
+	{	
+		p = newNode("func", $1->No_Line); 
+		insert(p, $4);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
+ /* 7 */
 paras
-	: para ',' paras	{p = newNode("paras", $1->No_Line, $1->col);
-						insert(p, $1); 
-						insert(p, $2); 
-						insert(p, $3); 
-						$$ = p;}
-	| para		{p = newNode("paras", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	: para_list
+	{	
+		p = newNode("paras", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
+	| VOID
+	{	
+		p = newNode("paras", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
+ /* 8 */
+para_list
+	: para-list ',' para
+	{	
+		p = newNode('para-list', $1->No_Line);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| para
+	{	
+		p = newNode('para_list', $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
+	;
+ 
+ /* 9 */
 para
-	: spec var 	{p = newNode("para", $1->No_Line, $1->col);
-				insert(p, $1);
-				insert(p, $2);
-				$$ = p;}
+	: type ID 	
+	{	
+		p = newNode("para", $1->No_Line);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| type ID '[' ']'
+	{	
+		p = newNode("para", $1->No_Line);
+		insert(p, $4);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	;
+
+ /* 10 */
+comp_stmt
+	: '{' local_decls stmt_list '}'	
+	{	
+		p = newNode("comp_stmt", $1->No_Line);
+		insert(p, $4);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	;
+ 
+ /* 11 */
+local_decls
+	: local_decls var_decl	
+	{
+		p = newNode("local_decls", $1->No_Line); 
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| %empty
+	{
+		/* Do nothing */
+	}
 	;
 	
-	
-stmtblock
-	: '{' defs stmts '}'	{p = newNode("stmtblock", $1->No_Line, $1->col);
-							insert(p, $1);
-							insert(p, $2);
-							insert(p, $3);
-							insert(p, $4);
-							$$ = p;}
+ /* 12 */
+stmt_list
+	: stmt_list stmt
+	{
+		p = newNode("stmt_list", $1->No_Line); 
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| %empty
+	{
+		/* Do nothing */
+	}
 	;
 	
-stmts
-	: stmt stmts	{p = newNode("stmts", $1->No_Line, $1->col); 
-					insert(p, $1); 
-					insert(p, $2); 
-					$$ = p;}
-	| 	{$$ = NULL;}
-	;
-	
+ /* 13 */
 stmt
-	: assignstmt	{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| stmtblock	{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| selstmt	{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| loopstmt	{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| jstmt		{p = newNode("stmt", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+	: expr_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
+	| comp_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
+	| selc_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
+	| iter_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
+	| retn_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
 	;	
 
-
-
-selstmt
-	: IF '(' exp ')' stmt	{p = newNode("selstmt", $1->No_Line, $1->col);
-							insert(p, $1); 
-							insert(p, $2); 
-							insert(p, $3); 
-							insert(p, $4); 
-							insert(p, $5); 
-							$$ = p;}
-	| IF '(' exp ')' stmt ELSE stmt	{p = newNode("selstmt", $1->No_Line, $1->col);
-										insert(p, $1);
-										insert(p, $2);
-										insert(p, $3);
-										insert(p, $4);
-										insert(p, $5);
-										insert(p, $6);
-										insert(p, $7);
-										$$ = p;}
+ /* 14 */
+expr_stmt
+	: expr ';'
+	{
+		p = newNode("expr_stmt", $1->No_Line); 
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| ';'
+	{
+		p = newNode("expr_stmt", $1->No_Line); 
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
-
+ /* 15 */
+selc_stmt
+	: IF '(' exp ')' stmt	
+	{	
+		p = newNode("selc_stmt", $1->No_Line);
+		insert(p, $5); 
+		insert(p, $4); 
+		insert(p, $3); 
+		insert(p, $2); 
+		insert(p, $1); 
+		$$ = p;
+	}
+	| IF '(' exp ')' stmt ELSE stmt	
+	{	
+		p = newNode("selc_stmt", $1->No_Line);
+		insert(p, $7);
+		insert(p, $6);
+		insert(p, $5);
+		insert(p, $4);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	;
 	
-loopstmt
-	: WHILE '(' exp ')' stmt	{p = newNode("loopstmt", $1->No_Line, $1->col);
-									insert(p, $1);
-									insert(p, $2);
-									insert(p, $3);
-									insert(p, $4);
-									insert(p, $5);
-									$$ = p;}
+ /* 16 */
+iter_stmt
+	: WHILE '(' exp ')' stmt	
+	{
+		p = newNode("iter_stmt", $1->No_Line);
+		insert(p, $5);
+		insert(p, $4);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	/*
 	| FOR '(' exp ';' exp ';' exp ')' stmt	{p = newNode("loopstmt", $1->No_Line, $1->col);
 													insert(p, $1); 
 													insert(p, $2); 
@@ -197,197 +307,195 @@ loopstmt
 											insert(p, $6); 
 											insert(p, $7); 
 											$$ = p;}
+	*/
 	;
 
-assignstmt
-	: assign ';' {p = newNode("assignstmt", $1->No_Line, $1->col);
-							insert(p, $1);
-							insert(p, $2);
-							$$ = p;}
+ /* 17 */
+retn_stmt
+	: RETURN exp ';'	
+	{	p = newNode("retn_stmt", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2); 
+		insert(p, $1); 
+		$$ = p;
+	}
+	| RETURN ';'
+	{
+		p = newNode("retn_stmt", $1->No_Line);
+		insert(p, $2);
+		insert(p, $1);  
+		$$ = p;
+	}
+	/*
+	| BREAK ';'		{p = newNode("jstmt", $1->No_Line, $1->col); insert(p, $1); insert(p, $2); $$ = p;}
+	*/
 	;
 
-
-assign
-	: var assignop assign	{p = newNode("assign", $1->No_Line, $1->col);
-							insert(p, $1);
-							insert(p, $2);
-							insert(p, $3);
-							$$ = p;}
-	| exp	{p = newNode("assign", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+ /* 18 */
+expr
+	: var '=' expr
+	{
+		p = newNode("expr", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2); 
+		insert(p, $1); 
+		$$ = p;
+	}
+	| simple_expr
+	{
+		p = newNode("expr", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
-
-jstmt
-	: BREAK ';'		{p = newNode("jstmt", $1->No_Line, $1->col); insert(p, $1); insert(p, $2); $$ = p;}
-	| RETURN exp ';'	{p = newNode("jstmt", $1->No_Line, $1->col);
-						insert(p, $1);
-						insert(p, $2); 
-						insert(p, $3); 
-						$$ = p;}
+ /* 19 */
+var
+	: ID				
+	{	
+		p = newNode("vars", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
+	| ID '[' expr ']'	
+	{	
+		p = newNode("var", $1->No_Line);
+		insert(p, $4);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
-
-	
-defs
-	: def defs	{p = newNode("defs", $1->No_Line, $1->col); 
-				insert(p, $1);
-				insert(p, $2);
-				$$ = p;}
-	|	{$$ = NULL;}
+ /* 20 */
+simple_expr
+	: add_expr relop add_expr
+	{
+		p = newNode("simple_expr", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| add_expr
+	{
+		p = newNode("simple_expr", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
-def
-	: spec extvars ';' {p = newNode("def", $1->No_Line, $1->col);
-					insert(p, $1);
-					insert(p, $2);
-					insert(p, $3);
-					$$ = p;}
+ /* 21 */
+relop
+	: GE	{ p = newNode("relop"); insert(p, $1); $$ = p;}
+	: GEQ	{ p = newNode("relop"); insert(p, $1); $$ = p;}
+	: LE	{ p = newNode("relop"); insert(p, $1); $$ = p;}
+	: LEQ	{ p = newNode("relop"); insert(p, $1); $$ = p;}
+	: EQ	{ p = newNode("relop"); insert(p, $1); $$ = p;}
+	: NEQ	{ p = newNode("relop"); insert(p, $1); $$ = p;}
 	;
 
-exp
-	: relationexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| equalexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| addexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| multipexp	{p = newNode("exp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	|	{p = NULL;}
+ /* 22 */
+add_expr
+	: add_expr addop term
+	{
+		p = newNode("add_expr", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| term
+	{
+		p = newNode("add_expr", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
-primexp
-	: IDENTIFIER	{p = newNode("primexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| CONSTANT	{p = newNode("primexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| STRING_LITERAL	{p = newNode("primexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| '(' exp ')'	{p = newNode("primexp", $1->No_Line, $1->col);
-					insert(p, $1);
-					insert(p, $2);
-					insert(p, $3);
-					$$ = p;}
-	| call 	{p = newNode("primexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+ /* 23 */
+addop
+	: '+'	{ p = newNode("addop"); insert(p, $1); $$ = p;}
+	: '-'	{ p = newNode("addop"); insert(p, $1); $$ = p;}
 	;
 
-unaryop
-	: '+'	{p = newNode("unaryop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| '-'	{p = newNode("unaryop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| '*'	{p = newNode("unaryop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| '!'	{p = newNode("unaryop", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
+ /* 24 */
+term
+	: term mulop factor
+	{
+		p = newNode("term", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| factor
+	{
+		p = newNode("term", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
-unaryexp
-	: unaryop unaryexp	{p = newNode("unaryexp", $1->No_Line, $1->col);
-						insert(p, $1); 
-						insert(p, $2); 
-						$$ = p;}
-	| leftexp	{p = newNode("unaryexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}	
+ /* 25 */
+mulop
+	: '*'	{ p = newNode("mulop"); insert(p, $1); $$ = p;}
+	: '/'	{ p = newNode("mulop"); insert(p, $1); $$ = p;}
 	;
 
-
-leftexp
-	: primexp	{p = newNode("leftexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| leftexp '[' ']'	{p = newNode("leftexp", $1->No_Line, $1->col); 
-						insert(p, $1);
-						insert(p, $2);
-						insert(p, $3);
-						$$ = p;}
-	| leftexp '(' ')'	{p = newNode("leftexp", $1->No_Line, $1->col); 
-						insert(p, $1); 
-						insert(p, $2); 
-						insert(p, $3); 
-						$$ = p;}
-	| leftexp '(' args ')'	{p = newNode("leftexp", $1->No_Line, $1->col);
-							insert(p, $1); 
-							insert(p, $2); 
-							insert(p, $3); 
-							insert(p, $4); 
-							$$ = p;}					
+ /* 26 */
+factor
+	: '(' expr ')'
+	{
+		p = newNode("factor", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| var	{ p = newNode("factor"); insert(p, $1); $$ = p;}
+	| call	{ p = newNode("factor"); insert(p, $1); $$ = p;}
+	| NUM	{ p = newNode("factor"); insert(p, $1); $$ = p;}
 	;
 
-args
-	: exp ',' args	{p = newNode("args", $1->No_Line, $1->col); 
-					insert(p, $1); 
-					insert(p, $2); 
-					insert(p, $3); 
-					$$ = p;}
-	| exp	{p = newNode("args", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	;
-	
-relationexp
-	: unaryexp	{p = newNode("relationexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	|  relationexp '<' addexp	{p = newNode("relationexp", $1->No_Line, $1->col); 
-								insert(p, $1); 
-								insert(p, $2); 
-								insert(p, $3); 
-								$$ = p;}
-	| relationexp '>' addexp 	{p = newNode("relationexp", $1->No_Line, $1->col); 
-								insert(p, $1); 
-								insert(p, $2); 
-								insert(p, $3); 
-								$$ = p;}
-	| relationexp LE addexp	{p = newNode("relationexp", $1->No_Line, $1->col);
-								insert(p, $1); 
-								insert(p, $2); 
-								insert(p, $3); 
-								$$ = p;}
-	| relationexp GE addexp	{p = newNode("relationexp", $1->No_Line, $1->col); 
-								insert(p, $1); 
-								insert(p, $2); 
-								insert(p, $3); 
-								$$ = p;}
-	;
-
-	
-equalexp
-	: equalexp EQ addexp	{p = newNode("equalexp", $1->No_Line, $1->col);
-								insert(p, $1); 
-								insert(p, $2); 
-								insert(p, $3); 
-								$$ = p;}
-	| equalexp NE addexp	{p = newNode("equalexp", $1->No_Line, $1->col); 
-								insert(p, $1);
-								insert(p, $2);
-								insert(p, $3);
-								$$ = p;}
-	| unaryexp	{p = newNode("addexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	;
-
-addexp
-	: unaryexp	{p = newNode("addexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| addexp '+' multipexp	{p = newNode("addexp", $1->No_Line, $1->col);
-							insert(p, $1); 
-							insert(p, $2);
-							insert(p, $3);
-							$$ = p;}
-	| addexp '-' multipexp	{p = newNode("addexp", $1->No_Line, $1->col);
-							insert(p, $1); 
-							insert(p, $2); 
-							insert(p, $3); 
-							$$ = p;}
-	;
-
-multipexp
-	: unaryexp	{p = newNode("multipexp", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| multipexp '*' unaryexp	{p = newNode("multipexp", $1->No_Line, $1->col); 
-								insert(p, $1); 
-								insert(p, $2); 
-								insert(p, $3); 
-								$$ = p;}
-	| multipexp '/' unaryexp	{p = newNode("multipexp", $1->No_Line, $1->col); 
-								insert(p, $1);
-								insert(p, $2);
-								insert(p, $3);
-								$$ = p;}
-	;
-
-
-
+ /* 27 */
 call
-	: IDENTIFIER '(' args ')' {p = newNode("call", $1->No_Line, $1->col); 
-								insert(p, $1);
-								insert(p, $2);
-								insert(p, $3);
-								insert(p, $4);
-								$$ = p;}
+	: ID '(' args ')'
+	{
+		p = newNode("call", $1->No_Line);
+		insert(p, $4);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
 	;
 
+ /* 28 */
+args
+	: arg_list	{ p = newNode("args"); insert(p, $1); $$ = p;}
+	| %empty	{ /* Do nothing */ }
+	;
+
+ /* 29 */
+arg_list
+	: arg_list ',' expr
+	{
+		p = newNode("arg_list", $1->No_Line);
+		insert(p, $3);
+		insert(p, $2);
+		insert(p, $1);
+		$$ = p;
+	}
+	| expr
+	{
+		p = newNode("arg_list", $1->No_Line);
+		insert(p, $1);
+		$$ = p;
+	}
 %%
+
 
 void yyerror(char* s)
 {    
