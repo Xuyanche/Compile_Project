@@ -5,20 +5,21 @@
 #include <string.h>
 #pragma warning(disable : 4996)
 
+
+/* Syntax tree node */
 typedef struct STNode STNode;
-typedef struct listnode listnode;
 struct STNode
 {
 	STNode * brother;
 	STNode * child;
 	STNode * father;
 	int No_Child;
-	int col;
 	int No_Line;
 	char name[20];
 	int IsBegin;
 };
-
+/* Linked list */
+typedef struct listnode listnode;
 struct listnode
 {
 	int data;
@@ -55,14 +56,12 @@ STNode* newNode(char* node_name, int line)
 	p->father = NULL;
 	p->No_Line = line;
 	p->No_Child = 0;
-	p->col = 0;
 	p->IsBegin = 0;
 	return p;
 }
 
 void print(STNode* node, int level)
 {
-	int i;
 	STNode *father = node->father;
 	listnode *tail = NULL;
 	if (father)

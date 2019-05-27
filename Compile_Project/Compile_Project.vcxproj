@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="node.h" />
     <ClInclude Include="parser.h" />
+    <ClInclude Include="symtab.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="parser.c" />

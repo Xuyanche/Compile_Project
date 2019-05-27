@@ -278,28 +278,6 @@ iter_stmt
 		insert(p, $1);
 		$$ = p;
 	}
-	/*
-	| FOR '(' exp ';' exp ';' exp ')' stmt	{p = newNode("loopstmt", $1->No_Line, $1->col);
-													insert(p, $1); 
-													insert(p, $2); 
-													insert(p, $3); 
-													insert(p, $4); 
-													insert(p, $5); 
-													insert(p, $6); 
-													insert(p, $7); 
-													insert(p, $8); 
-													insert(p, $9); 
-													$$ = p;}
-	| DO stmt WHILE '(' exp ')' ';'	{p = newNode("loopstmt", $1->No_Line, $1->col);
-											insert(p, $1); 
-											insert(p, $2); 
-											insert(p, $3); 
-											insert(p, $4); 
-											insert(p, $5); 
-											insert(p, $6); 
-											insert(p, $7); 
-											$$ = p;}
-	*/
 	;
 
  /* 17 */
@@ -318,9 +296,6 @@ retn_stmt
 		insert(p, $1);  
 		$$ = p;
 	}
-	/*
-	| BREAK ';'		{p = newNode("jstmt", $1->No_Line, $1->col); insert(p, $1); insert(p, $2); $$ = p;}
-	*/
 	;
 
  /* 18 */
