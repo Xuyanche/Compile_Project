@@ -1,4 +1,4 @@
-State 98 conflicts: 1 shift/reduce
+State 97 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -13,121 +13,122 @@ Grammar
     4 declaration: var_decl
     5            | func_decl
 
-    6 var_decl: type ID ';'
-    7         | type ID '[' NUM ']' ';'
+    6 var_decl: type ID SEMI
+    7         | type ID LBR NUM RBR SEMI
 
     8 type: VOID
     9     | INT
 
-   10 func_decl: type ID '(' paras ')' comp_stmt
+   10 func_decl: type ID LPR paras RPR comp_stmt
 
    11 paras: para_list
    12      | VOID
+   13      | /* empty */
 
-   13 para_list: para_list ',' para
-   14          | para
+   14 para_list: para_list COM para
+   15          | para
 
-   15 para: type ID
-   16     | type ID '[' ']'
+   16 para: type ID
+   17     | type ID LBR RBR
 
-   17 comp_stmt: '{' local_decls stmt_list '}'
+   18 comp_stmt: LCR local_decls stmt_list RCR
 
-   18 local_decls: local_decls var_decl
-   19            | /* empty */
+   19 local_decls: local_decls var_decl
+   20            | /* empty */
 
-   20 stmt_list: stmt_list stmt
-   21          | /* empty */
+   21 stmt_list: stmt_list stmt
+   22          | /* empty */
 
-   22 stmt: expr_stmt
-   23     | comp_stmt
-   24     | selc_stmt
-   25     | iter_stmt
-   26     | retn_stmt
+   23 stmt: expr_stmt
+   24     | comp_stmt
+   25     | selc_stmt
+   26     | iter_stmt
+   27     | retn_stmt
 
-   27 expr_stmt: expr ';'
-   28          | ';'
+   28 expr_stmt: expr SEMI
+   29          | SEMI
 
-   29 selc_stmt: IF '(' expr ')' stmt
-   30          | IF '(' expr ')' stmt ELSE stmt
+   30 selc_stmt: IF LPR expr RPR stmt
+   31          | IF LPR expr RPR stmt ELSE stmt
 
-   31 iter_stmt: WHILE '(' expr ')' stmt
+   32 iter_stmt: WHILE LPR expr RPR stmt
 
-   32 retn_stmt: RETURN expr ';'
-   33          | RETURN ';'
+   33 retn_stmt: RETURN expr SEMI
+   34          | RETURN SEMI
 
-   34 expr: var '=' expr
-   35     | simple_expr
+   35 expr: var ASN expr
+   36     | simple_expr
 
-   36 var: ID
-   37    | ID '[' expr ']'
+   37 var: ID
+   38    | ID LBR expr RBR
 
-   38 simple_expr: add_expr relop add_expr
-   39            | add_expr
+   39 simple_expr: add_expr relop add_expr
+   40            | add_expr
 
-   40 relop: GE
-   41      | GEQ
-   42      | LE
-   43      | LEQ
-   44      | EQ
-   45      | NEQ
+   41 relop: GE
+   42      | GEQ
+   43      | LE
+   44      | LEQ
+   45      | EQ
+   46      | NEQ
 
-   46 add_expr: add_expr addop term
-   47         | term
+   47 add_expr: add_expr addop term
+   48         | term
 
-   48 addop: '+'
-   49      | '-'
+   49 addop: ADD
+   50      | SUB
 
-   50 term: term mulop factor
-   51     | factor
+   51 term: term mulop factor
+   52     | factor
 
-   52 mulop: '*'
-   53      | '/'
+   53 mulop: MUL
+   54      | DIV
 
-   54 factor: '(' expr ')'
-   55       | var
-   56       | call
-   57       | NUM
+   55 factor: LPR expr RPR
+   56       | var
+   57       | call
+   58       | NUM
 
-   58 call: ID '(' args ')'
+   59 call: ID LPR args RPR
 
-   59 args: arg_list
-   60     | /* empty */
+   60 args: arg_list
+   61     | /* empty */
 
-   61 arg_list: arg_list ',' expr
-   62         | expr
+   62 arg_list: arg_list COM expr
+   63         | expr
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 10 29 30 31 54 58
-')' (41) 10 29 30 31 54 58
-'*' (42) 52
-'+' (43) 48
-',' (44) 13 61
-'-' (45) 49
-'/' (47) 53
-';' (59) 6 7 27 28 32 33
-'=' (61) 34
-'[' (91) 7 16 37
-']' (93) 7 16 37
-'{' (123) 17
-'}' (125) 17
 error (256)
-ID (258) 6 7 10 15 16 36 37 58
-NUM (259) 7 57
-INT (260) 9
-VOID (261) 8 12
-IF (262) 29 30
-ELSE (263) 30
-WHILE (264) 31
-RETURN (265) 32 33
-LE (266) 42
-LEQ (267) 43
-GE (268) 40
-GEQ (269) 41
-EQ (270) 44
-NEQ (271) 45
+ADD (258) 49
+SUB (259) 50
+MUL (260) 53
+DIV (261) 54
+COM (262) 14 62
+ASN (263) 35
+LCR (264) 18
+RCR (265) 18
+LBR (266) 7 17 38
+RBR (267) 7 17 38
+LPR (268) 10 30 31 32 55 59
+RPR (269) 10 30 31 32 55 59
+SEMI (270) 6 7 28 29 33 34
+INT (271) 9
+VOID (272) 8 12
+IF (273) 30 31
+ELSE (274) 31
+WHILE (275) 32
+RETURN (276) 33 34
+LE (277) 43
+LEQ (278) 44
+GE (279) 41
+GEQ (280) 42
+EQ (281) 45
+NEQ (282) 46
+ID (283) 6 7 10 16 17 37 38 59
+NUM (284) 7 58
 
 
 Nonterminals, with rules where they appear
@@ -141,57 +142,57 @@ declaration_list (32)
 declaration (33)
     on left: 4 5, on right: 2 3
 var_decl (34)
-    on left: 6 7, on right: 4 18
+    on left: 6 7, on right: 4 19
 type (35)
-    on left: 8 9, on right: 6 7 10 15 16
+    on left: 8 9, on right: 6 7 10 16 17
 func_decl (36)
     on left: 10, on right: 5
 paras (37)
-    on left: 11 12, on right: 10
+    on left: 11 12 13, on right: 10
 para_list (38)
-    on left: 13 14, on right: 11 13
+    on left: 14 15, on right: 11 14
 para (39)
-    on left: 15 16, on right: 13 14
+    on left: 16 17, on right: 14 15
 comp_stmt (40)
-    on left: 17, on right: 10 23
+    on left: 18, on right: 10 24
 local_decls (41)
-    on left: 18 19, on right: 17 18
+    on left: 19 20, on right: 18 19
 stmt_list (42)
-    on left: 20 21, on right: 17 20
+    on left: 21 22, on right: 18 21
 stmt (43)
-    on left: 22 23 24 25 26, on right: 20 29 30 31
+    on left: 23 24 25 26 27, on right: 21 30 31 32
 expr_stmt (44)
-    on left: 27 28, on right: 22
+    on left: 28 29, on right: 23
 selc_stmt (45)
-    on left: 29 30, on right: 24
+    on left: 30 31, on right: 25
 iter_stmt (46)
-    on left: 31, on right: 25
+    on left: 32, on right: 26
 retn_stmt (47)
-    on left: 32 33, on right: 26
+    on left: 33 34, on right: 27
 expr (48)
-    on left: 34 35, on right: 27 29 30 31 32 34 37 54 61 62
+    on left: 35 36, on right: 28 30 31 32 33 35 38 55 62 63
 var (49)
-    on left: 36 37, on right: 34 55
+    on left: 37 38, on right: 35 56
 simple_expr (50)
-    on left: 38 39, on right: 35
+    on left: 39 40, on right: 36
 relop (51)
-    on left: 40 41 42 43 44 45, on right: 38
+    on left: 41 42 43 44 45 46, on right: 39
 add_expr (52)
-    on left: 46 47, on right: 38 39 46
+    on left: 47 48, on right: 39 40 47
 addop (53)
-    on left: 48 49, on right: 46
+    on left: 49 50, on right: 47
 term (54)
-    on left: 50 51, on right: 46 47 50
+    on left: 51 52, on right: 47 48 51
 mulop (55)
-    on left: 52 53, on right: 50
+    on left: 53 54, on right: 51
 factor (56)
-    on left: 54 55 56 57, on right: 50 51
+    on left: 55 56 57 58, on right: 51 52
 call (57)
-    on left: 58, on right: 56
+    on left: 59, on right: 57
 args (58)
-    on left: 59 60, on right: 58
+    on left: 60 61, on right: 59
 arg_list (59)
-    on left: 61 62, on right: 59 61
+    on left: 62 63, on right: 60 62
 
 
 state 0
@@ -262,9 +263,9 @@ state 6
 
 state 7
 
-    6 var_decl: type . ID ';'
-    7         | type . ID '[' NUM ']' ';'
-   10 func_decl: type . ID '(' paras ')' comp_stmt
+    6 var_decl: type . ID SEMI
+    7         | type . ID LBR NUM RBR SEMI
+   10 func_decl: type . ID LPR paras RPR comp_stmt
 
     ID  shift, and go to state 11
 
@@ -292,180 +293,182 @@ state 10
 
 state 11
 
-    6 var_decl: type ID . ';'
-    7         | type ID . '[' NUM ']' ';'
-   10 func_decl: type ID . '(' paras ')' comp_stmt
+    6 var_decl: type ID . SEMI
+    7         | type ID . LBR NUM RBR SEMI
+   10 func_decl: type ID . LPR paras RPR comp_stmt
 
-    '('  shift, and go to state 12
-    '['  shift, and go to state 13
-    ';'  shift, and go to state 14
+    LBR   shift, and go to state 12
+    LPR   shift, and go to state 13
+    SEMI  shift, and go to state 14
 
 
 state 12
 
-   10 func_decl: type ID '(' . paras ')' comp_stmt
+    7 var_decl: type ID LBR . NUM RBR SEMI
 
-    INT   shift, and go to state 1
-    VOID  shift, and go to state 15
-
-    type       go to state 16
-    paras      go to state 17
-    para_list  go to state 18
-    para       go to state 19
+    NUM  shift, and go to state 15
 
 
 state 13
 
-    7 var_decl: type ID '[' . NUM ']' ';'
+   10 func_decl: type ID LPR . paras RPR comp_stmt
 
-    NUM  shift, and go to state 20
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 16
+
+    $default  reduce using rule 13 (paras)
+
+    type       go to state 17
+    paras      go to state 18
+    para_list  go to state 19
+    para       go to state 20
 
 
 state 14
 
-    6 var_decl: type ID ';' .
+    6 var_decl: type ID SEMI .
 
     $default  reduce using rule 6 (var_decl)
 
 
 state 15
 
-    8 type: VOID .
-   12 paras: VOID .
+    7 var_decl: type ID LBR NUM . RBR SEMI
 
-    ')'       reduce using rule 12 (paras)
-    $default  reduce using rule 8 (type)
+    RBR  shift, and go to state 21
 
 
 state 16
 
-   15 para: type . ID
-   16     | type . ID '[' ']'
+    8 type: VOID .
+   12 paras: VOID .
 
-    ID  shift, and go to state 21
+    RPR       reduce using rule 12 (paras)
+    $default  reduce using rule 8 (type)
 
 
 state 17
 
-   10 func_decl: type ID '(' paras . ')' comp_stmt
+   16 para: type . ID
+   17     | type . ID LBR RBR
 
-    ')'  shift, and go to state 22
+    ID  shift, and go to state 22
 
 
 state 18
 
-   11 paras: para_list .
-   13 para_list: para_list . ',' para
+   10 func_decl: type ID LPR paras . RPR comp_stmt
 
-    ','  shift, and go to state 23
-
-    $default  reduce using rule 11 (paras)
+    RPR  shift, and go to state 23
 
 
 state 19
 
-   14 para_list: para .
+   11 paras: para_list .
+   14 para_list: para_list . COM para
 
-    $default  reduce using rule 14 (para_list)
+    COM  shift, and go to state 24
+
+    $default  reduce using rule 11 (paras)
 
 
 state 20
 
-    7 var_decl: type ID '[' NUM . ']' ';'
+   15 para_list: para .
 
-    ']'  shift, and go to state 24
+    $default  reduce using rule 15 (para_list)
 
 
 state 21
 
-   15 para: type ID .
-   16     | type ID . '[' ']'
+    7 var_decl: type ID LBR NUM RBR . SEMI
 
-    '['  shift, and go to state 25
-
-    $default  reduce using rule 15 (para)
+    SEMI  shift, and go to state 25
 
 
 state 22
 
-   10 func_decl: type ID '(' paras ')' . comp_stmt
+   16 para: type ID .
+   17     | type ID . LBR RBR
 
-    '{'  shift, and go to state 26
-
-    comp_stmt  go to state 27
-
-
-state 23
-
-   13 para_list: para_list ',' . para
-
-    INT   shift, and go to state 1
-    VOID  shift, and go to state 2
-
-    type  go to state 16
-    para  go to state 28
-
-
-state 24
-
-    7 var_decl: type ID '[' NUM ']' . ';'
-
-    ';'  shift, and go to state 29
-
-
-state 25
-
-   16 para: type ID '[' . ']'
-
-    ']'  shift, and go to state 30
-
-
-state 26
-
-   17 comp_stmt: '{' . local_decls stmt_list '}'
-
-    $default  reduce using rule 19 (local_decls)
-
-    local_decls  go to state 31
-
-
-state 27
-
-   10 func_decl: type ID '(' paras ')' comp_stmt .
-
-    $default  reduce using rule 10 (func_decl)
-
-
-state 28
-
-   13 para_list: para_list ',' para .
-
-    $default  reduce using rule 13 (para_list)
-
-
-state 29
-
-    7 var_decl: type ID '[' NUM ']' ';' .
-
-    $default  reduce using rule 7 (var_decl)
-
-
-state 30
-
-   16 para: type ID '[' ']' .
+    LBR  shift, and go to state 26
 
     $default  reduce using rule 16 (para)
 
 
-state 31
+state 23
 
-   17 comp_stmt: '{' local_decls . stmt_list '}'
-   18 local_decls: local_decls . var_decl
+   10 func_decl: type ID LPR paras RPR . comp_stmt
+
+    LCR  shift, and go to state 27
+
+    comp_stmt  go to state 28
+
+
+state 24
+
+   14 para_list: para_list COM . para
 
     INT   shift, and go to state 1
     VOID  shift, and go to state 2
 
-    $default  reduce using rule 21 (stmt_list)
+    type  go to state 17
+    para  go to state 29
+
+
+state 25
+
+    7 var_decl: type ID LBR NUM RBR SEMI .
+
+    $default  reduce using rule 7 (var_decl)
+
+
+state 26
+
+   17 para: type ID LBR . RBR
+
+    RBR  shift, and go to state 30
+
+
+state 27
+
+   18 comp_stmt: LCR . local_decls stmt_list RCR
+
+    $default  reduce using rule 20 (local_decls)
+
+    local_decls  go to state 31
+
+
+state 28
+
+   10 func_decl: type ID LPR paras RPR comp_stmt .
+
+    $default  reduce using rule 10 (func_decl)
+
+
+state 29
+
+   14 para_list: para_list COM para .
+
+    $default  reduce using rule 14 (para_list)
+
+
+state 30
+
+   17 para: type ID LBR RBR .
+
+    $default  reduce using rule 17 (para)
+
+
+state 31
+
+   18 comp_stmt: LCR local_decls . stmt_list RCR
+   19 local_decls: local_decls . var_decl
+
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 2
+
+    $default  reduce using rule 22 (stmt_list)
 
     var_decl   go to state 32
     type       go to state 33
@@ -474,33 +477,33 @@ state 31
 
 state 32
 
-   18 local_decls: local_decls var_decl .
+   19 local_decls: local_decls var_decl .
 
-    $default  reduce using rule 18 (local_decls)
+    $default  reduce using rule 19 (local_decls)
 
 
 state 33
 
-    6 var_decl: type . ID ';'
-    7         | type . ID '[' NUM ']' ';'
+    6 var_decl: type . ID SEMI
+    7         | type . ID LBR NUM RBR SEMI
 
     ID  shift, and go to state 35
 
 
 state 34
 
-   17 comp_stmt: '{' local_decls stmt_list . '}'
-   20 stmt_list: stmt_list . stmt
+   18 comp_stmt: LCR local_decls stmt_list . RCR
+   21 stmt_list: stmt_list . stmt
 
-    '{'     shift, and go to state 26
-    '}'     shift, and go to state 36
-    '('     shift, and go to state 37
-    ';'     shift, and go to state 38
-    ID      shift, and go to state 39
-    NUM     shift, and go to state 40
-    IF      shift, and go to state 41
-    WHILE   shift, and go to state 42
-    RETURN  shift, and go to state 43
+    LCR     shift, and go to state 27
+    RCR     shift, and go to state 36
+    LPR     shift, and go to state 37
+    SEMI    shift, and go to state 38
+    IF      shift, and go to state 39
+    WHILE   shift, and go to state 40
+    RETURN  shift, and go to state 41
+    ID      shift, and go to state 42
+    NUM     shift, and go to state 43
 
     comp_stmt    go to state 44
     stmt         go to state 45
@@ -519,27 +522,27 @@ state 34
 
 state 35
 
-    6 var_decl: type ID . ';'
-    7         | type ID . '[' NUM ']' ';'
+    6 var_decl: type ID . SEMI
+    7         | type ID . LBR NUM RBR SEMI
 
-    '['  shift, and go to state 13
-    ';'  shift, and go to state 14
+    LBR   shift, and go to state 12
+    SEMI  shift, and go to state 14
 
 
 state 36
 
-   17 comp_stmt: '{' local_decls stmt_list '}' .
+   18 comp_stmt: LCR local_decls stmt_list RCR .
 
-    $default  reduce using rule 17 (comp_stmt)
+    $default  reduce using rule 18 (comp_stmt)
 
 
 state 37
 
-   54 factor: '(' . expr ')'
+   55 factor: LPR . expr RPR
 
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
 
     expr         go to state 57
     var          go to state 51
@@ -552,56 +555,37 @@ state 37
 
 state 38
 
-   28 expr_stmt: ';' .
+   29 expr_stmt: SEMI .
 
-    $default  reduce using rule 28 (expr_stmt)
+    $default  reduce using rule 29 (expr_stmt)
 
 
 state 39
 
-   36 var: ID .
-   37    | ID . '[' expr ']'
-   58 call: ID . '(' args ')'
+   30 selc_stmt: IF . LPR expr RPR stmt
+   31          | IF . LPR expr RPR stmt ELSE stmt
 
-    '('  shift, and go to state 58
-    '['  shift, and go to state 59
-
-    $default  reduce using rule 36 (var)
+    LPR  shift, and go to state 58
 
 
 state 40
 
-   57 factor: NUM .
+   32 iter_stmt: WHILE . LPR expr RPR stmt
 
-    $default  reduce using rule 57 (factor)
+    LPR  shift, and go to state 59
 
 
 state 41
 
-   29 selc_stmt: IF . '(' expr ')' stmt
-   30          | IF . '(' expr ')' stmt ELSE stmt
+   33 retn_stmt: RETURN . expr SEMI
+   34          | RETURN . SEMI
 
-    '('  shift, and go to state 60
+    LPR   shift, and go to state 37
+    SEMI  shift, and go to state 60
+    ID    shift, and go to state 42
+    NUM   shift, and go to state 43
 
-
-state 42
-
-   31 iter_stmt: WHILE . '(' expr ')' stmt
-
-    '('  shift, and go to state 61
-
-
-state 43
-
-   32 retn_stmt: RETURN . expr ';'
-   33          | RETURN . ';'
-
-    '('  shift, and go to state 37
-    ';'  shift, and go to state 62
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
-
-    expr         go to state 63
+    expr         go to state 61
     var          go to state 51
     simple_expr  go to state 52
     add_expr     go to state 53
@@ -610,80 +594,99 @@ state 43
     call         go to state 56
 
 
+state 42
+
+   37 var: ID .
+   38    | ID . LBR expr RBR
+   59 call: ID . LPR args RPR
+
+    LBR  shift, and go to state 62
+    LPR  shift, and go to state 63
+
+    $default  reduce using rule 37 (var)
+
+
+state 43
+
+   58 factor: NUM .
+
+    $default  reduce using rule 58 (factor)
+
+
 state 44
 
-   23 stmt: comp_stmt .
-
-    $default  reduce using rule 23 (stmt)
-
-
-state 45
-
-   20 stmt_list: stmt_list stmt .
-
-    $default  reduce using rule 20 (stmt_list)
-
-
-state 46
-
-   22 stmt: expr_stmt .
-
-    $default  reduce using rule 22 (stmt)
-
-
-state 47
-
-   24 stmt: selc_stmt .
+   24 stmt: comp_stmt .
 
     $default  reduce using rule 24 (stmt)
 
 
-state 48
+state 45
 
-   25 stmt: iter_stmt .
+   21 stmt_list: stmt_list stmt .
+
+    $default  reduce using rule 21 (stmt_list)
+
+
+state 46
+
+   23 stmt: expr_stmt .
+
+    $default  reduce using rule 23 (stmt)
+
+
+state 47
+
+   25 stmt: selc_stmt .
 
     $default  reduce using rule 25 (stmt)
 
 
-state 49
+state 48
 
-   26 stmt: retn_stmt .
+   26 stmt: iter_stmt .
 
     $default  reduce using rule 26 (stmt)
 
 
+state 49
+
+   27 stmt: retn_stmt .
+
+    $default  reduce using rule 27 (stmt)
+
+
 state 50
 
-   27 expr_stmt: expr . ';'
+   28 expr_stmt: expr . SEMI
 
-    ';'  shift, and go to state 64
+    SEMI  shift, and go to state 64
 
 
 state 51
 
-   34 expr: var . '=' expr
-   55 factor: var .
+   35 expr: var . ASN expr
+   56 factor: var .
 
-    '='  shift, and go to state 65
+    ASN  shift, and go to state 65
 
-    $default  reduce using rule 55 (factor)
+    $default  reduce using rule 56 (factor)
 
 
 state 52
 
-   35 expr: simple_expr .
+   36 expr: simple_expr .
 
-    $default  reduce using rule 35 (expr)
+    $default  reduce using rule 36 (expr)
 
 
 state 53
 
-   38 simple_expr: add_expr . relop add_expr
-   39            | add_expr .
-   46 add_expr: add_expr . addop term
+   39 simple_expr: add_expr . relop add_expr
+   40            | add_expr .
+   47 add_expr: add_expr . addop term
 
-    '+'  shift, and go to state 66
-    '-'  shift, and go to state 67
+    ADD  shift, and go to state 66
+    SUB  shift, and go to state 67
     LE   shift, and go to state 68
     LEQ  shift, and go to state 69
     GE   shift, and go to state 70
@@ -691,7 +694,7 @@ state 53
     EQ   shift, and go to state 72
     NEQ  shift, and go to state 73
 
-    $default  reduce using rule 39 (simple_expr)
+    $default  reduce using rule 40 (simple_expr)
 
     relop  go to state 74
     addop  go to state 75
@@ -699,47 +702,46 @@ state 53
 
 state 54
 
-   47 add_expr: term .
-   50 term: term . mulop factor
+   48 add_expr: term .
+   51 term: term . mulop factor
 
-    '*'  shift, and go to state 76
-    '/'  shift, and go to state 77
+    MUL  shift, and go to state 76
+    DIV  shift, and go to state 77
 
-    $default  reduce using rule 47 (add_expr)
+    $default  reduce using rule 48 (add_expr)
 
     mulop  go to state 78
 
 
 state 55
 
-   51 term: factor .
+   52 term: factor .
 
-    $default  reduce using rule 51 (term)
+    $default  reduce using rule 52 (term)
 
 
 state 56
 
-   56 factor: call .
+   57 factor: call .
 
-    $default  reduce using rule 56 (factor)
+    $default  reduce using rule 57 (factor)
 
 
 state 57
 
-   54 factor: '(' expr . ')'
+   55 factor: LPR expr . RPR
 
-    ')'  shift, and go to state 79
+    RPR  shift, and go to state 79
 
 
 state 58
 
-   58 call: ID '(' . args ')'
+   30 selc_stmt: IF LPR . expr RPR stmt
+   31          | IF LPR . expr RPR stmt ELSE stmt
 
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
-
-    $default  reduce using rule 60 (args)
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
 
     expr         go to state 80
     var          go to state 51
@@ -748,19 +750,17 @@ state 58
     term         go to state 54
     factor       go to state 55
     call         go to state 56
-    args         go to state 81
-    arg_list     go to state 82
 
 
 state 59
 
-   37 var: ID '[' . expr ']'
+   32 iter_stmt: WHILE LPR . expr RPR stmt
 
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
 
-    expr         go to state 83
+    expr         go to state 81
     var          go to state 51
     simple_expr  go to state 52
     add_expr     go to state 53
@@ -771,12 +771,44 @@ state 59
 
 state 60
 
-   29 selc_stmt: IF '(' . expr ')' stmt
-   30          | IF '(' . expr ')' stmt ELSE stmt
+   34 retn_stmt: RETURN SEMI .
 
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
+    $default  reduce using rule 34 (retn_stmt)
+
+
+state 61
+
+   33 retn_stmt: RETURN expr . SEMI
+
+    SEMI  shift, and go to state 82
+
+
+state 62
+
+   38 var: ID LBR . expr RBR
+
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
+
+    expr         go to state 83
+    var          go to state 51
+    simple_expr  go to state 52
+    add_expr     go to state 53
+    term         go to state 54
+    factor       go to state 55
+    call         go to state 56
+
+
+state 63
+
+   59 call: ID LPR . args RPR
+
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
+
+    $default  reduce using rule 61 (args)
 
     expr         go to state 84
     var          go to state 51
@@ -785,53 +817,24 @@ state 60
     term         go to state 54
     factor       go to state 55
     call         go to state 56
-
-
-state 61
-
-   31 iter_stmt: WHILE '(' . expr ')' stmt
-
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
-
-    expr         go to state 85
-    var          go to state 51
-    simple_expr  go to state 52
-    add_expr     go to state 53
-    term         go to state 54
-    factor       go to state 55
-    call         go to state 56
-
-
-state 62
-
-   33 retn_stmt: RETURN ';' .
-
-    $default  reduce using rule 33 (retn_stmt)
-
-
-state 63
-
-   32 retn_stmt: RETURN expr . ';'
-
-    ';'  shift, and go to state 86
+    args         go to state 85
+    arg_list     go to state 86
 
 
 state 64
 
-   27 expr_stmt: expr ';' .
+   28 expr_stmt: expr SEMI .
 
-    $default  reduce using rule 27 (expr_stmt)
+    $default  reduce using rule 28 (expr_stmt)
 
 
 state 65
 
-   34 expr: var '=' . expr
+   35 expr: var ASN . expr
 
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
 
     expr         go to state 87
     var          go to state 51
@@ -844,67 +847,67 @@ state 65
 
 state 66
 
-   48 addop: '+' .
-
-    $default  reduce using rule 48 (addop)
-
-
-state 67
-
-   49 addop: '-' .
+   49 addop: ADD .
 
     $default  reduce using rule 49 (addop)
 
 
+state 67
+
+   50 addop: SUB .
+
+    $default  reduce using rule 50 (addop)
+
+
 state 68
 
-   42 relop: LE .
-
-    $default  reduce using rule 42 (relop)
-
-
-state 69
-
-   43 relop: LEQ .
+   43 relop: LE .
 
     $default  reduce using rule 43 (relop)
 
 
-state 70
+state 69
 
-   40 relop: GE .
-
-    $default  reduce using rule 40 (relop)
-
-
-state 71
-
-   41 relop: GEQ .
-
-    $default  reduce using rule 41 (relop)
-
-
-state 72
-
-   44 relop: EQ .
+   44 relop: LEQ .
 
     $default  reduce using rule 44 (relop)
 
 
-state 73
+state 70
 
-   45 relop: NEQ .
+   41 relop: GE .
+
+    $default  reduce using rule 41 (relop)
+
+
+state 71
+
+   42 relop: GEQ .
+
+    $default  reduce using rule 42 (relop)
+
+
+state 72
+
+   45 relop: EQ .
 
     $default  reduce using rule 45 (relop)
 
 
+state 73
+
+   46 relop: NEQ .
+
+    $default  reduce using rule 46 (relop)
+
+
 state 74
 
-   38 simple_expr: add_expr relop . add_expr
+   39 simple_expr: add_expr relop . add_expr
 
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
 
     var       go to state 88
     add_expr  go to state 89
@@ -915,11 +918,11 @@ state 74
 
 state 75
 
-   46 add_expr: add_expr addop . term
+   47 add_expr: add_expr addop . term
 
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
 
     var     go to state 88
     term    go to state 90
@@ -929,25 +932,25 @@ state 75
 
 state 76
 
-   52 mulop: '*' .
-
-    $default  reduce using rule 52 (mulop)
-
-
-state 77
-
-   53 mulop: '/' .
+   53 mulop: MUL .
 
     $default  reduce using rule 53 (mulop)
 
 
+state 77
+
+   54 mulop: DIV .
+
+    $default  reduce using rule 54 (mulop)
+
+
 state 78
 
-   50 term: term mulop . factor
+   51 term: term mulop . factor
 
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
 
     var     go to state 88
     factor  go to state 91
@@ -956,127 +959,132 @@ state 78
 
 state 79
 
-   54 factor: '(' expr ')' .
-
-    $default  reduce using rule 54 (factor)
-
-
-state 80
-
-   62 arg_list: expr .
-
-    $default  reduce using rule 62 (arg_list)
-
-
-state 81
-
-   58 call: ID '(' args . ')'
-
-    ')'  shift, and go to state 92
-
-
-state 82
-
-   59 args: arg_list .
-   61 arg_list: arg_list . ',' expr
-
-    ','  shift, and go to state 93
-
-    $default  reduce using rule 59 (args)
-
-
-state 83
-
-   37 var: ID '[' expr . ']'
-
-    ']'  shift, and go to state 94
-
-
-state 84
-
-   29 selc_stmt: IF '(' expr . ')' stmt
-   30          | IF '(' expr . ')' stmt ELSE stmt
-
-    ')'  shift, and go to state 95
-
-
-state 85
-
-   31 iter_stmt: WHILE '(' expr . ')' stmt
-
-    ')'  shift, and go to state 96
-
-
-state 86
-
-   32 retn_stmt: RETURN expr ';' .
-
-    $default  reduce using rule 32 (retn_stmt)
-
-
-state 87
-
-   34 expr: var '=' expr .
-
-    $default  reduce using rule 34 (expr)
-
-
-state 88
-
-   55 factor: var .
+   55 factor: LPR expr RPR .
 
     $default  reduce using rule 55 (factor)
 
 
+state 80
+
+   30 selc_stmt: IF LPR expr . RPR stmt
+   31          | IF LPR expr . RPR stmt ELSE stmt
+
+    RPR  shift, and go to state 92
+
+
+state 81
+
+   32 iter_stmt: WHILE LPR expr . RPR stmt
+
+    RPR  shift, and go to state 93
+
+
+state 82
+
+   33 retn_stmt: RETURN expr SEMI .
+
+    $default  reduce using rule 33 (retn_stmt)
+
+
+state 83
+
+   38 var: ID LBR expr . RBR
+
+    RBR  shift, and go to state 94
+
+
+state 84
+
+   63 arg_list: expr .
+
+    $default  reduce using rule 63 (arg_list)
+
+
+state 85
+
+   59 call: ID LPR args . RPR
+
+    RPR  shift, and go to state 95
+
+
+state 86
+
+   60 args: arg_list .
+   62 arg_list: arg_list . COM expr
+
+    COM  shift, and go to state 96
+
+    $default  reduce using rule 60 (args)
+
+
+state 87
+
+   35 expr: var ASN expr .
+
+    $default  reduce using rule 35 (expr)
+
+
+state 88
+
+   56 factor: var .
+
+    $default  reduce using rule 56 (factor)
+
+
 state 89
 
-   38 simple_expr: add_expr relop add_expr .
-   46 add_expr: add_expr . addop term
+   39 simple_expr: add_expr relop add_expr .
+   47 add_expr: add_expr . addop term
 
-    '+'  shift, and go to state 66
-    '-'  shift, and go to state 67
+    ADD  shift, and go to state 66
+    SUB  shift, and go to state 67
 
-    $default  reduce using rule 38 (simple_expr)
+    $default  reduce using rule 39 (simple_expr)
 
     addop  go to state 75
 
 
 state 90
 
-   46 add_expr: add_expr addop term .
-   50 term: term . mulop factor
+   47 add_expr: add_expr addop term .
+   51 term: term . mulop factor
 
-    '*'  shift, and go to state 76
-    '/'  shift, and go to state 77
+    MUL  shift, and go to state 76
+    DIV  shift, and go to state 77
 
-    $default  reduce using rule 46 (add_expr)
+    $default  reduce using rule 47 (add_expr)
 
     mulop  go to state 78
 
 
 state 91
 
-   50 term: term mulop factor .
+   51 term: term mulop factor .
 
-    $default  reduce using rule 50 (term)
+    $default  reduce using rule 51 (term)
 
 
 state 92
 
-   58 call: ID '(' args ')' .
+   30 selc_stmt: IF LPR expr RPR . stmt
+   31          | IF LPR expr RPR . stmt ELSE stmt
 
-    $default  reduce using rule 58 (call)
+    LCR     shift, and go to state 27
+    LPR     shift, and go to state 37
+    SEMI    shift, and go to state 38
+    IF      shift, and go to state 39
+    WHILE   shift, and go to state 40
+    RETURN  shift, and go to state 41
+    ID      shift, and go to state 42
+    NUM     shift, and go to state 43
 
-
-state 93
-
-   61 arg_list: arg_list ',' . expr
-
-    '('  shift, and go to state 37
-    ID   shift, and go to state 39
-    NUM  shift, and go to state 40
-
-    expr         go to state 97
+    comp_stmt    go to state 44
+    stmt         go to state 97
+    expr_stmt    go to state 46
+    selc_stmt    go to state 47
+    iter_stmt    go to state 48
+    retn_stmt    go to state 49
+    expr         go to state 50
     var          go to state 51
     simple_expr  go to state 52
     add_expr     go to state 53
@@ -1085,26 +1093,18 @@ state 93
     call         go to state 56
 
 
-state 94
+state 93
 
-   37 var: ID '[' expr ']' .
+   32 iter_stmt: WHILE LPR expr RPR . stmt
 
-    $default  reduce using rule 37 (var)
-
-
-state 95
-
-   29 selc_stmt: IF '(' expr ')' . stmt
-   30          | IF '(' expr ')' . stmt ELSE stmt
-
-    '{'     shift, and go to state 26
-    '('     shift, and go to state 37
-    ';'     shift, and go to state 38
-    ID      shift, and go to state 39
-    NUM     shift, and go to state 40
-    IF      shift, and go to state 41
-    WHILE   shift, and go to state 42
-    RETURN  shift, and go to state 43
+    LCR     shift, and go to state 27
+    LPR     shift, and go to state 37
+    SEMI    shift, and go to state 38
+    IF      shift, and go to state 39
+    WHILE   shift, and go to state 40
+    RETURN  shift, and go to state 41
+    ID      shift, and go to state 42
+    NUM     shift, and go to state 43
 
     comp_stmt    go to state 44
     stmt         go to state 98
@@ -1121,26 +1121,29 @@ state 95
     call         go to state 56
 
 
+state 94
+
+   38 var: ID LBR expr RBR .
+
+    $default  reduce using rule 38 (var)
+
+
+state 95
+
+   59 call: ID LPR args RPR .
+
+    $default  reduce using rule 59 (call)
+
+
 state 96
 
-   31 iter_stmt: WHILE '(' expr ')' . stmt
+   62 arg_list: arg_list COM . expr
 
-    '{'     shift, and go to state 26
-    '('     shift, and go to state 37
-    ';'     shift, and go to state 38
-    ID      shift, and go to state 39
-    NUM     shift, and go to state 40
-    IF      shift, and go to state 41
-    WHILE   shift, and go to state 42
-    RETURN  shift, and go to state 43
+    LPR  shift, and go to state 37
+    ID   shift, and go to state 42
+    NUM  shift, and go to state 43
 
-    comp_stmt    go to state 44
-    stmt         go to state 99
-    expr_stmt    go to state 46
-    selc_stmt    go to state 47
-    iter_stmt    go to state 48
-    retn_stmt    go to state 49
-    expr         go to state 50
+    expr         go to state 99
     var          go to state 51
     simple_expr  go to state 52
     add_expr     go to state 53
@@ -1151,41 +1154,41 @@ state 96
 
 state 97
 
-   61 arg_list: arg_list ',' expr .
+   30 selc_stmt: IF LPR expr RPR stmt .
+   31          | IF LPR expr RPR stmt . ELSE stmt
 
-    $default  reduce using rule 61 (arg_list)
+    ELSE  shift, and go to state 100
+
+    ELSE      [reduce using rule 30 (selc_stmt)]
+    $default  reduce using rule 30 (selc_stmt)
 
 
 state 98
 
-   29 selc_stmt: IF '(' expr ')' stmt .
-   30          | IF '(' expr ')' stmt . ELSE stmt
+   32 iter_stmt: WHILE LPR expr RPR stmt .
 
-    ELSE  shift, and go to state 100
-
-    ELSE      [reduce using rule 29 (selc_stmt)]
-    $default  reduce using rule 29 (selc_stmt)
+    $default  reduce using rule 32 (iter_stmt)
 
 
 state 99
 
-   31 iter_stmt: WHILE '(' expr ')' stmt .
+   62 arg_list: arg_list COM expr .
 
-    $default  reduce using rule 31 (iter_stmt)
+    $default  reduce using rule 62 (arg_list)
 
 
 state 100
 
-   30 selc_stmt: IF '(' expr ')' stmt ELSE . stmt
+   31 selc_stmt: IF LPR expr RPR stmt ELSE . stmt
 
-    '{'     shift, and go to state 26
-    '('     shift, and go to state 37
-    ';'     shift, and go to state 38
-    ID      shift, and go to state 39
-    NUM     shift, and go to state 40
-    IF      shift, and go to state 41
-    WHILE   shift, and go to state 42
-    RETURN  shift, and go to state 43
+    LCR     shift, and go to state 27
+    LPR     shift, and go to state 37
+    SEMI    shift, and go to state 38
+    IF      shift, and go to state 39
+    WHILE   shift, and go to state 40
+    RETURN  shift, and go to state 41
+    ID      shift, and go to state 42
+    NUM     shift, and go to state 43
 
     comp_stmt    go to state 44
     stmt         go to state 101
@@ -1204,6 +1207,6 @@ state 100
 
 state 101
 
-   30 selc_stmt: IF '(' expr ')' stmt ELSE stmt .
+   31 selc_stmt: IF LPR expr RPR stmt ELSE stmt .
 
-    $default  reduce using rule 30 (selc_stmt)
+    $default  reduce using rule 31 (selc_stmt)

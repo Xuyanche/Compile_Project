@@ -18,69 +18,63 @@ whitespace [ \t\r]+
  /* Keywords Specification */
 
  /* Type Specification */
-"int"		{return(INT);}
+"int"		{yylval.Token=INT;return(INT);}
 
  /* Control flow keywords */
-"if"		{return(IF);}
-"else"		{return(ELSE);}
+"if"		{yylval.Token=IF;return(IF);}
+"else"		{yylval.Token=ELSE;return(ELSE);}
 
  /* Loop keywords */
-"while"		{return(WHILE);}
+"while"		{yylval.Token=WHILE;return(WHILE);}
 
  /* Function call keywords */
-"return"	{return(RETURN);}
-"void"		{return(VOID);}
+"return"	{yylval.Token=RETURN;return(RETURN);}
+"void"		{yylval.Token=VOID;return(VOID);}
 
  /* Symbol Token Specification */
 
   /* Parentheses */
-"("		{return LPR;}
-")"		{return RPR;}
-"["		{return LBR;}
-"]"		{return RBR;}
-"{"		{return LCR;}
-"}"		{return RCR;}
+"("		{yylval.Token=LPR;return LPR;}
+")"		{yylval.Token=RPR;return RPR;}
+"["		{yylval.Token=LBR;return LBR;}
+"]"		{yylval.Token=RBR;return RBR;}
+"{"		{yylval.Token=LCR;return LCR;}
+"}"		{yylval.Token=RCR;return RCR;}
 
  /* Identifier and numbers */
-{letter}({letter}|{digit})*		{return(ID);}
-{digit}+						{return(NUM); }
+{letter}({letter}|{digit})*		{yylval.name=strdup(yytext);return(ID);}
+{digit}+						{yylval.value=atoi(yytext);return(NUM); }
 
  /* Whitespace filtering and line counting */
 {whitespace}	{/*Skip whitespace*/}
 "\n"			{nr_line++;}
 
  /* Numerical Arithmetic Operators */
-"+"		{return ADD;}
-"-"		{return SUB;}
-"*"		{return MUL;}
-"/"		{return DIV;}
+"+"		{yylval.Token=ADD;return ADD;}
+"-"		{yylval.Token=SUB;return SUB;}
+"*"		{yylval.Token=MUL;return MUL;}
+"/"		{yylval.Token=DIV;return DIV;}
 
  /* Relative Operators */
-"<"		{return LE;}
-"<="	{return LEQ;}
-">"		{return GE;}
-">="	{return GEQ;}
-"=="	{return EQ;}
-"!="	{return NEQ;}
+"<"		{yylval.Token=LE;return LE;}
+"<="	{yylval.Token=LEQ;return LEQ;}
+">"		{yylval.Token=GE;return GE;}
+">="	{yylval.Token=GEQ;return GEQ;}
+"=="	{yylval.Token=EQ;return EQ;}
+"!="	{yylval.Token=NEQ;return NEQ;}
 
  /* Assign Operator */
-"="		{return ASN;}
+"="		{yylval.Token=ASN;return ASN;}
 
  /* Statement Delimiter */
-";"		{return SEMI;}
+";"		{yylval.Token=SEMI;return SEMI;}
 
  /* Comma */
-","		{return COM;}
+","		{yylval.Token=COM;return COM;}
 
 %%
 
 int yywrap()
 {
 	return 1;
-}
-
-int GetToken(){
-  int TokenType = yylex();
-  strcpy(TokenString, yytext);
-  return TokenType;
 }

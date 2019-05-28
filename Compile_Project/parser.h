@@ -39,37 +39,63 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     ID = 258,
-     NUM = 259,
-     INT = 260,
-     VOID = 261,
-     IF = 262,
-     ELSE = 263,
-     WHILE = 264,
-     RETURN = 265,
-     LE = 266,
-     LEQ = 267,
-     GE = 268,
-     GEQ = 269,
-     EQ = 270,
-     NEQ = 271
+     ADD = 258,
+     SUB = 259,
+     MUL = 260,
+     DIV = 261,
+     COM = 262,
+     ASN = 263,
+     LCR = 264,
+     RCR = 265,
+     LBR = 266,
+     RBR = 267,
+     LPR = 268,
+     RPR = 269,
+     SEMI = 270,
+     INT = 271,
+     VOID = 272,
+     IF = 273,
+     ELSE = 274,
+     WHILE = 275,
+     RETURN = 276,
+     LE = 277,
+     LEQ = 278,
+     GE = 279,
+     GEQ = 280,
+     EQ = 281,
+     NEQ = 282,
+     ID = 283,
+     NUM = 284
    };
 #endif
 /* Tokens.  */
-#define ID 258
-#define NUM 259
-#define INT 260
-#define VOID 261
-#define IF 262
-#define ELSE 263
-#define WHILE 264
-#define RETURN 265
-#define LE 266
-#define LEQ 267
-#define GE 268
-#define GEQ 269
-#define EQ 270
-#define NEQ 271
+#define ADD 258
+#define SUB 259
+#define MUL 260
+#define DIV 261
+#define COM 262
+#define ASN 263
+#define LCR 264
+#define RCR 265
+#define LBR 266
+#define RBR 267
+#define LPR 268
+#define RPR 269
+#define SEMI 270
+#define INT 271
+#define VOID 272
+#define IF 273
+#define ELSE 274
+#define WHILE 275
+#define RETURN 276
+#define LE 277
+#define LEQ 278
+#define GE 279
+#define GEQ 280
+#define EQ 281
+#define NEQ 282
+#define ID 283
+#define NUM 284
 
 
 
@@ -79,14 +105,18 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 14 ".\\compile.y"
+#line 18 ".\\compile.y"
 
-	STNode *token_p;
+	int Token;
+	int dtype;
+	int value;
+	STNode* node;
+	char* name;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 90 "parser.h"
+#line 120 "parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

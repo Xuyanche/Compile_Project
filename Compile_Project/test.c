@@ -1,7 +1,24 @@
-int f(void){
-	return 0;
+int add(int a, int b){
+	return a+b;
 }
-int main(void){
-	f();
+
+int main(){
+	int a[100];
+	int b;
+	int c;
+	int i;
+	i = 0;
+	b = 1;
+	c = b;
+	while (i < 100){
+		if (i < 50){
+			a[i] = add(b, 1);
+		}else{
+			a[i] = add(b, b + c);
+			c = b;
+		}
+		i = i + 1;
+
+	}
 	return 0;
 }

@@ -3,22 +3,35 @@
 #include <string.h>
 #include "node.h"
 
-/* Insert the newchild node as the first child of the father node */
-int insert(STNode* father, STNode* newchild)
+extern int nr_line;
+
+char* operators[25] = { "+", "-", "*", "/", ",", "=", "{", "}", "[", "]", "(", ")", ";", "int", "void", "if", "else", "while", "return", "<", "<=",
+						">", ">=", "==", "!=" };
+
+/* Insert newchild as the last child of father */
+int insert(STNode *father, STNode *newchild)
 {
-	if (!newchild && father)
+	if (!(newchild && father))
 		return 1;
-	if (father->No_Child == 0)
-		newchild->IsBegin = 1;
 	newchild->father = father;
-	STNode* focus = father->child;
-	newchild->brother = focus;
-	father->child = newchild;
-	father->No_Child++;
-	return 0;
+	if (father->child == NULL)
+	{
+		father->child = newchild;
+		return 0;
+	}
+	else
+	{
+		STNode* focus = father->child;
+		while (focus->brother)
+		{
+			focus = focus->brother;
+		}
+		focus->brother = newchild;
+		return 0;
+	}
 }
 
-STNode* newNode(char* node_name, int line)
+STNode* newDeclNode(decltype newType)
 {
 	STNode *p = (STNode*)malloc(sizeof(STNode));
 	if (p == NULL)
@@ -26,31 +39,162 @@ STNode* newNode(char* node_name, int line)
 		printf("Error:out of memory.\n");
 		exit(1);
 	}
-	strncpy(p->name, node_name, 20);
 	p->brother = NULL;
 	p->child = NULL;
 	p->father = NULL;
-	p->No_Line = line;
-	p->No_Child = 0;
-	p->col = 0;
-	p->IsBegin = 0;
+	p->No_Line = nr_line;
+	p->kind = DeclK;
+	p->type.decl = newType;
 	return p;
+}
+
+void refreshDeclNode(STNode *p) {
+	switch (p->type.decl)
+	{
+	case VarDeclT: {
+		sprintf(p->name, "VarDecl: %s", p->attr.name);
+		break;
+	}
+	case FuncDeclT: {
+		sprintf(p->name, "FuncDecl: %s", p->attr.name);
+		break;
+	}
+	case ArrDeclT: {
+		sprintf(p->name, "ArrDecl: %s[%d]", p->attr.name, p->attr.val);
+		break;
+	}
+	case MultiDeclT: {
+		sprintf(p->name, "MultiDecl");
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+STNode* newExprNode(exprtype newType)
+{
+	STNode *p = (STNode*)malloc(sizeof(STNode));
+	if (p == NULL)
+	{
+		printf("Error:out of memory.\n");
+		exit(1);
+	}
+	p->brother = NULL;
+	p->child = NULL;
+	p->father = NULL;
+	p->No_Line = nr_line;
+	p->kind = ExprK;
+	p->type.expr = newType;
+	return p;
+}
+
+void refreshExprNode(STNode *p) {
+	switch (p->type.expr)
+	{
+	case OpT: {
+		sprintf(p->name, "Operator: %s", operators[p->attr.Op - 258]);
+		break;
+	}
+	case ConstT: {
+		sprintf(p->name, "Const: %d", p->attr.val);
+		break;
+	}
+	case IdT: {
+		sprintf(p->name, "Identifier: %s", p->attr.name);
+		break;
+	}
+	case AddrT: {
+		sprintf(p->name, "Address: %s", p->attr.name);
+		break;
+	}
+	case CallT: {
+		sprintf(p->name, "FuncCall: %s", p->attr.name);
+		break;
+	}
+	case AssignT: {
+		sprintf(p->name, "Assign");
+		break;
+	}
+	case EntryT: {
+		sprintf(p->name, "ArrayEntry: %s", p->attr.name);
+		break;
+	}
+	default:
+		break;
+	}
+}
+STNode* newStmtNode(stmttype newType)
+{
+	STNode *p = (STNode*)malloc(sizeof(STNode));
+	if (p == NULL)
+	{
+		printf("Error:out of memory.\n");
+		exit(1);
+	}
+	p->brother = NULL;
+	p->child = NULL;
+	p->father = NULL;
+	p->No_Line = nr_line;
+	p->kind = StmtK;
+	p->type.stmt = newType;
+	return p;
+}
+
+void refreshStmtNode(STNode *p) {
+	switch (p->type.stmt)
+	{
+	case CompStmtT: {
+		sprintf(p->name, "CompoundStmt");
+		break;
+	}
+	case IfT: {
+		sprintf(p->name, "IfStmt");
+		break;
+	}
+	case IfElseT: {
+		sprintf(p->name, "IfElseStmt");
+		break;
+	}
+	case IterStmtT: {
+		sprintf(p->name, "LoopStmt");
+		break;
+	}
+	case RetnStmtT: {
+		sprintf(p->name, "Return");
+		break;
+	}
+	case ExprStmtT: {
+		sprintf(p->name, "Expression");
+		break;
+	}
+	case MultStmtT: {
+		sprintf(p->name, "Multiple");
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+int makeBrother(STNode *old, STNode *newone) {
+	old->brother = newone;
+	newone->father = old->father;
 }
 
 void print(STNode* node, int level)
 {
-	/*STNode *father = node;
+	if (node->brother) node->brother->father = node->father;
+	STNode *father = node->father;
 	listnode *tail = NULL;
 	if (father)
 		while (father->father)
 		{
-			father = father->father;
 			listnode *temp = (listnode*)malloc(sizeof(listnode));
-			if (!temp)
-				printf("No memory!\n");
 			temp->next = tail;
 			temp->data = father->brother ? 1 : 0;
 			tail = temp;
+			father = father->father;
 		}
 	while (tail)
 	{
@@ -60,18 +204,16 @@ void print(STNode* node, int level)
 			printf("   ");
 		tail = tail->next;
 	}
-	if ( level > 0 ){
-		printf("|--");
-	}*/
-	int i;
-	for (i = 0; i < level; i++)
-	{
-		printf("__");
+	if (level > 0) {
+		if (node->brother)
+			printf("|--");
+
+		else
+			printf("+--");
 	}
 	printf("%s\n", node->name);
-
 	STNode* focus = node->child;
-	for (i = 0; i < node->No_Child; i++)
+	while (focus)
 	{
 		print(focus, level + 1);
 		focus = focus->brother;
