@@ -9,67 +9,49 @@ int nr_line = 1;
 %}
 /* Basic symbol spcification */
 digit [0-9]
-letter [A-za-z_]
+letter [A-za-z]
 whitespace [ \t\r]+
-
-/*
-	H			[a-fA-F0-9]
-	E			[Ee][+-]?{D}+
-	FS			(f|F|l|L)
-	IS			(u|U|l|L)*
-*/
 
 %%
  /* Keywords Specification */
 
  /* Type Specification */
-"int"	{ yylval.token_p = newNode(yytext, nr_line);  return(INT);}
- /*
- "char"	{ yylval.token_p = newNode(yytext, nr_line);  return(CHAR);}
- "float"	{ yylval.token_p = newNode(yytext, nr_line);  return(FLOAT);}
- */
+"int"		{return(INT);}
 
  /* Control flow keywords */
-"if"	{ yylval.token_p = newNode(yytext, nr_line);  return(IF);}
-"else"	{ yylval.token_p = newNode(yytext, nr_line);  return(ELSE);}
+"if"		{return(IF);}
+"else"		{return(ELSE);}
 
  /* Loop keywords */
-"while"	{ yylval.token_p = newNode(yytext, nr_line);  return(WHILE);}
- /*
- "do"	{ yylval.token_p = newNode(yytext, nr_line);  return(DO);}
- "break"	{ yylval.token_p = newNode(yytext, nr_line);  return(BREAK);}
- "for"	{ yylval.token_p = newNode(yytext, nr_line);  return(FOR);}
- */
+"while"		{return(WHILE);}
 
  /* Function call keywords */
-"return"	{ yylval.token_p = newNode(yytext, nr_line);  return(RETURN);}
-"void"	{ yylval.token_p = newNode(yytext, nr_line);  return(VOID);}
-
- /*"struct"	{yylval.token_p = newNode(yytext, nr_line);  return(STRUCT);}*/
+"return"	{return(RETURN);}
+"void"		{return(VOID);}
 
  /* Symbol Token Specification */
 
   /* Parentheses */
-"("		{ yylval.token_p = newNode(yytext, nr_line);  return '(';}
-")"		{ yylval.token_p = newNode(yytext, nr_line);  return ')';}
-"["		{ yylval.token_p = newNode(yytext, nr_line);  return '[';}
-"]"		{ yylval.token_p = newNode(yytext, nr_line);  return ']';}
-"{"		{ yylval.token_p = newNode(yytext, nr_line);  return '{';}
-"}"		{ yylval.token_p = newNode(yytext, nr_line);  return '}';}
+"("		{return LPR;}
+")"		{return RPR;}
+"["		{return LBR;}
+"]"		{return RBR;}
+"{"		{return LCR;}
+"}"		{return RCR;}
 
  /* Identifier and numbers */
-{letter}({letter}|{digit})*		{ yylval.token_p = newNode(yytext, nr_line);   return(ID); }
-{digit}+	{ yylval.token_p = newNode(yytext, nr_line);   return(NUM); }
+{letter}({letter}|{digit})*		{return(ID);}
+{digit}+						{return(NUM); }
 
  /* Whitespace filtering and line counting */
-{whitespace} {/*Skip whitespace*/}
-"\n"	{nr_line++;}
+{whitespace}	{/*Skip whitespace*/}
+"\n"			{nr_line++;}
 
  /* Numerical Arithmetic Operators */
-"+"		{ yylval.token_p = newNode(yytext, nr_line); return '+';}
-"-"		{ yylval.token_p = newNode(yytext, nr_line); return '-';}
-"*"		{ yylval.token_p = newNode(yytext, nr_line); return '*';}
-"/"		{ yylval.token_p = newNode(yytext, nr_line); return '/';}
+"+"		{return ADD;}
+"-"		{return SUB;}
+"*"		{return MUL;}
+"/"		{return DIV;}
 
  /* Relative Operators */
 "<"		{ yylval.token_p = newNode(yytext, nr_line);  return LE;}
@@ -80,29 +62,13 @@ whitespace [ \t\r]+
 "!="	{ yylval.token_p = newNode(yytext, nr_line);  return NEQ;}
 
  /* Assign Operator */
-"="		{ yylval.token_p = newNode(yytext, nr_line);  return '=';}
+"="		{ yylval.token_p = newNode(yytext, nr_line);  return ASN;}
 
  /* Statement Delimiter */
-";"		{ yylval.token_p = newNode(yytext, nr_line);  return ';';}
+";"		{ yylval.token_p = newNode(yytext, nr_line);  return SEMI;}
 
  /* Comma */
-","		{ yylval.token_p = newNode(yytext, nr_line);  return ',';}
-
- /* To be added:
-	"&&"	{ yylval.token_p = newNode(yytext, nr_line);  return AND;}
-	"||"	{ yylval.token_p = newNode(yytext, nr_line);  return OR;}
-	"!"		{ yylval.token_p = newNode(yytext, nr_line);  return '!';}	
-	"."		{ yylval.token_p = newNode(yytext, nr_line);  return '.';}
-	"?"		{ yylval.token_p = newNode(yytext, nr_line);  return '?';}
-	":"		{ yylval.token_p = newNode(yytext, nr_line);  return ':';}
-	"|"		{ yylval.token_p = newNode(yytext, nr_line);  return '|';}
-	"^"	{ yylval.token_p = newNode(yytext, nr_line);  return '^';}
-	0[xX]{H}+{IS}?		{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); }
-	0{DIGIT}+{IS}?		{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); }
-	{DIGIT}+{IS}?		{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); }
-	{DIGIT}*"."{DIGIT}+	{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); } 
-	{DIGIT}+"."{DIGIT}*	{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); }
- */
+","		{ yylval.token_p = newNode(yytext, nr_line);  return COM;}
 
 %%
 
@@ -110,3 +76,6 @@ int yywrap()
 {
 	return 1;
 }
+
+int GetToken(){
+	

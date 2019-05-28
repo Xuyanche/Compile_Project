@@ -1,11 +1,17 @@
+/* Syntax Tree Node Specification file */
 #ifndef NODE_H
 #define NODE_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #pragma warning(disable : 4996)
-
-
+typedef enum kind {
+	DeclK, StmtK
+}kind;
+typedef enum type {
+	VarDeclT, FuncDeclT,
+	IntT, VoidT, ArrayT
+}type;
 /* Syntax tree node */
 typedef struct STNode STNode;
 struct STNode
@@ -13,10 +19,10 @@ struct STNode
 	STNode * brother;
 	STNode * child;
 	STNode * father;
-	int No_Child;
 	int No_Line;
 	char name[20];
-	int IsBegin;
+	kind kind;
+	type type;
 };
 /* Linked list */
 typedef struct listnode listnode;
@@ -26,23 +32,31 @@ struct listnode
 	listnode *next;
 };
 
-/* Insert newchild as the first child of father */
-int insert(STNode* father, STNode* newchild)
+/* Insert newchild as the last child of father */
+int insert(STNode *father, STNode *newchild)
 {
-	if (!newchild && father)
+	if (!(newchild && father))
 		return 1;
-	if (father->No_Child == 0)
-		newchild->IsBegin = 1;
 	newchild->father = father;
-	STNode* focus = father->child;
-	newchild->brother = focus;
-	father->child = newchild;
-	father->No_Child++;
-	return 0;
+	if (father->child == NULL)
+	{
+		father->child = newchild;
+		return 0;
+	}
+	else
+	{
+		STNode* focus = father->child;
+		while (focus->brother)
+		{
+			focus = focus->brother;
+		}
+		focus->brother = newchild;
+		return 0;
+	}
 }
 
 /* Create a new node with given node name */
-STNode* newNode(char* node_name, int line)
+STNode* newNode(char* node_name, kind nodekind, type nodetype, int line)
 {
 	STNode *p = (STNode*)malloc(sizeof(STNode));
 	if (p == NULL)
@@ -55,8 +69,8 @@ STNode* newNode(char* node_name, int line)
 	p->child = NULL;
 	p->father = NULL;
 	p->No_Line = line;
-	p->No_Child = 0;
-	p->IsBegin = 0;
+	p->kind = nodekind;
+	p->type = nodetype;
 	return p;
 }
 

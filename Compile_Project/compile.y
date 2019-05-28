@@ -5,7 +5,8 @@
 #include "lex.yy.c"
 #include "node.h"
 #define YYDEBUG 1
-STNode* p;
+#define YYSTYPE STNode*
+static STNode* TreeRoot;
 void yyerror(char *s);
 FILE *fout;
 extern int column;
@@ -14,65 +15,52 @@ extern int column;
 %union{
 	STNode *token_p;
 }
-%type <token_p> program declaration_list declaration var_decl func_decl
-%type <token_p> type var paras para_list para
-%type <token_p> local_decls comp_stmt
-%type <token_p> stmt_list stmt expr_stmt selc_stmt iter_stmt retn_stmt
-%type <token_p> expr simple_expr relop add_expr addop term mulop factor
-%type <token_p> call args arg_list
-%token <token_p> '+' '-' '*' '/' ',' '=' '{' '}' '(' ')' '[' ']' ';'
-%token <token_p> ID NUM INT VOID IF ELSE WHILE RETURN
-%token <token_p> LE LEQ GE GEQ EQ NEQ
+%type program declaration_list declaration var_decl func_decl
+%type type var paras para_list para
+%type local_decls comp_stmt
+%type stmt_list stmt expr_stmt selc_stmt iter_stmt retn_stmt
+%type expr simple_expr relop add_expr addop term mulop factor
+%type call args arg_list
+%token ADD SUB MUL DIV COM ASN LCR RCR LBR RBR LPR RPR SEMI
+%token ID NUM INT VOID IF ELSE WHILE RETURN
+%token LE LEQ GE GEQ EQ NEQ
 
 %start program
 %%
 
  /* 1 */
 program
-	: declaration_list {p = newNode("program", $1->No_Line); insert(p, $1); $$ = p;}
+	: declaration_list {TreeRoot = $1;}
 	;
 
  /* 2 */
 declaration_list
 	: declaration_list declaration
-	{ 
-		p = newNode("declaration_list", $1->No_Line);
-		insert(p, $2); 
-		insert(p, $1);
-		$$ = p;
+	{
+		YYSTYPE t = $1;
+		if (t != NULL) {
+			insert(t, $2);
+			$$ = t;
+		}
+		else
+			$$ = $2;
 	}
-	| declaration	
-	{	
-		p = newNode("declaration_list", $1->No_Line); 
-		insert(p, $1); 
-		$$ = p;
-	}
+	| declaration	{$$ = $1;}
 	;
 
  /* 3 */
 declaration
-	: var_decl
-	{	
-		p = newNode("declaration", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
-	}
-	| func_decl
-	{	
-		p = newNode("declaration", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
-	}
+	: var_decl	{$$ = $1;}
+	| func_decl {$$ = $1;}
 	;
 
  /* 4 */
 var_decl
 	: type ID ';'	
 	{	
-		p = newNode("var_decl", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
+		YYSTYPE t = newNode("var_decl", DeclK, VarDeclT, $1->No_Line);
+		insert(t, $1);
+
 		$$ = p;
 	}
 	| type ID '[' NUM ']' ';'
