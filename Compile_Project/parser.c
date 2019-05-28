@@ -1588,7 +1588,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 104 ".\\compile.y"
-    {(yyval.node) = (yyvsp[(1) - (1)].node);}
+    {(yyval.node) = newExprNode(MultiT); refreshExprNode((yyval.node)); insert((yyval.node), (yyvsp[(1) - (1)].node));}
     break;
 
   case 13:
@@ -2313,7 +2313,7 @@ void yyerror(char* s)
 int main(int argc,char *argv[])
 {    
 	extern int yydebug;
-	yydebug = 1;
+	yydebug = 0;
 	if (argc == 1)
 	{
 		printf("No input file!\n");
@@ -2331,6 +2331,7 @@ int main(int argc,char *argv[])
 	yyparse();
 	print(TreeRoot,0);
 	fclose(fin);
+	system("pause");
 	return 0;
 }
 

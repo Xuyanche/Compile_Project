@@ -120,6 +120,10 @@ void refreshExprNode(STNode *p) {
 		sprintf(p->name, "ArrayEntry: %s", p->attr.name);
 		break;
 	}
+	case MultiT: {
+		sprintf(p->name, "MultipleExp");
+		break;
+	}
 	default:
 		break;
 	}
@@ -178,8 +182,10 @@ void refreshStmtNode(STNode *p) {
 }
 
 int makeBrother(STNode *old, STNode *newone) {
-	old->brother = newone;
-	newone->father = old->father;
+	STNode *node = old;
+	while (node->brother)
+		node = node->brother;
+	node->brother = newone;
 }
 
 void print(STNode* node, int level)

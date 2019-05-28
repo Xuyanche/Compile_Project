@@ -19,7 +19,7 @@ typedef enum stmttype {
 }stmttype; // Statement node type
 
 typedef enum exprtype {
-	OpT, ConstT, IdT, AddrT, CallT, AssignT, EntryT
+	OpT, ConstT, IdT, AddrT, CallT, AssignT, EntryT, MultiT
 }exprtype; // Expression node type
 
 typedef union type
