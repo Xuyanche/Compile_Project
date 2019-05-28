@@ -5,13 +5,41 @@
 #include <stdlib.h>
 #include <string.h>
 #pragma warning(disable : 4996)
+
+typedef enum tokentype{
+	ADD,SUB,MUL,DIV,COM,ASN,LCR,RCR,LBR,RBR,LPR,RPR,SEMI,ID,NUM,INT,VOID,IF,ELSE,WHILE,RETURN,LE,LEQ,GE,GEQ,EQ,NEQ
+}TokenType;
+
 typedef enum kind {
-	DeclK, StmtK
-}kind;
-typedef enum type {
-	VarDeclT, FuncDeclT,
-	IntT, VoidT, ArrayT
+	DeclK, StmtK, ExprK // Declaration, Statement, Expression
+}kind; // Kinds of nodes
+
+typedef enum decltype {
+	VarDeclT, FuncDeclT, ArrDeclT
+}decltype; // Declaration node type
+
+typedef enum stmttype {
+	CompStmtT, IfT, IfElseT, IterStmtT, RetnStmtT, ExprStmtT
+}stmttype; // Statement node type
+
+typedef enum exprtype {
+	OpT, ConstT, IdT, AddrT, CallT
+}exprtype; // Expression node type
+
+typedef union type
+{
+	decltype decl;
+	stmttype stmt;
+	exprtype expr;
 }type;
+
+typedef struct attr
+{
+	TokenType Op, dtype;
+	int val;
+	char* name;
+}attr;
+
 /* Syntax tree node */
 typedef struct STNode STNode;
 struct STNode
@@ -22,8 +50,10 @@ struct STNode
 	int No_Line;
 	char name[20];
 	kind kind;
-	type type;
+	type nodetype;
+	attr nodeattr;
 };
+
 /* Linked list */
 typedef struct listnode listnode;
 struct listnode
@@ -55,8 +85,7 @@ int insert(STNode *father, STNode *newchild)
 	}
 }
 
-/* Create a new node with given node name */
-STNode* newNode(char* node_name, kind nodekind, type nodetype, int line)
+STNode* newDeclNode(decltype newType)
 {
 	STNode *p = (STNode*)malloc(sizeof(STNode));
 	if (p == NULL)
@@ -64,13 +93,117 @@ STNode* newNode(char* node_name, kind nodekind, type nodetype, int line)
 		printf("Error:out of memory.\n");
 		exit(1);
 	}
-	strncpy(p->name, node_name, 20);
 	p->brother = NULL;
 	p->child = NULL;
 	p->father = NULL;
-	p->No_Line = line;
-	p->kind = nodekind;
-	p->type = nodetype;
+	p->No_Line = nr_line;
+	p->kind = DeclK;
+	p->nodetype.decl = newType;
+	switch (newType)
+	{
+	case VarDeclT: {
+		strcpy(p->name, "VarDecl\0");
+		break;
+	}
+	case FuncDeclT: {
+		strcpy(p->name, "FuncDecl\0");
+		break;
+	}
+	case ArrDeclT: {
+		strcpy(p->name, "ArrDecl\0");
+		break;
+	}
+	default:
+		break;
+	}
+	return p;
+}
+
+STNode* newExprNode(exprtype newType)
+{
+	STNode *p = (STNode*)malloc(sizeof(STNode));
+	if (p == NULL)
+	{
+		printf("Error:out of memory.\n");
+		exit(1);
+	}
+	p->brother = NULL;
+	p->child = NULL;
+	p->father = NULL;
+	p->No_Line = nr_line;
+	p->kind = ExprK;
+	p->nodetype.expr = newType;
+	switch (newType)
+	{
+	case OpT: {
+		strcpy(p->name, "Operator\0");
+		break;
+	}
+	case ConstT: {
+		strcpy(p->name, "Const\0");
+		break;
+	}
+	case IdT: {
+		strcpy(p->name, "Identifier\0");
+		break;
+	}
+	case AddrT: {
+		strcpy(p->name, "Address\0");
+		break;
+	}
+	case CallT: {
+		strcpy(p->name, "FuncCall\0");
+		break;
+	}
+	default:
+		break;
+	}
+	return p;
+}
+
+STNode* newStmtNode(stmttype newType)
+{
+	STNode *p = (STNode*)malloc(sizeof(STNode));
+	if (p == NULL)
+	{
+		printf("Error:out of memory.\n");
+		exit(1);
+	}
+	p->brother = NULL;
+	p->child = NULL;
+	p->father = NULL;
+	p->No_Line = nr_line;
+	p->kind = StmtK;
+	p->nodetype.stmt = newType;
+	switch (newType)
+	{
+	case CompStmtT: {
+		strcpy(p->name, "CompoundStmt\0");
+		break;
+	}
+	case IfT: {
+		strcpy(p->name, "IfStmt\0");
+		break;
+	}
+	case IfElseT: {
+		strcpy(p->name, "IfElseStmt\0");
+		break;
+	}
+	case IterStmtT: {
+		strcpy(p->name, "LoopStmt\0");
+		break;
+	}
+	case RetnStmtT: {
+		strcpy(p->name, "Return\0");
+		break;
+	}
+	case ExprStmtT: {
+		strcpy(p->name, "Expression\0");
+		break;
+	}
+	default:
+		break;
+	}
 	return p;
 }
 
@@ -102,7 +235,7 @@ void print(STNode* node, int level)
 		else
 			printf("+--");
 	}
-	printf("%s\n", node->name);
+
 	STNode* focus = node->child;
 	while (focus)
 	{

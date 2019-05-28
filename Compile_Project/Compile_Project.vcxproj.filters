@@ -24,6 +24,12 @@
     <ClInclude Include="symtab.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="defs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="parser.c">

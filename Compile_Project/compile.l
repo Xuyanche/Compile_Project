@@ -4,8 +4,10 @@
 #include <string.h>
 #include "node.h"
 #include "parser.h"
+#define MAX_TOKEN_LEN 20
 /* Global variable specification */
 int nr_line = 1;
+char TokenString[MAX_TOKEN_LEN];
 %}
 /* Basic symbol spcification */
 digit [0-9]
@@ -54,21 +56,21 @@ whitespace [ \t\r]+
 "/"		{return DIV;}
 
  /* Relative Operators */
-"<"		{ yylval.token_p = newNode(yytext, nr_line);  return LE;}
-"<="	{ yylval.token_p = newNode(yytext, nr_line);  return LEQ;}
-">"		{ yylval.token_p = newNode(yytext, nr_line);  return GE;}
-">="	{ yylval.token_p = newNode(yytext, nr_line);  return GEQ;}
-"=="	{ yylval.token_p = newNode(yytext, nr_line);  return EQ;}
-"!="	{ yylval.token_p = newNode(yytext, nr_line);  return NEQ;}
+"<"		{return LE;}
+"<="	{return LEQ;}
+">"		{return GE;}
+">="	{return GEQ;}
+"=="	{return EQ;}
+"!="	{return NEQ;}
 
  /* Assign Operator */
-"="		{ yylval.token_p = newNode(yytext, nr_line);  return ASN;}
+"="		{return ASN;}
 
  /* Statement Delimiter */
-";"		{ yylval.token_p = newNode(yytext, nr_line);  return SEMI;}
+";"		{return SEMI;}
 
  /* Comma */
-","		{ yylval.token_p = newNode(yytext, nr_line);  return COM;}
+","		{return COM;}
 
 %%
 
@@ -78,4 +80,7 @@ int yywrap()
 }
 
 int GetToken(){
-	
+  int TokenType = yylex();
+  strcpy(TokenString, yytext);
+  return TokenType;
+}

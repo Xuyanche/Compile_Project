@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="defs.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="symtab.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="parser.c" />
