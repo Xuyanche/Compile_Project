@@ -1,11 +1,17 @@
+ /* C Minus Lexical Specification File
+  * Code referenced from TINY Compiler Implementation from book
+  */
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "def.h"
 #include "node.h"
 #include "parser.h"
+#define MAX_TOKEN_LENGTH
 /* Global variable specification */
 int nr_line = 1;
+char TokenString[MAX_TOKEN_LENGTH];
 %}
 /* Basic symbol spcification */
 digit [0-9]
@@ -45,7 +51,7 @@ whitespace [ \t\r]+
 
  /* Whitespace filtering and line counting */
 {whitespace}	{/*Skip whitespace*/}
-"\n"			{nr_line++;}
+"\n"			    {nr_line++;}
 
  /* Numerical Arithmetic Operators */
 "+"		{return ADD;}
@@ -54,21 +60,38 @@ whitespace [ \t\r]+
 "/"		{return DIV;}
 
  /* Relative Operators */
-"<"		{ yylval.token_p = newNode(yytext, nr_line);  return LE;}
-"<="	{ yylval.token_p = newNode(yytext, nr_line);  return LEQ;}
-">"		{ yylval.token_p = newNode(yytext, nr_line);  return GE;}
-">="	{ yylval.token_p = newNode(yytext, nr_line);  return GEQ;}
-"=="	{ yylval.token_p = newNode(yytext, nr_line);  return EQ;}
-"!="	{ yylval.token_p = newNode(yytext, nr_line);  return NEQ;}
+"<"		{return LE;}
+"<="	{return LEQ;}
+">"		{return GE;}
+">="	{return GEQ;}
+"=="	{return EQ;}
+"!="	{return NEQ;}
 
  /* Assign Operator */
-"="		{ yylval.token_p = newNode(yytext, nr_line);  return ASN;}
+"="		{return ASN;}
 
  /* Statement Delimiter */
-";"		{ yylval.token_p = newNode(yytext, nr_line);  return SEMI;}
+";"		{return SEMI;}
 
  /* Comma */
-","		{ yylval.token_p = newNode(yytext, nr_line);  return COM;}
+","		{return COM;}
+
+ /* Comment */
+"/*"  {
+  char next1, next2;
+  while (true){
+    next1 = input();
+    if (next1 == '\n') nr_line++;
+    else if (next1 == EOF) break;
+    else if (next1 == '*'){
+      next2 = input();
+      if (next2 == '/') break;
+      else unput(next2);
+    }
+  }
+}
+
+. { return ERROR;}
 
 %%
 
@@ -78,4 +101,6 @@ int yywrap()
 }
 
 int GetToken(){
-	
+  CurrentToken = yylex();
+  strcpy()
+}

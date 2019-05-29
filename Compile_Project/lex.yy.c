@@ -406,13 +406,7 @@ char *yytext;
 /* Global variable specification */
 int nr_line = 1;
 /* Basic symbol spcification */
-/*
-	H			[a-fA-F0-9]
-	E			[Ee][+-]?{D}+
-	FS			(f|F|l|L)
-	IS			(u|U|l|L)*
-*/
-#line 416 "lex.yy.c"
+#line 410 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -563,12 +557,12 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 22 ".\\compile.l"
+#line 15 ".\\compile.l"
 
  /* Keywords Specification */
 
  /* Type Specification */
-#line 572 "lex.yy.c"
+#line 566 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -653,192 +647,167 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 26 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return(INT);}
+#line 19 ".\\compile.l"
+{return(INT);}
 	YY_BREAK
-/*
- "char"	{ yylval.token_p = newNode(yytext, nr_line);  return(CHAR);}
- "float"	{ yylval.token_p = newNode(yytext, nr_line);  return(FLOAT);}
- */
 /* Control flow keywords */
 case 2:
 YY_RULE_SETUP
-#line 33 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return(IF);}
+#line 22 ".\\compile.l"
+{return(IF);}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 34 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return(ELSE);}
+#line 23 ".\\compile.l"
+{return(ELSE);}
 	YY_BREAK
 /* Loop keywords */
 case 4:
 YY_RULE_SETUP
-#line 37 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return(WHILE);}
+#line 26 ".\\compile.l"
+{return(WHILE);}
 	YY_BREAK
-/*
- "do"	{ yylval.token_p = newNode(yytext, nr_line);  return(DO);}
- "break"	{ yylval.token_p = newNode(yytext, nr_line);  return(BREAK);}
- "for"	{ yylval.token_p = newNode(yytext, nr_line);  return(FOR);}
- */
 /* Function call keywords */
 case 5:
 YY_RULE_SETUP
-#line 45 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return(RETURN);}
+#line 29 ".\\compile.l"
+{return(RETURN);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 46 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return(VOID);}
+#line 30 ".\\compile.l"
+{return(VOID);}
 	YY_BREAK
-/*"struct"	{yylval.token_p = newNode(yytext, nr_line);  return(STRUCT);}*/
 /* Symbol Token Specification */
 /* Parentheses */
 case 7:
 YY_RULE_SETUP
-#line 53 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return '(';}
+#line 35 ".\\compile.l"
+{return LPR;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 54 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return ')';}
+#line 36 ".\\compile.l"
+{return RPR;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 55 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return '[';}
+#line 37 ".\\compile.l"
+{return LBR;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 56 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return ']';}
+#line 38 ".\\compile.l"
+{return RBR;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 57 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return '{';}
+#line 39 ".\\compile.l"
+{return LCR;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 58 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return '}';}
+#line 40 ".\\compile.l"
+{return RCR;}
 	YY_BREAK
 /* Identifier and numbers */
 case 13:
 YY_RULE_SETUP
-#line 61 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);   return(ID); }
+#line 43 ".\\compile.l"
+{return(ID);}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 62 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);   return(NUM); }
+#line 44 ".\\compile.l"
+{return(NUM); }
 	YY_BREAK
 /* Whitespace filtering and line counting */
 case 15:
 YY_RULE_SETUP
-#line 65 ".\\compile.l"
+#line 47 ".\\compile.l"
 {/*Skip whitespace*/}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 66 ".\\compile.l"
+#line 48 ".\\compile.l"
 {nr_line++;}
 	YY_BREAK
 /* Numerical Arithmetic Operators */
 case 17:
 YY_RULE_SETUP
-#line 69 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line); return '+';}
+#line 51 ".\\compile.l"
+{return ADD;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 70 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line); return '-';}
+#line 52 ".\\compile.l"
+{return SUB;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 71 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line); return '*';}
+#line 53 ".\\compile.l"
+{return MUL;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 72 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line); return '/';}
+#line 54 ".\\compile.l"
+{return DIV;}
 	YY_BREAK
 /* Relative Operators */
 case 21:
 YY_RULE_SETUP
-#line 75 ".\\compile.l"
+#line 57 ".\\compile.l"
 { yylval.token_p = newNode(yytext, nr_line);  return LE;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 76 ".\\compile.l"
+#line 58 ".\\compile.l"
 { yylval.token_p = newNode(yytext, nr_line);  return LEQ;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 77 ".\\compile.l"
+#line 59 ".\\compile.l"
 { yylval.token_p = newNode(yytext, nr_line);  return GE;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 78 ".\\compile.l"
+#line 60 ".\\compile.l"
 { yylval.token_p = newNode(yytext, nr_line);  return GEQ;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 79 ".\\compile.l"
+#line 61 ".\\compile.l"
 { yylval.token_p = newNode(yytext, nr_line);  return EQ;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 80 ".\\compile.l"
+#line 62 ".\\compile.l"
 { yylval.token_p = newNode(yytext, nr_line);  return NEQ;}
 	YY_BREAK
 /* Assign Operator */
 case 27:
 YY_RULE_SETUP
-#line 83 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return '=';}
+#line 65 ".\\compile.l"
+{ yylval.token_p = newNode(yytext, nr_line);  return ASN;}
 	YY_BREAK
 /* Statement Delimiter */
 case 28:
 YY_RULE_SETUP
-#line 86 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return ';';}
+#line 68 ".\\compile.l"
+{ yylval.token_p = newNode(yytext, nr_line);  return SEMI;}
 	YY_BREAK
 /* Comma */
 case 29:
 YY_RULE_SETUP
-#line 89 ".\\compile.l"
-{ yylval.token_p = newNode(yytext, nr_line);  return ',';}
+#line 71 ".\\compile.l"
+{ yylval.token_p = newNode(yytext, nr_line);  return COM;}
 	YY_BREAK
-/* To be added:
-	"&&"	{ yylval.token_p = newNode(yytext, nr_line);  return AND;}
-	"||"	{ yylval.token_p = newNode(yytext, nr_line);  return OR;}
-	"!"		{ yylval.token_p = newNode(yytext, nr_line);  return '!';}	
-	"."		{ yylval.token_p = newNode(yytext, nr_line);  return '.';}
-	"?"		{ yylval.token_p = newNode(yytext, nr_line);  return '?';}
-	":"		{ yylval.token_p = newNode(yytext, nr_line);  return ':';}
-	"|"		{ yylval.token_p = newNode(yytext, nr_line);  return '|';}
-	"^"	{ yylval.token_p = newNode(yytext, nr_line);  return '^';}
-	0[xX]{H}+{IS}?		{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); }
-	0{DIGIT}+{IS}?		{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); }
-	{DIGIT}+{IS}?		{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); }
-	{DIGIT}*"."{DIGIT}+	{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); } 
-	{DIGIT}+"."{DIGIT}*	{ yylval.token_p = newNode(yytext, nr_line);  return(CONSTANT); }
- */
 case 30:
 YY_RULE_SETUP
-#line 107 ".\\compile.l"
+#line 73 ".\\compile.l"
 ECHO;
 	YY_BREAK
-#line 842 "lex.yy.c"
+#line 811 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1724,10 +1693,13 @@ int main()
 	return 0;
 	}
 #endif
-#line 107 ".\\compile.l"
+#line 73 ".\\compile.l"
 
 
 int yywrap()
 {
 	return 1;
 }
+
+int GetToken(){
+	
