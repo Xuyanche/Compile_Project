@@ -81,13 +81,14 @@
 
 extern STNode* TreeRoot;
 extern FILE* input, output;
+extern int nr_line;
 
 void yyerror(char *s);
 int parse();
 
 
 /* Line 189 of yacc.c  */
-#line 91 "parser.c"
+#line 92 "parser.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -180,7 +181,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 17 ".\\compile.y"
+#line 18 ".\\compile.y"
 
 	int Token;
 	int dtype;
@@ -191,7 +192,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 195 "parser.c"
+#line 196 "parser.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -203,7 +204,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 207 "parser.c"
+#line 208 "parser.c"
 
 #ifdef short
 # undef short
@@ -511,13 +512,13 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    37,    37,    42,    52,    57,    58,    63,    70,    82,
-      83,    88,   103,   104,   105,   110,   120,   125,   132,   143,
-     164,   175,   180,   191,   196,   197,   198,   199,   200,   205,
-     206,   211,   218,   230,   241,   247,   256,   263,   271,   277,
-     288,   296,   304,   305,   306,   307,   308,   309,   314,   322,
-     330,   331,   336,   344,   352,   353,   358,   359,   360,   361,
-     371,   382,   383,   388,   398
+       0,    38,    38,    43,    53,    58,    59,    64,    71,    83,
+      84,    89,   104,   105,   106,   111,   121,   126,   133,   144,
+     165,   176,   181,   192,   197,   198,   199,   200,   201,   206,
+     207,   212,   219,   231,   242,   248,   257,   264,   272,   278,
+     289,   297,   305,   306,   307,   308,   309,   310,   315,   323,
+     331,   332,   337,   345,   353,   354,   359,   360,   361,   362,
+     372,   383,   384,   389,   399
 };
 #endif
 
@@ -1488,14 +1489,14 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 37 ".\\compile.y"
+#line 38 ".\\compile.y"
     {TreeRoot = newStmtNode(ProgStmtT); refreshStmtNode(TreeRoot); insert(TreeRoot, (yyvsp[(1) - (1)].node));}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 43 ".\\compile.y"
+#line 44 ".\\compile.y"
     {
 		STNode* t = (yyvsp[(1) - (2)].node);
 		if (t != NULL) {
@@ -1510,28 +1511,28 @@ yyreduce:
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 52 ".\\compile.y"
+#line 53 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 57 ".\\compile.y"
+#line 58 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 58 ".\\compile.y"
+#line 59 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 64 ".\\compile.y"
+#line 65 ".\\compile.y"
     {
 		(yyval.node) = newDeclNode(VarDeclT);
 		(yyval.node)->attr.dtype = (yyvsp[(1) - (3)].dtype);
@@ -1543,7 +1544,7 @@ yyreduce:
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 71 ".\\compile.y"
+#line 72 ".\\compile.y"
     {
             (yyval.node) = newDeclNode(ArrDeclT);
             (yyval.node)->attr.dtype = (yyvsp[(1) - (6)].dtype);
@@ -1556,21 +1557,21 @@ yyreduce:
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 82 ".\\compile.y"
+#line 83 ".\\compile.y"
     {(yyval.dtype) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 83 ".\\compile.y"
+#line 84 ".\\compile.y"
     {(yyval.dtype) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 89 ".\\compile.y"
+#line 90 ".\\compile.y"
     {	
 		(yyval.node) = newDeclNode(FuncDeclT);
         (yyval.node)->attr.dtype = (yyvsp[(1) - (6)].dtype);
@@ -1586,28 +1587,28 @@ yyreduce:
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 103 ".\\compile.y"
+#line 104 ".\\compile.y"
     {(yyval.node) = newExprNode(ParasT); refreshExprNode((yyval.node)); insert((yyval.node), (yyvsp[(1) - (1)].node));}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 104 ".\\compile.y"
+#line 105 ".\\compile.y"
     {(yyval.node) = NULL;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 105 ".\\compile.y"
+#line 106 ".\\compile.y"
     {(yyval.node) = NULL;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 111 ".\\compile.y"
+#line 112 ".\\compile.y"
     {	
 		STNode* t = (yyvsp[(1) - (3)].node);
 		if (t != NULL) {
@@ -1622,14 +1623,14 @@ yyreduce:
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 120 ".\\compile.y"
+#line 121 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 126 ".\\compile.y"
+#line 127 ".\\compile.y"
     {	
 		(yyval.node) = newExprNode(IdT);
         (yyval.node)->attr.dtype = (yyvsp[(1) - (2)].dtype);
@@ -1641,7 +1642,7 @@ yyreduce:
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 133 ".\\compile.y"
+#line 134 ".\\compile.y"
     {	
 		(yyval.node) = newExprNode(AddrT);
         (yyval.node)->attr.dtype = (yyvsp[(1) - (4)].dtype);
@@ -1653,7 +1654,7 @@ yyreduce:
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 144 ".\\compile.y"
+#line 145 ".\\compile.y"
     {	
         (yyval.node) = newStmtNode(CompStmtT);
 		refreshStmtNode((yyval.node));
@@ -1675,7 +1676,7 @@ yyreduce:
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 165 ".\\compile.y"
+#line 166 ".\\compile.y"
     {
 		STNode* t = (yyvsp[(1) - (2)].node);
 		if (t != NULL) {
@@ -1690,14 +1691,14 @@ yyreduce:
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 175 ".\\compile.y"
+#line 176 ".\\compile.y"
     {(yyval.node) = NULL;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 181 ".\\compile.y"
+#line 182 ".\\compile.y"
     {
 		STNode* t = (yyvsp[(1) - (2)].node);
 		if (t != NULL) {
@@ -1712,63 +1713,63 @@ yyreduce:
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 191 ".\\compile.y"
+#line 192 ".\\compile.y"
     {(yyval.node) = NULL;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 196 ".\\compile.y"
+#line 197 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 197 ".\\compile.y"
+#line 198 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 198 ".\\compile.y"
+#line 199 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 199 ".\\compile.y"
+#line 200 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 200 ".\\compile.y"
+#line 201 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 205 ".\\compile.y"
+#line 206 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (2)].node);}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 206 ".\\compile.y"
+#line 207 ".\\compile.y"
     {(yyval.node) = NULL;}
     break;
 
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 212 ".\\compile.y"
+#line 213 ".\\compile.y"
     {	
 		(yyval.node) = newStmtNode(IfT);
 		refreshStmtNode((yyval.node));
@@ -1780,7 +1781,7 @@ yyreduce:
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 219 ".\\compile.y"
+#line 220 ".\\compile.y"
     {	
 		(yyval.node) = newStmtNode(IfElseT);
 		refreshStmtNode((yyval.node));
@@ -1793,7 +1794,7 @@ yyreduce:
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 231 ".\\compile.y"
+#line 232 ".\\compile.y"
     {
 		(yyval.node) = newStmtNode(IterStmtT);
 		refreshStmtNode((yyval.node));
@@ -1805,7 +1806,7 @@ yyreduce:
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 242 ".\\compile.y"
+#line 243 ".\\compile.y"
     {	
         (yyval.node) = newStmtNode(RetnStmtT);
 		refreshStmtNode((yyval.node));
@@ -1816,7 +1817,7 @@ yyreduce:
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 248 ".\\compile.y"
+#line 249 ".\\compile.y"
     {
 		(yyval.node) = newStmtNode(RetnStmtT);
 		refreshStmtNode((yyval.node));
@@ -1826,7 +1827,7 @@ yyreduce:
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 257 ".\\compile.y"
+#line 258 ".\\compile.y"
     {
 		(yyval.node) = newExprNode(AssignT);
 		refreshExprNode((yyval.node));
@@ -1838,7 +1839,7 @@ yyreduce:
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 264 ".\\compile.y"
+#line 265 ".\\compile.y"
     {
 		(yyval.node) = (yyvsp[(1) - (1)].node);
 	}
@@ -1847,7 +1848,7 @@ yyreduce:
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 272 ".\\compile.y"
+#line 273 ".\\compile.y"
     {	
 		(yyval.node) = newExprNode(IdT);
         (yyval.node)->attr.name = (yyvsp[(1) - (1)].name);
@@ -1858,7 +1859,7 @@ yyreduce:
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 278 ".\\compile.y"
+#line 279 ".\\compile.y"
     {	
 		(yyval.node) = newExprNode(EntryT);
         (yyval.node)->attr.name = (yyvsp[(1) - (4)].name);
@@ -1870,7 +1871,7 @@ yyreduce:
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 289 ".\\compile.y"
+#line 290 ".\\compile.y"
     {
 		(yyval.node) = newExprNode(OpT);
         (yyval.node)->attr.Op = (yyvsp[(2) - (3)].Token);
@@ -1883,7 +1884,7 @@ yyreduce:
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 297 ".\\compile.y"
+#line 298 ".\\compile.y"
     {
 		(yyval.node) = (yyvsp[(1) - (1)].node);
 	}
@@ -1892,49 +1893,49 @@ yyreduce:
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 304 ".\\compile.y"
+#line 305 ".\\compile.y"
     { (yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 305 ".\\compile.y"
+#line 306 ".\\compile.y"
     { (yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 306 ".\\compile.y"
+#line 307 ".\\compile.y"
     { (yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 307 ".\\compile.y"
+#line 308 ".\\compile.y"
     { (yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 308 ".\\compile.y"
+#line 309 ".\\compile.y"
     { (yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 309 ".\\compile.y"
+#line 310 ".\\compile.y"
     { (yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 315 ".\\compile.y"
+#line 316 ".\\compile.y"
     {
 		(yyval.node) = newExprNode(OpT);
         (yyval.node)->attr.Op = (yyvsp[(2) - (3)].Token);
@@ -1947,7 +1948,7 @@ yyreduce:
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 323 ".\\compile.y"
+#line 324 ".\\compile.y"
     {
 		(yyval.node) = (yyvsp[(1) - (1)].node);
 	}
@@ -1956,21 +1957,21 @@ yyreduce:
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 330 ".\\compile.y"
+#line 331 ".\\compile.y"
     {(yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 331 ".\\compile.y"
+#line 332 ".\\compile.y"
     {(yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 337 ".\\compile.y"
+#line 338 ".\\compile.y"
     {
 		(yyval.node) = newExprNode(OpT);
         (yyval.node)->attr.Op = (yyvsp[(2) - (3)].Token);
@@ -1983,7 +1984,7 @@ yyreduce:
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 345 ".\\compile.y"
+#line 346 ".\\compile.y"
     {
 		(yyval.node) = (yyvsp[(1) - (1)].node);
 	}
@@ -1992,42 +1993,42 @@ yyreduce:
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 352 ".\\compile.y"
+#line 353 ".\\compile.y"
     {(yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 353 ".\\compile.y"
+#line 354 ".\\compile.y"
     {(yyval.Token) = (yyvsp[(1) - (1)].Token);}
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 358 ".\\compile.y"
+#line 359 ".\\compile.y"
     {(yyval.node) = (yyvsp[(2) - (3)].node);}
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 359 ".\\compile.y"
+#line 360 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 360 ".\\compile.y"
+#line 361 ".\\compile.y"
     {(yyval.node) = (yyvsp[(1) - (1)].node);}
     break;
 
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 362 ".\\compile.y"
+#line 363 ".\\compile.y"
     {
         (yyval.node) = newExprNode(ConstT);
         (yyval.node)->attr.val = (yyvsp[(1) - (1)].value);
@@ -2038,7 +2039,7 @@ yyreduce:
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 372 ".\\compile.y"
+#line 373 ".\\compile.y"
     {
 		(yyval.node) = newExprNode(CallT);
         (yyval.node)->attr.name = (yyvsp[(1) - (4)].name);
@@ -2050,21 +2051,21 @@ yyreduce:
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 382 ".\\compile.y"
+#line 383 ".\\compile.y"
     {(yyval.node) = newExprNode(ArgsT); refreshExprNode((yyval.node)); insert((yyval.node), (yyvsp[(1) - (1)].node));}
     break;
 
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 383 ".\\compile.y"
+#line 384 ".\\compile.y"
     { (yyval.node) = NULL; }
     break;
 
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 389 ".\\compile.y"
+#line 390 ".\\compile.y"
     {
 		STNode* t = (yyvsp[(1) - (3)].node);
 		if (t != NULL) {
@@ -2079,7 +2080,7 @@ yyreduce:
   case 64:
 
 /* Line 1455 of yacc.c  */
-#line 399 ".\\compile.y"
+#line 400 ".\\compile.y"
     {
 		(yyval.node) = (yyvsp[(1) - (1)].node);
 	}
@@ -2088,7 +2089,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 2092 "parser.c"
+#line 2093 "parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2300,13 +2301,14 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 402 ".\\compile.y"
+#line 403 ".\\compile.y"
 
 
 
 void yyerror(char* s)
 {    
-	printf("Error:%s\n", s);
+	printf("Line %d: %s\n", nr_line, s);
+	exit(0);
 }
 
 int parse()
@@ -2318,7 +2320,7 @@ int parse()
 	yyout=output;
 	yyparse();
 	printf("Parse Tree:\n");
-	print(TreeRoot,0);
+	printSTree(TreeRoot,0);
 	return 0;
 }
 

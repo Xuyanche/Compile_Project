@@ -7,6 +7,7 @@
 
 typedef struct SymTab SymTab; 
 typedef struct SymtabEntry SymtabEntry; // Entry for hash bucket chain
+typedef struct SymtabEntryList SymtabEntryList;
 
 typedef enum SymKind{VarK, FuncK, ParaK, ArrK}SymKind;
 
@@ -19,11 +20,16 @@ struct SymtabEntry
 	int nr;
 };
 
+struct SymtabEntryList {
+	SymtabEntry entry;
+	SymtabEntryList *next;
+};
+
 struct SymTab
 {
 	SymTab *child, *brother, *father;
 	int nr_symbols, nr_func, nr_localvar, nr_para;
-	SymtabEntry bucket[MAX_SYMBOLS];
+	SymtabEntryList* bucket[MAX_SYMBOLS];
 	char* name;
 };
 
@@ -38,3 +44,5 @@ int InsertSym(SymTab* table, char* name, SymKind kind, int dtype, int order, int
 SymtabEntry* lookup(SymTab* table, char* name);
 
 void printTable(SymTab* table);
+
+int TypeCheck(STNode *t, SymTab *table);

@@ -10,6 +10,7 @@
 
 extern STNode* TreeRoot;
 extern FILE* input, output;
+extern int nr_line;
 
 void yyerror(char *s);
 int parse();
@@ -289,6 +290,7 @@ simple_expr
 	{
 		$$ = newExprNode(OpT);
         $$->attr.Op = $2;
+		$$->attr.dtype = INT;
 		refreshExprNode($$);
         insert($$, $1);
         insert($$, $3);
@@ -362,6 +364,7 @@ factor
     {
         $$ = newExprNode(ConstT);
         $$->attr.val = $1;
+		$$->attr.dtype = INT;
 		refreshExprNode($$);
     }
 	;
@@ -404,7 +407,8 @@ arg_list
 
 void yyerror(char* s)
 {    
-	printf("Error:%s\n", s);
+	printf("Line %d: %s\n", nr_line, s);
+	exit(0);
 }
 
 int parse()
@@ -416,6 +420,6 @@ int parse()
 	yyout=output;
 	yyparse();
 	printf("Parse Tree:\n");
-	print(TreeRoot,0);
+	printSTree(TreeRoot,0);
 	return 0;
 }

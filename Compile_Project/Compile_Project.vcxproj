@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cgen.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="symtab.h" />
@@ -26,6 +27,7 @@
     <ClInclude Include="scan.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cgen.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="node.c" />
     <ClCompile Include="parser.c" />

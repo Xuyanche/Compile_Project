@@ -196,7 +196,7 @@ int makeBrother(STNode *old, STNode *newone) {
 	node->brother = newone;
 }
 
-void print(STNode* node, int level)
+void printSTree(STNode* node, int level)
 {
 	if (node->brother) node->brother->father = node->father;
 	STNode *father = node->father;
@@ -229,7 +229,7 @@ void print(STNode* node, int level)
 	STNode* focus = node->child;
 	while (focus)
 	{
-		print(focus, level + 1);
+		printSTree(focus, level + 1);
 		focus = focus->brother;
 	}
 	return;

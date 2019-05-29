@@ -68,5 +68,5 @@ STNode* newStmtNode(stmttype newType);
 void refreshDeclNode(STNode *p);
 void refreshExprNode(STNode *p);
 void refreshStmtNode(STNode *p);
-void print(STNode* node, int level);
+void printSTree(STNode* node, int level);
 #endif

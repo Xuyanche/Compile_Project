@@ -8,6 +8,7 @@
 FILE *input, *output;
 STNode *TreeRoot;
 SymTab *SymbolTable;
+int error = 0;
 
 int main(int argc, char* argv[]) {
 	if (argc == 1) {
@@ -24,9 +25,15 @@ int main(int argc, char* argv[]) {
 		input = fopen(argv[1], "r");
 		output = fopen(argv[2], "w");
 	}
+	// Build Parse Tree
 	parse();
+	// Build Symbol Table
 	SymbolTable = BuildTable(TreeRoot, NULL);
-	printf("Symbol Tables: \n");
+	printf("Symbol Tables:\n");
 	printTable(SymbolTable);
-	return 0;
+	// Do Type Checking
+	error = TypeCheck(TreeRoot, SymbolTable);
+	if (error)
+		return 0;
+
 }
