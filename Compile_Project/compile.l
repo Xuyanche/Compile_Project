@@ -1,106 +1,82 @@
- /* C Minus Lexical Specification File
-  * Code referenced from TINY Compiler Implementation from book
-  */
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "def.h"
 #include "node.h"
 #include "parser.h"
-#define MAX_TOKEN_LENGTH
+#define MAX_TOKEN_LEN 20
 /* Global variable specification */
 int nr_line = 1;
-char TokenString[MAX_TOKEN_LENGTH];
+char TokenString[MAX_TOKEN_LEN];
 %}
 /* Basic symbol spcification */
 digit [0-9]
 letter [A-za-z]
+id ({letter}{letter|digit}*)
+num {digit}+
 whitespace [ \t\r]+
 
 %%
  /* Keywords Specification */
 
  /* Type Specification */
-"int"		{return(INT);}
+"int"		{yylval.Token=INT;return(INT);}
 
  /* Control flow keywords */
-"if"		{return(IF);}
-"else"		{return(ELSE);}
+"if"		{yylval.Token=IF;return(IF);}
+"else"		{yylval.Token=ELSE;return(ELSE);}
 
  /* Loop keywords */
-"while"		{return(WHILE);}
+"while"		{yylval.Token=WHILE;return(WHILE);}
 
  /* Function call keywords */
-"return"	{return(RETURN);}
-"void"		{return(VOID);}
+"return"	{yylval.Token=RETURN;return(RETURN);}
+"void"		{yylval.Token=VOID;return(VOID);}
 
  /* Symbol Token Specification */
 
   /* Parentheses */
-"("		{return LPR;}
-")"		{return RPR;}
-"["		{return LBR;}
-"]"		{return RBR;}
-"{"		{return LCR;}
-"}"		{return RCR;}
+"("		{yylval.Token=LPR;return LPR;}
+")"		{yylval.Token=RPR;return RPR;}
+"["		{yylval.Token=LBR;return LBR;}
+"]"		{yylval.Token=RBR;return RBR;}
+"{"		{yylval.Token=LCR;return LCR;}
+"}"		{yylval.Token=RCR;return RCR;}
 
  /* Identifier and numbers */
-{letter}({letter}|{digit})*		{return(ID);}
-{digit}+						{return(NUM); }
+[a-zA-Z]+	{yylval.name=strdup(yytext);return(ID);}
+[0-9]+		{yylval.value=atoi(yytext);return(NUM); }
 
  /* Whitespace filtering and line counting */
 {whitespace}	{/*Skip whitespace*/}
-"\n"			    {nr_line++;}
+"\n"			{nr_line++;}
 
  /* Numerical Arithmetic Operators */
-"+"		{return ADD;}
-"-"		{return SUB;}
-"*"		{return MUL;}
-"/"		{return DIV;}
+"+"		{yylval.Token=ADD;return ADD;}
+"-"		{yylval.Token=SUB;return SUB;}
+"*"		{yylval.Token=MUL;return MUL;}
+"/"		{yylval.Token=DIV;return DIV;}
 
  /* Relative Operators */
-"<"		{return LE;}
-"<="	{return LEQ;}
-">"		{return GE;}
-">="	{return GEQ;}
-"=="	{return EQ;}
-"!="	{return NEQ;}
+"<"		{yylval.Token=LE;return LE;}
+"<="	{yylval.Token=LEQ;return LEQ;}
+">"		{yylval.Token=GE;return GE;}
+">="	{yylval.Token=GEQ;return GEQ;}
+"=="	{yylval.Token=EQ;return EQ;}
+"!="	{yylval.Token=NEQ;return NEQ;}
 
  /* Assign Operator */
-"="		{return ASN;}
+"="		{yylval.Token=ASN;return ASN;}
 
  /* Statement Delimiter */
-";"		{return SEMI;}
+";"		{yylval.Token=SEMI;return SEMI;}
 
  /* Comma */
-","		{return COM;}
-
- /* Comment */
-"/*"  {
-  char next1, next2;
-  while (true){
-    next1 = input();
-    if (next1 == '\n') nr_line++;
-    else if (next1 == EOF) break;
-    else if (next1 == '*'){
-      next2 = input();
-      if (next2 == '/') break;
-      else unput(next2);
-    }
-  }
-}
-
-. { return ERROR;}
+","		{yylval.Token=COM;return COM;}
 
 %%
 
 int yywrap()
 {
 	return 1;
-}
-
-int GetToken(){
-  CurrentToken = yylex();
-  strcpy()
 }

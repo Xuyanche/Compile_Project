@@ -2,44 +2,48 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "lex.yy.c"
+#include "scan.h"
 #include "node.h"
-#define YYDEBUG 1
-#define YYSTYPE STNode*
-static STNode* TreeRoot;
-void yyerror(char *s);
-FILE *fout;
-extern int column;
-%}
+#include "utils.h"
 
+#define YYDEBUG 1
+
+extern STNode* TreeRoot;
+extern FILE* input, output;
+
+void yyerror(char *s);
+int parse();
+%}
 %union{
-	STNode *token_p;
+	int Token;
+	int dtype;
+	int value;
+	STNode* node;
+	char* name;
 }
-%type program declaration_list declaration var_decl func_decl
-%type type var paras para_list para
-%type local_decls comp_stmt
-%type stmt_list stmt expr_stmt selc_stmt iter_stmt retn_stmt
-%type expr simple_expr relop add_expr addop term mulop factor
-%type call args arg_list
-%token ADD SUB MUL DIV COM ASN LCR RCR LBR RBR LPR RPR SEMI
-%token ID NUM INT VOID IF ELSE WHILE RETURN
-%token LE LEQ GE GEQ EQ NEQ
+%type <node> program declaration_list declaration var_decl func_decl paras comp_stmt para_list local_decls stmt_list para
+%type <node> stmt expr_stmt selc_stmt iter_stmt retn_stmt expr simple_expr add_expr term factor call args arg_list var
+%type <dtype> type
+%type <Token> relop addop mulop
+%token <Token> ADD SUB MUL DIV COM ASN LCR RCR LBR RBR LPR RPR SEMI INT VOID IF ELSE WHILE RETURN LE LEQ GE GEQ EQ NEQ
+%token <name> ID
+%token <value> NUM
 
 %start program
 %%
 
  /* 1 */
 program
-	: declaration_list {TreeRoot = $1;}
+	: declaration_list {TreeRoot = newStmtNode(ProgStmtT); refreshStmtNode(TreeRoot); insert(TreeRoot, $1);}
 	;
 
  /* 2 */
 declaration_list
 	: declaration_list declaration
 	{
-		YYSTYPE t = $1;
+		STNode* t = $1;
 		if (t != NULL) {
-			insert(t, $2);
+			makeBrother(t, $2);
 			$$ = t;
 		}
 		else
@@ -56,117 +60,102 @@ declaration
 
  /* 4 */
 var_decl
-	: type ID ';'	
-	{	
-		YYSTYPE t = newNode("var_decl", DeclK, VarDeclT, $1->No_Line);
-		insert(t, $1);
-
-		$$ = p;
-	}
-	| type ID '[' NUM ']' ';'
+	: type ID SEMI
 	{
-		p = newNode("var_decl", $1->No_Line);
-		insert(p, $6);
-		insert(p, $5);
-		insert(p, $4);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newDeclNode(VarDeclT);
+		$$->attr.dtype = $1;
+		$$->attr.name = $2;
+		refreshDeclNode($$);
 	}
+	| type ID LBR NUM RBR SEMI
+        {
+            $$ = newDeclNode(ArrDeclT);
+            $$->attr.dtype = $1;
+		    $$->attr.name = $2;
+            $$->attr.val = $4;
+			refreshDeclNode($$);
+        }
 	;
 
  /* 5 */
 type
-	: VOID			{p = newNode("type", $1->No_Line); insert(p, $1); $$ = p;}
-	| INT			{p = newNode("type", $1->No_Line); insert(p, $1); $$ = p;}
-	/* 
-	| CHAR			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	| FLOAT			{p = newNode("type", $1->No_Line, $1->col); insert(p, $1); $$ = p;}
-	*/
+	: VOID	{$$ = $1;}
+	| INT	{$$ = $1;}
 	;
 
  /* 6 */
 func_decl
-	: type ID '(' paras ')' comp_stmt	
+	: type ID LPR paras RPR comp_stmt	
 	{	
-		p = newNode("func_decl", $1->No_Line);
-		insert(p, $6);
-		insert(p, $5);
-		insert(p, $4);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newDeclNode(FuncDeclT);
+        $$->attr.dtype = $1;
+        $$->attr.name = $2;
+		refreshDeclNode($$);
+		if ($4)
+			insert($$, $4);
+        if ($6)
+            insert($$, $6);
 	}
 	;
 
  /* 7 */
 paras
-	: para_list
-	{	
-		p = newNode("paras", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
-	}
-	| VOID
-	{	
-		p = newNode("paras", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
-	}
+	: para_list {$$ = newExprNode(ParasT); refreshExprNode($$); insert($$, $1);}
+	| VOID {$$ = NULL;}
+	| {$$ = NULL;}
 	;
 
  /* 8 */
 para_list
-	: para_list ',' para
+	: para_list COM para
 	{	
-		p = newNode("para_list", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		STNode* t = $1;
+		if (t != NULL) {
+			makeBrother(t, $3);
+			$$ = t;
+		}
+		else
+			$$ = $3;
 	}
-	| para
-	{	
-		p = newNode("para_list", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
-	}
+	| para  {$$ = $1;}
 	;
  
  /* 9 */
 para
-	: type ID 	
+	: type ID
 	{	
-		p = newNode("para", $1->No_Line);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newExprNode(IdT);
+        $$->attr.dtype = $1;
+        $$->attr.name = $2;
+		refreshExprNode($$);
 	}
-	| type ID '[' ']'
+	| type ID LBR RBR
 	{	
-		p = newNode("para", $1->No_Line);
-		insert(p, $4);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newExprNode(AddrT);
+        $$->attr.dtype = $1;
+        $$->attr.name = $2;
+		refreshExprNode($$);
 	}
 	;
 
  /* 10 */
 comp_stmt
-	: '{' local_decls stmt_list '}'	
+	: LCR local_decls stmt_list RCR
 	{	
-		p = newNode("comp_stmt", $1->No_Line);
-		insert(p, $4);
-		if ($3)
-			insert(p, $3);
-		if ($2)
+        $$ = newStmtNode(CompStmtT);
+		refreshStmtNode($$);
+		if ($2){
+			STNode* p = newDeclNode(LocalDeclT);
+			refreshDeclNode(p);
 			insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+			insert($$, p);
+		}
+		if ($3){
+			STNode* p = newStmtNode(StmtListT);
+			refreshStmtNode(p);
+			insert(p, $3);
+			insert($$, p);
+		}
 	}
 	;
  
@@ -174,152 +163,123 @@ comp_stmt
 local_decls
 	: local_decls var_decl	
 	{
-		p = newNode("local_decls", $2->No_Line); 
-		insert(p, $2);
-		if ($1)
-			insert(p, $1);
-		$$ = p;
+		STNode* t = $1;
+		if (t != NULL) {
+			makeBrother(t, $2);
+			$$ = t;
+		}
+		else
+			$$ = $2;
 	}
 	| 
-	{
-		$$ = NULL;
-	}
+    {$$ = NULL;}
 	;
 	
  /* 12 */
 stmt_list
 	: stmt_list stmt
 	{
-		p = newNode("stmt_list", $2->No_Line);
-		insert(p, $2);
-		if ($1)
-			insert(p, $1);
-		$$ = p;
+		STNode* t = $1;
+		if (t != NULL) {
+			makeBrother(t, $2);
+			$$ = t;
+		}
+		else
+			$$ = $2;
 	}
 	| 
-	{
-		$$ = NULL;
-	}
+	{$$ = NULL;}
 	;
 	
  /* 13 */
 stmt
-	: expr_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
-	| comp_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
-	| selc_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
-	| iter_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
-	| retn_stmt		{p = newNode("stmt", $1->No_Line); insert(p, $1); $$ = p;}
+	: expr_stmt		{$$ = $1;}
+	| comp_stmt		{$$ = $1;}
+	| selc_stmt		{$$ = $1;}
+	| iter_stmt		{$$ = $1;}
+	| retn_stmt		{$$ = $1;}
 	;	
 
  /* 14 */
 expr_stmt
-	: expr ';'
-	{
-		p = newNode("expr_stmt", $1->No_Line); 
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
-	}
-	| ';'
-	{
-		p = newNode("expr_stmt", $1->No_Line); 
-		insert(p, $1);
-		$$ = p;
-	}
+	: expr SEMI {$$ = $1;}
+	| SEMI {$$ = NULL;}
 	;
 
  /* 15 */
 selc_stmt
-	: IF '(' expr ')' stmt	
+	: IF LPR expr RPR stmt	
 	{	
-		p = newNode("selc_stmt", $1->No_Line);
-		insert(p, $5); 
-		insert(p, $4); 
-		insert(p, $3); 
-		insert(p, $2); 
-		insert(p, $1); 
-		$$ = p;
+		$$ = newStmtNode(IfT);
+		refreshStmtNode($$);
+        insert($$, $3);
+        insert($$, $5);
 	}
-	| IF '(' expr ')' stmt ELSE stmt	
+	| IF LPR expr RPR stmt ELSE stmt	
 	{	
-		p = newNode("selc_stmt", $1->No_Line);
-		insert(p, $7);
-		insert(p, $6);
-		insert(p, $5);
-		insert(p, $4);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newStmtNode(IfElseT);
+		refreshStmtNode($$);
+        insert($$, $3);
+        insert($$, $5);
+        insert($$, $7);
 	}
 	;
 	
  /* 16 */
 iter_stmt
-	: WHILE '(' expr ')' stmt	
+	: WHILE LPR expr RPR stmt	
 	{
-		p = newNode("iter_stmt", $1->No_Line);
-		insert(p, $5);
-		insert(p, $4);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newStmtNode(IterStmtT);
+		refreshStmtNode($$);
+        insert($$, $3);
+        insert($$, $5);
 	}
 	;
 
  /* 17 */
 retn_stmt
-	: RETURN expr ';'	
-	{	p = newNode("retn_stmt", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2); 
-		insert(p, $1); 
-		$$ = p;
+	: RETURN expr SEMI	
+	{	
+        $$ = newStmtNode(RetnStmtT);
+		refreshStmtNode($$);
+        insert($$, $2);
 	}
-	| RETURN ';'
+	| RETURN SEMI
 	{
-		p = newNode("retn_stmt", $1->No_Line);
-		insert(p, $2);
-		insert(p, $1);  
-		$$ = p;
+		$$ = newStmtNode(RetnStmtT);
+		refreshStmtNode($$);
 	}
 	;
 
  /* 18 */
 expr
-	: var '=' expr
+	: var ASN expr
 	{
-		p = newNode("expr", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2); 
-		insert(p, $1); 
-		$$ = p;
+		$$ = newExprNode(AssignT);
+		refreshExprNode($$);
+        insert($$, $1);
+        insert($$, $3);
 	}
 	| simple_expr
 	{
-		p = newNode("expr", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
+		$$ = $1;
 	}
 	;
 
  /* 19 */
 var
-	: ID				
+	: ID	
 	{	
-		p = newNode("vars", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
+		$$ = newExprNode(IdT);
+        $$->attr.name = $1;
+		refreshExprNode($$);
 	}
-	| ID '[' expr ']'	
+	| ID LBR expr RBR	
 	{	
-		p = newNode("var", $1->No_Line);
-		insert(p, $4);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newExprNode(EntryT);
+        $$->attr.name = $1;
+		refreshExprNode($$);
+        insert($$, $3);
 	}
 	;
 
@@ -327,128 +287,117 @@ var
 simple_expr
 	: add_expr relop add_expr
 	{
-		p = newNode("simple_expr", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newExprNode(OpT);
+        $$->attr.Op = $2;
+		refreshExprNode($$);
+        insert($$, $1);
+        insert($$, $3);
 	}
 	| add_expr
 	{
-		p = newNode("simple_expr", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
+		$$ = $1;
 	}
 	;
 
  /* 21 */
 relop
-	: GE	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
-	| GEQ	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
-	| LE	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
-	| LEQ	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
-	| EQ	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
-	| NEQ	{ p = newNode("relop", $1->No_Line); insert(p, $1); $$ = p;}
+	: GE	{ $$ = $1;}
+	| GEQ	{ $$ = $1;}
+	| LE	{ $$ = $1;}
+	| LEQ	{ $$ = $1;}
+	| EQ	{ $$ = $1;}
+	| NEQ	{ $$ = $1;}
 	;
 
  /* 22 */
 add_expr
 	:add_expr addop term
 	{
-		p = newNode("add_expr", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newExprNode(OpT);
+        $$->attr.Op = $2;
+		refreshExprNode($$);
+        insert($$, $1);
+        insert($$, $3);
 	}
 	| term
 	{
-		p = newNode("add_expr", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
+		$$ = $1;
 	}
 	;
 
  /* 23 */
 addop
-	: '+'	{ p = newNode("addop", $1->No_Line); insert(p, $1); $$ = p;}
-	| '-'	{ p = newNode("addop", $1->No_Line); insert(p, $1); $$ = p;}
+	: ADD	{$$ = $1;}
+	| SUB	{$$ = $1;}
 	;
 
  /* 24 */
 term
 	:term mulop factor
 	{
-		p = newNode("term", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newExprNode(OpT);
+        $$->attr.Op = $2;
+		refreshExprNode($$);
+        insert($$, $1);
+        insert($$, $3);
 	}
 	| factor
 	{
-		p = newNode("term", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
+		$$ = $1;
 	}
 	;
 
  /* 25 */
 mulop
-	: '*'	{ p = newNode("mulop", $1->No_Line);; insert(p, $1); $$ = p;}
-	| '/'	{ p = newNode("mulop", $1->No_Line);; insert(p, $1); $$ = p;}
+	: MUL	{$$ = $1;}
+	| DIV	{$$ = $1;}
 	;
 
  /* 26 */
 factor
-	: '(' expr ')'
-	{
-		p = newNode("factor", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
-	}
-	| var	{ p = newNode("factor", $1->No_Line); insert(p, $1); $$ = p;}
-	| call	{ p = newNode("factor", $1->No_Line); insert(p, $1); $$ = p;}
-	| NUM	{ p = newNode("factor", $1->No_Line); insert(p, $1); $$ = p;}
+	: LPR expr RPR {$$ = $2;}
+	| var	{$$ = $1;}
+	| call	{$$ = $1;}
+	| NUM
+    {
+        $$ = newExprNode(ConstT);
+        $$->attr.val = $1;
+		refreshExprNode($$);
+    }
 	;
 
  /* 27 */
 call
-	: ID '(' args ')'
+	: ID LPR args RPR
 	{
-		p = newNode("call", $1->No_Line);
-		insert(p, $4);
-		if ($3)
-			insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		$$ = newExprNode(CallT);
+        $$->attr.name = $1;
+		refreshExprNode($$);
+        if ($3) insert($$, $3);
 	}
 	;
 
  /* 28 */
 args
-	: arg_list	{ p = newNode("args", $1->No_Line); insert(p, $1); $$ = p;}
-	| 	{ $$ = NULL; }
+	: arg_list	{$$ = newExprNode(ArgsT); refreshExprNode($$); insert($$, $1);}
+	| { $$ = NULL; }
 	;
 
  /* 29 */
 arg_list
-	: arg_list ',' expr
+	: arg_list COM expr
 	{
-		p = newNode("arg_list", $1->No_Line);
-		insert(p, $3);
-		insert(p, $2);
-		insert(p, $1);
-		$$ = p;
+		STNode* t = $1;
+		if (t != NULL) {
+			makeBrother(t, $3);
+			$$ = t;
+		}
+		else
+			$$ = $3;
 	}
 	| expr
 	{
-		p = newNode("arg_list", $1->No_Line);
-		insert(p, $1);
-		$$ = p;
+		$$ = $1;
 	}
 %%
 
@@ -458,26 +407,15 @@ void yyerror(char* s)
 	printf("Error:%s\n", s);
 }
 
-int main(int argc,char *argv[])
+int parse()
 {    
 	extern int yydebug;
 	yydebug = 1;
-	if (argc == 1)
-	{
-		printf("No input file!\n");
-		return -1;
-	}
-	FILE* fin=NULL;
-	fin = fopen(argv[1],"r"); 
-	if(!fin)
-	{ 
-		printf("cannot open reading file.\n");
-		return -1;
-	}
-	extern FILE* yyin;
-	yyin=fin;
+	extern FILE* yyin, yyout;
+	yyin=input;
+	yyout=output;
 	yyparse();
-	print(p,0);
-	fclose(fin);
+	printf("Parse Tree:\n");
+	print(TreeRoot,0);
 	return 0;
 }

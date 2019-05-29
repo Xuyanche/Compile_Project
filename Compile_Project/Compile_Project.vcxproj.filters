@@ -24,9 +24,30 @@
     <ClInclude Include="symtab.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="scan.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="parser.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="node.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="scan.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="symtab.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
