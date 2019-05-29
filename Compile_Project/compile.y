@@ -8,12 +8,11 @@
 
 #define YYDEBUG 1
 
-static STNode* TreeRoot;
+extern STNode* TreeRoot;
+extern FILE* input, output;
 
 void yyerror(char *s);
-
-FILE *fout;
-
+int parse();
 %}
 %union{
 	int Token;
@@ -35,7 +34,7 @@ FILE *fout;
 
  /* 1 */
 program
-	: declaration_list {TreeRoot = newStmtNode(CompStmtT); refreshStmtNode(TreeRoot); insert(TreeRoot, $1);}
+	: declaration_list {TreeRoot = newStmtNode(ProgStmtT); refreshStmtNode(TreeRoot); insert(TreeRoot, $1);}
 	;
 
  /* 2 */
@@ -101,7 +100,7 @@ func_decl
 
  /* 7 */
 paras
-	: para_list {$$ = newExprNode(MultiT); refreshExprNode($$); insert($$, $1);}
+	: para_list {$$ = newExprNode(ParasT); refreshExprNode($$); insert($$, $1);}
 	| VOID {$$ = NULL;}
 	| {$$ = NULL;}
 	;
@@ -146,13 +145,13 @@ comp_stmt
         $$ = newStmtNode(CompStmtT);
 		refreshStmtNode($$);
 		if ($2){
-			STNode* p = newDeclNode(MultiDeclT);
+			STNode* p = newDeclNode(LocalDeclT);
 			refreshDeclNode(p);
 			insert(p, $2);
 			insert($$, p);
 		}
 		if ($3){
-			STNode* p = newStmtNode(MultStmtT);
+			STNode* p = newStmtNode(StmtListT);
 			refreshStmtNode(p);
 			insert(p, $3);
 			insert($$, p);
@@ -380,7 +379,7 @@ call
 
  /* 28 */
 args
-	: arg_list	{$$ = $1;}
+	: arg_list	{$$ = newExprNode(ArgsT); refreshExprNode($$); insert($$, $1);}
 	| { $$ = NULL; }
 	;
 
@@ -408,27 +407,15 @@ void yyerror(char* s)
 	printf("Error:%s\n", s);
 }
 
-int main(int argc,char *argv[])
+int parse()
 {    
 	extern int yydebug;
-	yydebug = 0;
-	if (argc == 1)
-	{
-		printf("No input file!\n");
-		return -1;
-	}
-	FILE* fin=NULL;
-	fin = fopen(argv[1],"r"); 
-	if(!fin)
-	{ 
-		printf("cannot open reading file.\n");
-		return -1;
-	}
-	extern FILE* yyin;
-	yyin=fin;
+	yydebug = 1;
+	extern FILE* yyin, yyout;
+	yyin=input;
+	yyout=output;
 	yyparse();
+	printf("Parse Tree:\n");
 	print(TreeRoot,0);
-	fclose(fin);
-	system("pause");
 	return 0;
 }

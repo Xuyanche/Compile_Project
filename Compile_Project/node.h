@@ -7,19 +7,19 @@
 #pragma warning(disable : 4996)
 
 typedef enum kind {
-	DeclK, StmtK, ExprK // Declaration, Statement, Expression
+	DeclK, StmtK, ExprK// Declaration, Statement, Expression
 }kind; // Kinds of nodes
 
 typedef enum decltype {
-	VarDeclT, FuncDeclT, ArrDeclT, MultiDeclT
+	VarDeclT, FuncDeclT, ArrDeclT, LocalDeclT
 }decltype; // Declaration node type
 
 typedef enum stmttype {
-	CompStmtT, IfT, IfElseT, IterStmtT, RetnStmtT, ExprStmtT, MultStmtT
+	CompStmtT, IfT, IfElseT, IterStmtT, RetnStmtT, ExprStmtT, StmtListT, ProgStmtT
 }stmttype; // Statement node type
 
 typedef enum exprtype {
-	OpT, ConstT, IdT, AddrT, CallT, AssignT, EntryT, MultiT
+	OpT, ConstT, IdT, AddrT, CallT, AssignT, EntryT, ArgsT, ParasT
 }exprtype; // Expression node type
 
 typedef union type

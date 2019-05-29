@@ -12,9 +12,9 @@ int main(){
 	c = b;
 	while (i < 100){
 		if (i < 50){
-			a[i] = add(b, 1);
+			a [i] = add(b, 1);
 		}else{
-			a[i] = add(b, b + c);
+			a [i] = add(b, b + c);
 			c = b;
 		}
 		i = i + 1;

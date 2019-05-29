@@ -63,8 +63,8 @@ void refreshDeclNode(STNode *p) {
 		sprintf(p->name, "ArrDecl: %s[%d]", p->attr.name, p->attr.val);
 		break;
 	}
-	case MultiDeclT: {
-		sprintf(p->name, "MultiDecl");
+	case LocalDeclT: {
+		sprintf(p->name, "LocalDecl");
 		break;
 	}
 	default:
@@ -120,8 +120,12 @@ void refreshExprNode(STNode *p) {
 		sprintf(p->name, "ArrayEntry: %s", p->attr.name);
 		break;
 	}
-	case MultiT: {
-		sprintf(p->name, "MultipleExp");
+	case ArgsT: {
+		sprintf(p->name, "Arguments");
+		break;
+	}
+	case ParasT: {
+		sprintf(p->name, "Parameters");
 		break;
 	}
 	default:
@@ -148,6 +152,10 @@ STNode* newStmtNode(stmttype newType)
 void refreshStmtNode(STNode *p) {
 	switch (p->type.stmt)
 	{
+	case ProgStmtT: {
+		sprintf(p->name, "Program");
+		break;
+	}
 	case CompStmtT: {
 		sprintf(p->name, "CompoundStmt");
 		break;
@@ -172,8 +180,8 @@ void refreshStmtNode(STNode *p) {
 		sprintf(p->name, "Expression");
 		break;
 	}
-	case MultStmtT: {
-		sprintf(p->name, "Multiple");
+	case StmtListT: {
+		sprintf(p->name, "StmtList");
 		break;
 	}
 	default:

@@ -26,9 +26,11 @@
     <ClInclude Include="scan.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main.c" />
     <ClCompile Include="node.c" />
     <ClCompile Include="parser.c" />
     <ClCompile Include="scan.c" />
+    <ClCompile Include="symtab.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>

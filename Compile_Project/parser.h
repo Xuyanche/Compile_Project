@@ -105,7 +105,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 18 ".\\compile.y"
+#line 17 ".\\compile.y"
 
 	int Token;
 	int dtype;

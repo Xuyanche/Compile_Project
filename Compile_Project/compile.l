@@ -12,6 +12,8 @@ char TokenString[MAX_TOKEN_LEN];
 /* Basic symbol spcification */
 digit [0-9]
 letter [A-za-z]
+id ({letter}{letter|digit}*)
+num {digit}+
 whitespace [ \t\r]+
 
 %%
@@ -42,8 +44,8 @@ whitespace [ \t\r]+
 "}"		{yylval.Token=RCR;return RCR;}
 
  /* Identifier and numbers */
-{letter}({letter}|{digit})*		{yylval.name=strdup(yytext);return(ID);}
-{digit}+						{yylval.value=atoi(yytext);return(NUM); }
+[a-zA-Z]+	{yylval.name=strdup(yytext);return(ID);}
+[0-9]+		{yylval.value=atoi(yytext);return(NUM); }
 
  /* Whitespace filtering and line counting */
 {whitespace}	{/*Skip whitespace*/}
