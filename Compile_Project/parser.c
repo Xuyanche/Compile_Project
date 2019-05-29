@@ -2312,7 +2312,7 @@ void yyerror(char* s)
 int parse()
 {    
 	extern int yydebug;
-	yydebug = 1;
+	yydebug = 0;
 	extern FILE* yyin, yyout;
 	yyin=input;
 	yyout=output;

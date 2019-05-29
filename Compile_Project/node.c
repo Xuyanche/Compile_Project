@@ -5,7 +5,7 @@
 
 extern int nr_line;
 
-char* operators[25] = { "+", "-", "*", "/", ",", "=", "{", "}", "[", "]", "(", ")", ";", "int", "void", "if", "else", "while", "return", "<", "<=",
+static char* operators[25] = { "+", "-", "*", "/", ",", "=", "{", "}", "[", "]", "(", ")", ";", "int", "void", "if", "else", "while", "return", "<", "<=",
 						">", ">=", "==", "!=" };
 
 /* Insert newchild as the last child of father */

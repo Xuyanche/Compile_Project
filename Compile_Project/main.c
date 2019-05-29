@@ -25,6 +25,8 @@ int main(int argc, char* argv[]) {
 		output = fopen(argv[2], "w");
 	}
 	parse();
-	// SymbolTable = BuildTable(TreeRoot, NULL);
+	SymbolTable = BuildTable(TreeRoot, NULL);
+	printf("Symbol Tables: \n");
+	printTable(SymbolTable);
 	return 0;
 }

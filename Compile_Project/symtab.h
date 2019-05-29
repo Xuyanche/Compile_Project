@@ -22,16 +22,19 @@ struct SymtabEntry
 struct SymTab
 {
 	SymTab *child, *brother, *father;
-	int nr_symbols, nr_func, nr_localvar;
+	int nr_symbols, nr_func, nr_localvar, nr_para;
 	SymtabEntry bucket[MAX_SYMBOLS];
+	char* name;
 };
 
 SymTab* BuildTable(STNode *t, SymTab* curTable);
 
-SymTab* CreateTable(SymTab *father);
+SymTab* CreateTable(SymTab *father, const char* TableName);
 
 /* Function `insert` inserts a symbol into symbol table */
 int InsertSym(SymTab* table, char* name, SymKind kind, int dtype, int order, int nr);
 
 /* Function `lookup` takes a var name and return the corresponding symbol table entry */
 SymtabEntry* lookup(SymTab* table, char* name);
+
+void printTable(SymTab* table);

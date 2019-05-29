@@ -1,6 +1,10 @@
 int add(int a, int b){
+	int ac;
+	int bc;
 	return a+b;
 }
+
+int fu;
 
 int main(){
 	int a[100];
