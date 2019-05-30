@@ -26,7 +26,7 @@ int parse();
 %type <node> stmt expr_stmt selc_stmt iter_stmt retn_stmt expr simple_expr add_expr term factor call args arg_list var
 %type <dtype> type
 %type <Token> relop addop mulop
-%token <Token> ADD SUB MUL DIV COM ASN LCR RCR LBR RBR LPR RPR SEMI INT VOID IF ELSE WHILE RETURN LE LEQ GE GEQ EQ NEQ
+%token <Token> ADD SUB MUL DIV COM ASN LCR RCR LBR RBR LPR RPR SEMI INT VOID IF ELSE WHILE RETURN LE LEQ GE GEQ EQ NEQ ADDR
 %token <name> ID
 %token <value> NUM
 
@@ -71,7 +71,7 @@ var_decl
 	| type ID LBR NUM RBR SEMI
         {
             $$ = newDeclNode(ArrDeclT);
-            $$->attr.dtype = $1;
+            $$->attr.dtype = ADDR;
 		    $$->attr.name = $2;
             $$->attr.val = $4;
 			refreshDeclNode($$);
@@ -133,7 +133,7 @@ para
 	| type ID LBR RBR
 	{	
 		$$ = newExprNode(AddrT);
-        $$->attr.dtype = $1;
+        $$->attr.dtype = ADDR;
         $$->attr.name = $2;
 		refreshExprNode($$);
 	}

@@ -4,6 +4,7 @@
 #include "node.h"
 #include "symtab.h"
 #include "parser.h"
+#include "cgen.h"
 
 FILE *input, *output;
 STNode *TreeRoot;
@@ -35,5 +36,6 @@ int main(int argc, char* argv[]) {
 	error = TypeCheck(TreeRoot, SymbolTable);
 	if (error)
 		return 0;
-
+	cGen(TreeRoot);
+	return 0;
 }

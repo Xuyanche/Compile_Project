@@ -6,9 +6,10 @@
 #include "parser.h"
 
 char* KindStr[] = { "Var", "Func", "Para", "Arr" };
-static char* operators[25] = { "+", "-", "*", "/", ",", "=", "{", "}", "[", "]", "(", ")", ";", "int", "void", "if", "else", "while", "return", "<", "<=",
-						">", ">=", "==", "!=" };
+static char* operators[26] = { "+", "-", "*", "/", ",", "=", "{", "}", "[", "]", "(", ")", ";", "int", "void", "if", "else", "while", "return", "<", "<=",
+						">", ">=", "==", "!=", "address" };
 extern int error;
+extern SymTab *SymbolTable;
 
 /* Traverse t and build symbol table */
 SymTab* BuildTable(STNode* t, SymTab* curTable) {
@@ -211,7 +212,8 @@ int TypeCheck(STNode * t, SymTab *table)
 			STNode *child2 = child1->brother;
 			if (TypeCheck(child1, table) || TypeCheck(child2, table))
 				return 1;
-			return (child1->attr.dtype == child2->attr.dtype) ? 0 : 1;
+			int err = (child1->attr.dtype == child2->attr.dtype) ? 0 : 1;
+			t->attr.dtype = child1->attr.dtype;
 		}
 		case OpT: {
 			STNode *child1 = t->child;
@@ -223,7 +225,17 @@ int TypeCheck(STNode * t, SymTab *table)
 			t->attr.dtype = lookup(table, t->attr.name)->dtype;
 		}
 		case EntryT: {
+			t->attr.dtype = INT;
+		}
+		case CallT: {
 			t->attr.dtype = lookup(table, t->attr.name)->dtype;
+		}
+		case ArgsT: {
+			STNode *child = t->child;
+			while (child)
+			{
+				
+			}
 		}
 		default:
 			break;

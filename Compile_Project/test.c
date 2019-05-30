@@ -8,7 +8,6 @@ int fu;
 
 int main(){
 	int a[100];
-	int a;
 	int b;
 	int c;
 	int i;
