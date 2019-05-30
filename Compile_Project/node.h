@@ -1,90 +1,72 @@
-#ifndef Node_H
-#define Node_H
+/* Syntax Tree Node Specification file */
+#ifndef NODE_H
+#define NODE_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #pragma warning(disable : 4996)
 
-typedef struct Node Node;
-struct Node
+typedef enum kind {
+	DeclK, StmtK, ExprK// Declaration, Statement, Expression
+}kind; // Kinds of nodes
+
+typedef enum decltype {
+	VarDeclT, FuncDeclT, ArrDeclT, LocalDeclT
+}decltype; // Declaration node type
+
+typedef enum stmttype {
+	CompStmtT, IfT, IfElseT, IterStmtT, RetnStmtT, ExprStmtT, StmtListT, ProgStmtT
+}stmttype; // Statement node type
+
+typedef enum exprtype {
+	OpT, ConstT, IdT, AddrT, CallT, AssignT, EntryT, ArgsT, ParasT
+}exprtype; // Expression node type
+
+typedef union type
 {
-	Node * brother;	
-	Node * child;
-	int No_Child;
-	int col;
+	decltype decl;
+	stmttype stmt;
+	exprtype expr;
+}nodetype;
+
+typedef struct attr
+{
+	int Op, dtype;
+	int val;
+	char* name;
+}nodeattr;
+
+/* Syntax tree node */
+typedef struct STNode STNode;
+struct STNode
+{
+	STNode * brother;
+	STNode * child;
+	STNode * father;
 	int No_Line;
 	char name[20];
-	int IsBegin;
+	kind kind;
+	nodetype type;
+	nodeattr attr;
 };
 
-
-void insert(Node* father, Node* newchild)
+/* Linked list */
+typedef struct listnode listnode;
+struct listnode
 {
-	if (newchild == NULL)
-	{
-		return;
-	}
-	
-	if (father->No_Child == 0)
-	{
-		newchild->IsBegin = 1;
-		father->child = newchild;
-		father->No_Child++;
-		return;
-	}
+	int data;
+	listnode *next;
+};
 
-	Node* focus = father->child;
-	int i;
-	for(i=0;i<father->No_Child - 1;i++)
-	{
-		focus = focus->brother;
-	}
-	
-	focus->brother = newchild;
-	father->No_Child++;
-	return;
-}
+/* Insert newchild as the last child of father */
+int insert(STNode *father, STNode *newchild);
+int makeBrother(STNode *old, STNode *newone);
 
-
-
-Node* newNode (char* node_name,int line, int c)
-{
-	struct Node *p=(struct Node*)malloc(sizeof(struct Node));
-	if (p==NULL)
-	{
-		printf("Error:out of memory.\n");
-		exit(1);
-	}
-    strncpy(p->name,node_name,20);
-    p->brother=NULL;
-    p->child=NULL;
-    p->No_Line=line;
-    p->No_Child=0;
-    p->col= 0;
-    p->IsBegin=0;
-    printf("reading:%s\n",node_name );
-    return p;
-}
-
-void print(Node* root, int level)
-{
-	int i;
-	for ( i = 0; i < level; i++)
-	{
-		printf("__");
-	}
-	printf("%s\n",root->name);
-	
-	Node* focus = root->child;
-	for (i = 0; i < root->No_Child; i++)
-	{
-		print(focus, level + 1);
-		focus = focus->brother;
-	}
-
-	return;
-
-}
-
-
+STNode* newDeclNode(decltype newType);
+STNode* newExprNode(exprtype newType);
+STNode* newStmtNode(stmttype newType);
+void refreshDeclNode(STNode *p);
+void refreshExprNode(STNode *p);
+void refreshStmtNode(STNode *p);
+void printSTree(STNode* node, int level);
 #endif
