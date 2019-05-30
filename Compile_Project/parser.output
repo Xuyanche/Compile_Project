@@ -1,3 +1,8 @@
+Terminals unused in grammar
+
+   ADDR
+
+
 State 97 conflicts: 1 shift/reduce
 
 
@@ -127,71 +132,72 @@ GE (279) 41
 GEQ (280) 42
 EQ (281) 45
 NEQ (282) 46
-ID (283) 6 7 10 16 17 37 38 59
-NUM (284) 7 58
+ADDR (283)
+ID (284) 6 7 10 16 17 37 38 59
+NUM (285) 7 58
 
 
 Nonterminals, with rules where they appear
 
-$accept (30)
+$accept (31)
     on left: 0
-program (31)
+program (32)
     on left: 1, on right: 0
-declaration_list (32)
+declaration_list (33)
     on left: 2 3, on right: 1 2
-declaration (33)
+declaration (34)
     on left: 4 5, on right: 2 3
-var_decl (34)
+var_decl (35)
     on left: 6 7, on right: 4 19
-type (35)
+type (36)
     on left: 8 9, on right: 6 7 10 16 17
-func_decl (36)
+func_decl (37)
     on left: 10, on right: 5
-paras (37)
+paras (38)
     on left: 11 12 13, on right: 10
-para_list (38)
+para_list (39)
     on left: 14 15, on right: 11 14
-para (39)
+para (40)
     on left: 16 17, on right: 14 15
-comp_stmt (40)
+comp_stmt (41)
     on left: 18, on right: 10 24
-local_decls (41)
+local_decls (42)
     on left: 19 20, on right: 18 19
-stmt_list (42)
+stmt_list (43)
     on left: 21 22, on right: 18 21
-stmt (43)
+stmt (44)
     on left: 23 24 25 26 27, on right: 21 30 31 32
-expr_stmt (44)
+expr_stmt (45)
     on left: 28 29, on right: 23
-selc_stmt (45)
+selc_stmt (46)
     on left: 30 31, on right: 25
-iter_stmt (46)
+iter_stmt (47)
     on left: 32, on right: 26
-retn_stmt (47)
+retn_stmt (48)
     on left: 33 34, on right: 27
-expr (48)
+expr (49)
     on left: 35 36, on right: 28 30 31 32 33 35 38 55 62 63
-var (49)
+var (50)
     on left: 37 38, on right: 35 56
-simple_expr (50)
+simple_expr (51)
     on left: 39 40, on right: 36
-relop (51)
+relop (52)
     on left: 41 42 43 44 45 46, on right: 39
-add_expr (52)
+add_expr (53)
     on left: 47 48, on right: 39 40 47
-addop (53)
+addop (54)
     on left: 49 50, on right: 47
-term (54)
+term (55)
     on left: 51 52, on right: 47 48 51
-mulop (55)
+mulop (56)
     on left: 53 54, on right: 51
-factor (56)
+factor (57)
     on left: 55 56 57 58, on right: 51 52
-call (57)
+call (58)
     on left: 59, on right: 57
-args (58)
+args (59)
     on left: 60 61, on right: 59
-arg_list (59)
+arg_list (60)
     on left: 62 63, on right: 60 62
 
 

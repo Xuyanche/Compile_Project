@@ -8,7 +8,6 @@ int fu;
 
 int main(){
 	int a[100];
-	int a;
 	int b;
 	int c;
 	int i;
@@ -23,7 +22,9 @@ int main(){
 			c = b;
 		}
 		i = i + 1;
-
+		if (i == 2){
+			i = 2;
+		}
 	}
 	return 0;
 }

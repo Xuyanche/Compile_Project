@@ -6,9 +6,11 @@
 #include "parser.h"
 
 char* KindStr[] = { "Var", "Func", "Para", "Arr" };
-static char* operators[25] = { "+", "-", "*", "/", ",", "=", "{", "}", "[", "]", "(", ")", ";", "int", "void", "if", "else", "while", "return", "<", "<=",
-						">", ">=", "==", "!=" };
+static char* operators[26] = { "+", "-", "*", "/", ",", "=", "{", "}", "[", "]", "(", ")", ";", "int", "void", "if", "else", "while", "return", "<", "<=",
+						">", ">=", "==", "!=", "address" };
 extern int error;
+extern SymTab *SymbolTable;
+extern FILE* soutput;
 
 /* Traverse t and build symbol table */
 SymTab* BuildTable(STNode* t, SymTab* curTable) {
@@ -28,9 +30,9 @@ SymTab* BuildTable(STNode* t, SymTab* curTable) {
 			return ret;
 		}
 		case CompStmtT: {
-			char FatherName[20];
-			sprintf(FatherName, "%s", curTable->name);
-			SymTab* ret = (t->father->type.decl==FuncDeclT) ? curTable : CreateTable(curTable, strdup(strcat(FatherName, "_Scope")));
+			char newName[100];
+			sprintf(newName, "%s", curTable->name);
+			SymTab* ret = (t->father->type.decl == FuncDeclT && t->father->kind == DeclK) ? curTable : CreateTable(curTable, strdup(strcat(newName, "_Scope")));
 			STNode *child = t->child;
 			while (child)
 			{
@@ -177,7 +179,7 @@ SymtabEntry * lookup(SymTab * table, char * name)
 
 void printTable(SymTab * table)
 {
-	printf("Symbol Table: %s\n", table->name);
+	fprintf(soutput, "Symbol Table: %s\n", table->name);
 	int i;
 	for (i = 0; i < MAX_SYMBOLS; i++)
 	{
@@ -186,12 +188,12 @@ void printTable(SymTab * table)
 			while (list)
 			{
 				SymtabEntry record = list->entry;
-				printf("%s\t%s\t%s\t%d\t%d\t\n", record.name, KindStr[record.kind], operators[record.dtype - 258], record.order, record.nr);
+				fprintf(soutput,"%s\t%s\t%s\t%d\t%d\t\n", record.name, KindStr[record.kind], operators[record.dtype - 258], record.order, record.nr);
 				list = list->next;
 			}
 		}
 	}
-	printf("\n");
+	fprintf(soutput, "\n");
 	SymTab *child = table->child;
 	while (child) {
 		printTable(child);
@@ -211,7 +213,8 @@ int TypeCheck(STNode * t, SymTab *table)
 			STNode *child2 = child1->brother;
 			if (TypeCheck(child1, table) || TypeCheck(child2, table))
 				return 1;
-			return (child1->attr.dtype == child2->attr.dtype) ? 0 : 1;
+			int err = (child1->attr.dtype == child2->attr.dtype) ? 0 : 1;
+			t->attr.dtype = child1->attr.dtype;
 		}
 		case OpT: {
 			STNode *child1 = t->child;
@@ -223,7 +226,17 @@ int TypeCheck(STNode * t, SymTab *table)
 			t->attr.dtype = lookup(table, t->attr.name)->dtype;
 		}
 		case EntryT: {
+			t->attr.dtype = INT;
+		}
+		case CallT: {
 			t->attr.dtype = lookup(table, t->attr.name)->dtype;
+		}
+		case ArgsT: {
+			STNode *child = t->child;
+			while (child)
+			{
+				
+			}
 		}
 		default:
 			break;

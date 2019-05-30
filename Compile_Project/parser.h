@@ -64,8 +64,9 @@
      GEQ = 280,
      EQ = 281,
      NEQ = 282,
-     ID = 283,
-     NUM = 284
+     ADDR = 283,
+     ID = 284,
+     NUM = 285
    };
 #endif
 /* Tokens.  */
@@ -94,8 +95,9 @@
 #define GEQ 280
 #define EQ 281
 #define NEQ 282
-#define ID 283
-#define NUM 284
+#define ADDR 283
+#define ID 284
+#define NUM 285
 
 
 
@@ -116,7 +118,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 120 "parser.h"
+#line 122 "parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
