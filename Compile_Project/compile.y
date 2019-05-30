@@ -9,7 +9,7 @@
 #define YYDEBUG 1
 
 extern STNode* TreeRoot;
-extern FILE* input, output;
+extern FILE* input;
 extern int nr_line;
 
 void yyerror(char *s);
@@ -417,9 +417,8 @@ int parse()
 	yydebug = 0;
 	extern FILE* yyin, yyout;
 	yyin=input;
-	yyout=output;
 	yyparse();
-	printf("Parse Tree:\n");
+	printf("Parse Tree Built.\n");
 	printSTree(TreeRoot,0);
 	return 0;
 }

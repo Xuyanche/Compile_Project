@@ -80,7 +80,7 @@
 #define YYDEBUG 1
 
 extern STNode* TreeRoot;
-extern FILE* input, output;
+extern FILE* input;
 extern int nr_line;
 
 void yyerror(char *s);
@@ -1550,7 +1550,7 @@ yyreduce:
 #line 72 ".\\compile.y"
     {
             (yyval.node) = newDeclNode(ArrDeclT);
-            (yyval.node)->attr.dtype = (yyvsp[(1) - (6)].dtype);
+            (yyval.node)->attr.dtype = ADDR;
 		    (yyval.node)->attr.name = (yyvsp[(2) - (6)].name);
             (yyval.node)->attr.val = (yyvsp[(4) - (6)].value);
 			refreshDeclNode((yyval.node));
@@ -1648,7 +1648,7 @@ yyreduce:
 #line 134 ".\\compile.y"
     {	
 		(yyval.node) = newExprNode(AddrT);
-        (yyval.node)->attr.dtype = (yyvsp[(1) - (4)].dtype);
+        (yyval.node)->attr.dtype = ADDR;
         (yyval.node)->attr.name = (yyvsp[(2) - (4)].name);
 		refreshExprNode((yyval.node));
 	}
@@ -2322,9 +2322,8 @@ int parse()
 	yydebug = 0;
 	extern FILE* yyin, yyout;
 	yyin=input;
-	yyout=output;
 	yyparse();
-	printf("Parse Tree:\n");
+	printf("Parse Tree Built.\n");
 	printSTree(TreeRoot,0);
 	return 0;
 }

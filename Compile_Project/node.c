@@ -4,6 +4,7 @@
 #include "node.h"
 
 extern int nr_line;
+extern FILE *toutput;
 
 static char* operators[25] = { "+", "-", "*", "/", ",", "=", "{", "}", "[", "]", "(", ")", ";", "int", "void", "if", "else", "while", "return", "<", "<=",
 						">", ">=", "==", "!=" };
@@ -36,7 +37,7 @@ STNode* newDeclNode(decltype newType)
 	STNode *p = (STNode*)malloc(sizeof(STNode));
 	if (p == NULL)
 	{
-		printf("Error:out of memory.\n");
+		fprintf(toutput, "Error:out of memory.\n");
 		exit(1);
 	}
 	p->brother = NULL;
@@ -77,7 +78,7 @@ STNode* newExprNode(exprtype newType)
 	STNode *p = (STNode*)malloc(sizeof(STNode));
 	if (p == NULL)
 	{
-		printf("Error:out of memory.\n");
+		fprintf(toutput, "Error:out of memory.\n");
 		exit(1);
 	}
 	p->brother = NULL;
@@ -137,7 +138,7 @@ STNode* newStmtNode(stmttype newType)
 	STNode *p = (STNode*)malloc(sizeof(STNode));
 	if (p == NULL)
 	{
-		printf("Error:out of memory.\n");
+		fprintf(toutput, "Error:out of memory.\n");
 		exit(1);
 	}
 	p->brother = NULL;
@@ -213,19 +214,19 @@ void printSTree(STNode* node, int level)
 	while (tail)
 	{
 		if (tail->data)
-			printf("|  ");
+			fprintf(toutput, "|  ");
 		else
-			printf("   ");
+			fprintf(toutput, "   ");
 		tail = tail->next;
 	}
 	if (level > 0) {
 		if (node->brother)
-			printf("|--");
+			fprintf(toutput, "|--");
 
 		else
-			printf("+--");
+			fprintf(toutput, "+--");
 	}
-	printf("%s\n", node->name);
+	fprintf(toutput, "%s\n", node->name);
 	STNode* focus = node->child;
 	while (focus)
 	{
