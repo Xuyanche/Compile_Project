@@ -36,4 +36,6 @@ int main(int argc, char* argv[]) {
 	if (error)
 		return 0;
 
+
+	system("pause");
 }
