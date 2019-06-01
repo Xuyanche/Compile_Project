@@ -11,7 +11,7 @@ int main(){
 	int b;
 	int c;
 	int i;
-	i = 0;
+	i = 1+2*3;
 	b = 1;
 	c = b;
 	while (i < 100){

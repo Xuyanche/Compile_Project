@@ -9,7 +9,7 @@
 FILE *input, *toutput, *soutput, *poutput;
 STNode *TreeRoot;
 SymTab *SymbolTable;
-int error = 0;
+int TypeError = 0;
 
 int main(int argc, char* argv[]) {
 	if (argc == 1) {
@@ -48,8 +48,8 @@ int main(int argc, char* argv[]) {
 	printf("Symbol Tables Built\n");
 	printTable(SymbolTable);
 	// Do Type Checking
-	error = TypeCheck(TreeRoot, SymbolTable);
-	if (error)
+	TypeError = TypeCheck(TreeRoot, SymbolTable);
+	if (TypeError)
 		return 0;
 	cGen(TreeRoot);
 	return 0;

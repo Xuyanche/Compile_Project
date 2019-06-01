@@ -1,4 +1,5 @@
 _add:
+  ent
   arg a
   arg b
   lod a
@@ -6,8 +7,9 @@ _add:
   add
   retv
 _main:
+  ent
   lda i
-  ldc 0
+  ldc 7
   sti
   lda b
   ldc 1

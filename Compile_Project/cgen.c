@@ -194,6 +194,7 @@ void GenDecl(STNode * t)
 	{
 	case FuncDeclT: {
 		fprintf(poutput, "_%s:\n", t->attr.name);
+		fprintf(poutput, "  ent\n");
 		STNode *child = t->child;
 		while (child)
 		{
