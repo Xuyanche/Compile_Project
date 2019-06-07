@@ -124,9 +124,9 @@ void GenExpr(STNode * t)
 		cGen(t->child);
 		cGen(t->child->brother);
 		if (t->attr.Op <= 261)
-			fprintf(poutput, "  %s\n", arith[t->attr.Op - 258]);
+			fprintf(poutput, "  %s\n", arith[t->attr.Op - ADD]);
 		else
-			fprintf(poutput, "  %s\n", relop[t->attr.Op - 277]);
+			fprintf(poutput, "  %s\n", relop[t->attr.Op - LE]);
 		break;
 	}
 	case ConstT: {
@@ -144,6 +144,13 @@ void GenExpr(STNode * t)
 	}
 	case CallT: {
 		if (t->child) cGen(t->child);
+		int nr_arg = 0;
+		STNode* child = t->child->child; // Arg list
+		while (child)
+		{
+			nr_arg++;
+			child = child->brother;
+		}
 		fprintf(poutput, "  call _%s\n", t->attr.name);
 		break;
 	}

@@ -1,3 +1,0 @@
-lex compile.l
-yacc compile.y -d -v -o parser.c
-gcc parser.c -o parser

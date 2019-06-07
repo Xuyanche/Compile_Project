@@ -83,12 +83,12 @@ SymTab* BuildTable(STNode* t, SymTab* curTable) {
 			return 0;
 		}
 		case FuncDeclT: {
-			if (InsertSym(curTable, t->attr.name, FuncK, t->attr.dtype, curTable->nr_func, 1))
+			if (InsertSym(curTable, t->attr.name, FuncK, t->attr.dtype, curTable->nr_func, 1)) // Find duplicate
 				printf("Line %d: Redeclaration error.\n", t->No_Line);
-			curTable->nr_func++;
-			SymTab* ret = CreateTable(curTable, t->attr.name);
+			curTable->nr_func++; 
+			SymTab* ret = CreateTable(curTable, t->attr.name); // Create new symtab for this function scope
 			STNode *child = t->child;
-			while (child)
+			while (child) // traversal
 			{
 				BuildTable(child, ret);
 				child = child->brother;
