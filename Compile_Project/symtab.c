@@ -219,7 +219,7 @@ SymtabEntry* LocateParam(char* funcname, int order) {
 	int i = 0;
 	for (i = 0; i < FuncOrder; i++) table = table->brother;
 	// 'table' is the corresponding symbol table of the function we look for
-	if (order > table->nr_para) {
+	if (order+1 > table->nr_para) {
 		return 0;
 	}
 	for (i = 0; i < MAX_SYMBOLS; i++) { // Iterate through hash buckets
@@ -376,6 +376,7 @@ int TypeCheck(STNode * t)
 				if (!paraEntry) { // Arguments overload
 					printf("Error at line %d: No corresponding paramters.\n", t->No_Line);
 					TypeError++;
+					return TypeError;
 				}
 				if (paraEntry->dtype != currentDtype) { // Dtype unmatch
 					printf("Error at line %d: The no.%d argument's dtype doesn't match parameter's dtype.\n", t->No_Line, order + 1);
@@ -458,9 +459,7 @@ int InsertSym(SymTab * table, char * name, SymKind kind, int type, int order, in
 {
 	SymtabEntry *exist = lookup(table, name);
 	if (exist) {
-		if (exist->dtype != type || exist->kind != kind) {
-			return 1; // 1 means redeclaration error.
-		}
+		return 1; // 1 means redeclaration error.
 	}
 	else
 	{
